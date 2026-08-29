@@ -1,0 +1,49 @@
+# Fly.io configuration for EduCore Protocol Go Relayer
+# Deploy: fly deploy --config api/fly.toml
+
+app = "educore-relayer"
+primary_region = "gru"  # São Paulo region for Brazil latency
+
+[build]
+  # Use the Go builder
+  builder = "paketobuildpacks/builder:base"
+
+[env]
+  # Application
+  PORT = "8080"
+  ENVIRONMENT = "production"
+  
+  # Solana RPC (set via fly secrets)
+  # HELIUS_RPC_URL = "https://mainnet.helius-rpc.com/?api-key=..."
+  # QUICKNODE_RPC_URL = "https://..."
+  
+  # Supabase (set via fly secrets)
+  # SUPABASE_URL = "https://xxx.supabase.co"
+  # SUPABASE_SERVICE_ROLE_KEY = "eyJ..."
+  
+  # Master Registry Program ID (set via fly secrets)
+  # MASTER_REGISTRY_PROGRAM_ID = "..."
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  
+  [http_service.checks]
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "10s"
+    method = "GET"
+    path = "/health"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 512
+
+# Scale configuration
+[metrics]
+  port = 9091
+  path = "/metrics"

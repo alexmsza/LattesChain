@@ -1,0 +1,403 @@
+openapi: 3.1.0
+info:
+  title: EduCore Protocol Relayer API
+  version: 1.0.0-mvp
+  description: |
+    Backend relayer do EduCore Protocol (LattesChain).
+    Hosting: Fly.io (app educore-relayer, regiao gru, porta 8080).
+    Auth MVP: nenhuma (ver docs/04 secao 5); alvo: JWT Supabase / token institucional.
+    Todas as respostas de erro seguem o formato {"error": string} alem dos codigos HTTP.
+servers:
+  - url: https://educore-relayer.fly.dev
+    description: Production (Mainnet quando mock_icp_signing=false)
+  - url: https://educore-relayer-staging.fly.dev
+    description: Staging (Devnet)
+  - url: http://localhost:8080
+    description: Development (local, Devnet)
+
+paths:
+  /health:
+    get:
+      summary: Health check (probed by Fly.io every 30s)
+      operationId: healthCheck
+      tags: [Ops]
+      security: []
+      responses:
+        "200":
+          description: Service is up
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+
+  /api/issue_certificate:
+    post:
+      summary: Emitir certificado/horas/diploma
+      description: |
+        Pipeline: valida aluno+IES, hash canonico SHA-256, idempotencia (409 se duplicado),
+        assinatura ICP-Brasil (mock MVP), derivacao BIP44 da wallet do aluno se necessario,
+        submissao tx Solana (log_academic_event), persistencia em academic_records, auditoria.
+        Diploma (DIPLOMA) reserva metaplex_asset_id para mint de SBT Metaplex Core.
+      operationId: issueCertificate
+      tags: [Issuance]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IssueCertificateRequest"
+            example:
+              student_id: "3f9d1c2e-0000-4000-8000-000000000001"
+              institution_id: "b7a2e4f1-0000-4000-8000-000000000002"
+              document_metadata:
+                type: "HORAS_COMPLEMENTARES"
+                course_name: "Curso de Extensao em Blockchain"
+                workload_hours: 40
+                issued_on: "2026-08-29"
+      responses:
+        "201":
+          description: Certificado emitido e registrado on-chain
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IssueCertificateResponse"
+        "400":
+          description: Payload invalido (binding/uuid)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Instituicao inativa
+        "404":
+          description: Aluno ou instituicao nao encontrados
+        "409":
+          description: |
+            Documento ja emitido (idempotencia por document_hash).
+            Retorna a emissao original.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DuplicateResponse"
+        "500":
+          description: Falha de hash/submissao Solana/persistencia
+
+  /api/verify/pdf:
+    post:
+      summary: Verificar autenticidade de PDF
+      description: |
+        Canonicalizacao no backend (ADR-005): o frontend envia o arquivo binario
+        (multipart/form-data, campo "document"); o Go le os bytes brutos, computa
+        SHA-256, consulta Supabase (rapido) e, se ausente, faz fallback on-chain.
+        Log de auditoria em todos os caminhos.
+      operationId: verifyPdf
+      tags: [Verification]
+      security: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [document]
+              properties:
+                document:
+                  type: string
+                  format: binary
+                  description: Arquivo PDF original emitido
+      responses:
+        "200":
+          description: Resultado da verificacao (valida ou nao)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerifyPdfResponse"
+        "400":
+          description: Sem arquivo / form invalido
+        "429":
+          description: Rate limit excedido (pendente de implementacao)
+        "500":
+          description: Falha de leitura/consulta
+
+  /api/verify/hash/{document_hash}:
+    get:
+      summary: Verificar por hash (tx lookup)
+      description: |
+        Rota planejada (nao implementada) - resolve por document_hash ou solana_tx_signature
+        com fallback on-chain direto (Helius Enhanced Transactions API).
+      operationId: verifyByHash
+      tags: [Verification]
+      security: []
+      parameters:
+        - name: document_hash
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: "^[a-f0-9]{64}$"
+      responses:
+        "200":
+          description: Resultado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerifyPdfResponse"
+        "404":
+          description: Nao encontrado
+      x-implementation-status: planned
+
+  /api/students/{id}/records:
+    get:
+      summary: Registros academicos do aluno
+      operationId: getStudentRecords
+      tags: [Records]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Lista de registros (issued_at desc)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  records:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AcademicRecord"
+        "500":
+          description: Falha de consulta
+
+  /api/students/{id}/assets:
+    get:
+      summary: Ativos Metaplex Core (SBTs) do aluno via Helius DAS API
+      operationId: getStudentAssets
+      tags: [Records]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Lista de SBTs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  assets:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MetaplexCoreAsset"
+        "404":
+          description: Aluno nao encontrado
+        "500":
+          description: Falha DAS API
+
+  /api/institutions/{id}/records:
+    get:
+      summary: Registros emitidos pela instituicao
+      operationId: getInstitutionRecords
+      tags: [Records]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Lista de registros (issued_at desc)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  records:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AcademicRecord"
+        "500":
+          description: Falha de consulta
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Supabase Auth JWT (alvo - ver docs/05 secao 3)
+    serviceToken:
+      type: apiKey
+      in: header
+      name: X-Service-Token
+      description: Token institucional service-to-service (alvo, rotas de emissao)
+
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: ok
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+          example: 1.0.0-mvp
+        checks:
+          type: object
+          additionalProperties:
+            type: string
+
+    IssueCertificateRequest:
+      type: object
+      required: [student_id, institution_id, document_metadata]
+      properties:
+        student_id:
+          type: string
+          format: uuid
+        institution_id:
+          type: string
+          format: uuid
+        document_metadata:
+          type: object
+          description: |
+            Metadados canonicos do documento (hasheados em ordem alfabetica).
+            O campo type e obrigatorio; workload_hours e exigido para HORAS_COMPLEMENTARES.
+          required: [type]
+          properties:
+            type:
+              type: string
+              enum: [DIPLOMA, HORAS_COMPLEMENTARES, CERTIFICADO_CURSO, HISTORICO_ESCOLAR]
+            course_name:
+              type: string
+            workload_hours:
+              type: integer
+              minimum: 1
+              maximum: 10000
+            issued_on:
+              type: string
+              format: date
+          additionalProperties: true
+
+    IssueCertificateResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        document_hash:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+        solana_tx_signature:
+          type: string
+        icp_signature:
+          type: string
+        metaplex_asset_id:
+          type: string
+          description: "Presente para DIPLOMA (MVP: PENDING_SBT_MINT)"
+
+    DuplicateResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Document already issued
+        document_hash:
+          type: string
+        tx_signature:
+          type: string
+
+    VerifyPdfResponse:
+      type: object
+      properties:
+        valid:
+          type: boolean
+        document_hash:
+          type: string
+        solana_tx_signature:
+          type: string
+        institution_name:
+          type: string
+        document_type:
+          type: string
+        issued_at:
+          type: string
+        error:
+          type: string
+          description: "Motivo da invalidez, ex.: Document not found in registry"
+
+    AcademicRecord:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        student_id:
+          type: string
+          format: uuid
+        institution_id:
+          type: string
+          format: uuid
+        document_type:
+          type: string
+          enum: [DIPLOMA, HORAS_COMPLEMENTARES, CERTIFICADO_CURSO, HISTORICO_ESCOLAR]
+        document_hash:
+          type: string
+        icp_brasil_signature:
+          type: string
+        solana_tx_signature:
+          type: string
+        metaplex_asset_id:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+          additionalProperties: true
+        issued_at:
+          type: string
+          format: date-time
+
+    MetaplexCoreAsset:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Asset ID (address da conta Asset do Metaplex Core)
+        owner:
+          type: string
+        data:
+          type: object
+          properties:
+            name:
+              type: string
+            uri:
+              type: string
+        mutable:
+          type: boolean
+        update_authority:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+
+security:
+  - bearerAuth: []

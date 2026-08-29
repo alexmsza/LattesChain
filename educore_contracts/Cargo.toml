@@ -1,0 +1,16 @@
+[package]
+name = "educore_contracts"
+version = "0.1.0"
+description = "EduCore Protocol Smart Contracts for LattesChain"
+edition = "2021"
+
+[features]
+no-entrypoint = []
+
+[dependencies]
+anchor-lang = "0.29.0"
+anchor-spl = "0.29.0"
+solana-program = "1.18.0"
+
+[dev-dependencies]
+anchor-test = "0.29.0"
