@@ -1,137 +1,192 @@
-# EduCore Protocol (LattesChain) 🎓⛓️
+# LattesChain — Passaporte Acadêmico Descentralizado 🎓⛓️
 
 [![Solana](https://img.shields.io/badge/Blockchain-Solana%20Devnet-9945FF?logo=solana)](https://solana.com)
-[![Next.js 14](https://img.shields.io/badge/Frontend-Next.js%2014-black?logo=next.js)](https://nextjs.org)
-[![Go](https://img.shields.io/badge/Backend-Go%201.22%20on%20Fly.io-00ADD8?logo=go)](https://fly.io)
-[![Supabase](https://img.shields.io/badge/Database-Supabase%20Postgres-3ECF8E?logo=supabase)](https://supabase.com)
-[![Anchor](https://img.shields.io/badge/Anchor-0.29.0-2b2b2b)](https://www.anchor-lang.com)
+[![SAS](https://img.shields.io/badge/Protocolo-Solana%20Attestation%20Service-14F195)](https://attest.solana.com)
+[![Python](https://img.shields.io/badge/Skeleton-Python%203.10%2B-3776AB?logo=python)](https://python.org)
 
-Plataforma B2B SaaS de certificação acadêmica e validação de horas complementares baseada em arquitetura híbrida (Off-Chain/On-Chain). Integra a validade jurídica governamental (**ICP-Brasil**) com a imutabilidade pública da blockchain **Solana**.
+> ⚠️ **PIVÔ (2026-08-29)**: este README é o planejamento **atual**, pra um
+> hackathon de Solana com <24h e time de Go/Python/IA (não Rust/TS). A
+> arquitetura de produção antiga (Go+Fly.io, Anchor `MasterRegistry`
+> próprio, Metaplex Core, CloudHSM) descrita em `docs/` foi **substituída**
+> pelo plano abaixo. Os docs antigos ficam como referência histórica — a
+> análise de LGPD/negócio em `relatorio_ideação.md` ainda vale — mas não são
+> o que vamos apresentar.
 
-> 📚 **Documentação completa**: comece por [`docs/00_index.md`](docs/00_index.md) — índice, status de implementação, issues conhecidas e Definition of Ready para Mainnet.
+## 1. O problema (2 frases pro júri)
 
----
+Credenciais acadêmicas hoje são reféns da instituição: pedir histórico é
+lento e burocrático, e RH/outras faculdades não têm como verificar
+autenticidade sem ligar pra secretaria. O aluno devia ser dono do seu
+histórico — não a instituição.
 
-## 🏛️ Arquitetura do Sistema
+## 2. A solução
 
-```
-                        ┌──────────────────────────────────┐
-                        │  Frontend Next.js (App Router)   │
-                        │  /admin /university /student     │
-                        │  /validator (upload PDF p/ API)  │
-                        └───────────────┬──────────────────┘
-                                        │ HTTPS
-                                        ▼
-                        ┌──────────────────────────────────┐
-                        │  Go Relayer — Fly.io (região gru)│
-                        │  SHA-256 canônico + BIP44 + ICP  │
-                        └───────┬──────────────────┬───────┘
-                                │                  │
-                 ┌──────────────┴───────┐  ┌───────┴────────────────────┐
-                 ▼                      │  ▼                            ▼
-    ┌─────────────────────────┐         │  ┌─────────────────────────────────┐
-    │ Supabase (Off-Chain)   │         │  │ Solana (On-Chain)               │
-    │ • PII / LGPD + RLS     │◄────────┘  │ • MasterRegistry (Anchor 0.29)   │
-    │ • Vault (master seed)  │   fallback │ • SPL Memo (horas/certificados) │
-    │ • Auth + logs auditoria│            │ • Metaplex Core SBT (diplomas)  │
-    └─────────────────────────┘            │ RPC: Helius → QuickNode        │
-                                           └─────────────────────────────────┘
+**Passaporte acadêmico do aluno**: cada disciplina concluída e cada diploma
+viram uma credencial verificável on-chain, na carteira do próprio aluno.
+Três atores, uma demo:
+
+```mermaid
+graph LR
+    U[Universidade\nIssuer / Credential] -->|CreateSchema| S[Schema\ndisciplina / diploma]
+    U -->|CreateAttestation| A[Attestation\nna carteira do aluno]
+    S --> A
+    A -->|token soulbound\nToken-2022| AL[Aluno\nHolder]
+    AL -.->|carteira pública| V[Validador / RH\nlê direto da chain]
+    V -->|IA: traduz pra\nlinguagem natural| R[Relatório de confiança]
 ```
 
-**Decisões-chave** (ADRs completos em `docs/adr/`):
-- **Fly.io** para o backend Go (região `gru`, scale-to-zero) — ADR-002
-- **Helius primário + QuickNode fallback** com `ExecuteWithFallback` — ADR-001
-- Carteiras alunos custodiais próprias: **Supabase Vault + derivação BIP44** — ADR-004
-- **Metaplex Core SBT** obrigatório para diplomas; SPL Memo para horas — ADR-003/007
-- **Hash do PDF no backend** (`POST /api/verify/pdf`, bytes brutos) — ADR-005
+## 3. Por que Solana — e por que isso não é blockchain-por-buzzword
 
----
+Regra de ouro: só usar blockchain onde propriedade, permanência ou
+não-precisar-confiar-num-intermediário importam de verdade. Aqui importa
+porque:
 
-## ⚠️ Estado Atual do Código (MVP incompleto)
+- **Propriedade real do aluno**: a credencial vive na carteira dele, não no
+  banco de dados de uma instituição que pode sumir, negar acesso ou cobrar
+  "segunda via".
+- **Verificação sem confiar em ninguém**: RH ou outra faculdade leem
+  direto da chain — não existe API da universidade no meio que possa estar
+  fora do ar, mentir, ou cobrar.
+- **Emissão em massa é barata**: uma IES emite milhares de credenciais por
+  semestre. Numa chain cara isso é inviável. Na Solana, fração de centavo
+  por atestação (e existe *compressed NFT / state compression* pra escalar
+  ainda mais, se formos pra volumes de dezenas de milhares).
+- **Não é "banco de dados com blockchain enfiada"**: usamos uma primitiva
+  *nativa* da Solana desenhada exatamente pra isso.
 
-Este repositório está em fase de esqueleto. Antes de rodar qualquer fluxo end-to-end, leia [`docs/00_index.md` §3](docs/00_index.md) — há issues bloqueantes conhecidas (imports quebrados no Go, derivação de wallet com curva errada, hash de emissão ≠ hash de validação, `is_paused` não aplicado no contrato, transação Solana ainda mock).
+## 4. A peça técnica central: Solana Attestation Service (SAS)
 
----
+Em vez de escrever e auditar nosso próprio smart contract Anchor do zero
+(o que a spec antiga em `docs/03_smart_contracts_anchor.md` propunha, e que
+tinha issues sérias — ver `docs/00_index.md` §3), usamos o **SAS**: um
+protocolo nativo, aberto e permissionless da Solana pra credenciais
+verificáveis, lançado em 2025 e já usado em produção (Solana ID, Civic,
+Range, SumSub).
 
-## 📂 Estrutura do Repositório
+Modelo de três componentes — mapeado 1:1 pro nosso caso:
+
+| SAS | LattesChain |
+| :--- | :--- |
+| **Credential** (emissor confiável) | A universidade |
+| **Schema** (template de campos) | `disciplina_concluida_v1` (disciplina, carga_horária, nota, semestre, ementa_hash) e `diploma_v1` (curso, data_conclusão, diploma_hash) |
+| **Attestation** (afirmação individual) | Uma disciplina ou diploma emitido pra um aluno específico |
+
+Programa on-chain: `22zoJMtdu4tQc2PzL74ZUT7FrwgB1Udec8DdW4yw4BdG` (mesmo
+endereço em devnet e mainnet).
+
+### A pergunta que o júri vai fazer: "o que impede o aluno de vender o diploma?"
+
+Resposta: **Token-2022 non-transferable + permanent delegate**. Quando
+tokenizamos uma Attestation (`sas/04_issue_soulbound.py`), o mint nasce com
+duas extensões do próprio token program da Solana:
+
+- `NonTransferable` — a transação de transferência é rejeitada pelo token
+  program antes mesmo de chegar na chain. Não é regra de aplicação, é
+  protocolo.
+- `PermanentDelegate` — a universidade pode revogar/queimar o token depois
+  (fraude descoberta, erro de emissão) **sem precisar da assinatura do
+  aluno**. A Solana até loga um aviso na criação da conta avisando que isso
+  é possível — transparência embutida, não escondida em termo de uso.
+
+Isso é soulbound *e* revogável, garantido pelo protocolo — narrativa
+redonda, e demonstrável ao vivo (`sas/06_revoke.py`).
+
+### Privacidade: o que fica on-chain vs off-chain
+
+Nenhum PII (nome, CPF, PDF do diploma) vai on-chain. On-chain só vai a
+*prova*: `ementa_hash` / `diploma_hash` (SHA-256 do conteúdo real, que fica
+fora da chain). Mesmo princípio do `docs/01_architecture_overview.md`
+antigo (matriz de separação LGPD), só que aplicado à estrutura de dados do
+SAS em vez de contas Anchor customizadas.
+
+## 5. O diferencial: camada de IA em cima da camada on-chain
+
+Poucos times vão ter isso. Dois scripts em `ai/`:
+
+1. **`trust_report.py`** — resolve "RH não sabe ler blockchain": lê as
+   atestações on-chain de um aluno, roda as mesmas checagens
+   criptográficas do validador (`sas/05_verify.py`), e pede pro Claude
+   traduzir isso num resumo de confiança em português, pronto pra um
+   painel de RH/ATS.
+2. **`equivalence_check.py`** — resolve o problema chato de verdade
+   mencionado no brainstorm inicial: créditos que não se transferem entre
+   instituições. Recomputa o hash da ementa on-chain (prova de
+   integridade) e pede pro Claude um veredito estruturado de equivalência
+   contra a ementa de outra instituição.
+
+## 6. Estrutura do repositório
 
 ```
 LattesChain/
-├── api/                          # Backend Go (Fly.io) — relayer
-│   ├── cmd/main.go               # Gin + zerolog + graceful shutdown
-│   ├── internal/{config,handlers,models,services,utils}
-│   └── fly.toml                  # região gru, porta 8080, health check
-├── docs/                         # Documentação técnica (source of truth)
-│   ├── 00_index.md               # ← COMECE AQUI
-│   ├── 01..06_*.md               # arquitetura, dados, contratos, backend, frontend, segurança
-│   ├── 07_api_openapi.yaml       # spec OpenAPI 3.1
-│   ├── 08_key_management.md      # K1-K7, cerimônias, CloudHSM
-│   ├── 09_threat_model.md        # STRIDE + DFD + DPIA
-│   ├── 10_runbooks.md            # RB-01..RB-10
-│   └── adr/001-007               # decisões de arquitetura
-├── educore_contracts/            # Smart Contracts Rust/Anchor 0.29
-│   ├── Cargo.toml
-│   └── programs/educore_contracts/src/lib.rs
-├── supabase/migrations/          # 001_initial_schema.sql + 002_rls_policies.sql
-├── src/                          # Frontend Next.js (ainda não implementado)
-├── prompts/                      # Prompts de referência históricos
-└── .agents/                      # Regras + skill do orchestrator
+├── README.md            # este arquivo — o planejamento atual
+├── sas/                  # esqueleto Python contra o Solana Attestation Service
+│   ├── sas_core.py       # constantes, codec, PDAs, decoders (ver comentários = fonte)
+│   ├── sas_client.py     # builders de instrução + envio de tx
+│   ├── 00..06_*.py       # scripts numerados da demo (ver §7)
+│   └── README.md         # setup, status honesto do que foi/não foi testado
+├── ai/                   # camada de IA (Claude) em cima dos dados on-chain
+│   ├── trust_report.py
+│   └── equivalence_check.py
+├── demo/
+│   └── RUNBOOK.md        # sequência exata de comandos + fala pra apresentação
+├── docs/                 # arquitetura de PRODUÇÃO antiga (histórico, não é o plano atual)
+├── relatorio_ideação.md  # análise de negócio/LGPD original — ainda útil pra Q&A
+├── api/, educore_contracts/, supabase/  # código da arquitetura antiga (Go/Anchor/SQL) — não usado no pivô
+└── .agents/               # regras/skills de agente (legado)
 ```
 
----
+## 7. Roteiro de demo ao vivo
 
-## 🚀 Como Executar
+Sequência completa de comandos + fala está em [`demo/RUNBOOK.md`](demo/RUNBOOK.md). Resumo:
 
-### 1. Pré-requisitos
-- Go `1.22+`
-- Rust `1.75+` & Anchor `0.29.0` (Solana CLI `1.18+`)
-- Node.js `18+` (frontend)
-- Contas: Supabase (projeto), Helius (RPC + API key), Fly.io (CLI autenticada)
+1. Universidade registra Credential + Schema (`sas/00`, `01`, `02`).
+2. Universidade emite atestação de disciplina pro aluno (`sas/03`) →
+   validador confere na hora (`sas/05 disciplina`) → **PASS**.
+3. Universidade emite diploma tokenizado — token aparece na carteira do
+   aluno no Explorer/Phantom (`sas/04`).
+4. IA gera o relatório de confiança pro RH (`ai/trust_report.py`).
+5. Momento de virada: universidade revoga o diploma (`sas/06`) → valida de
+   novo (`sas/05 diploma`) → **FAIL**. Prova ao vivo que revogação
+   funciona sem a cooperação do aluno.
+6. Bônus, se der tempo: `ai/equivalence_check.py` mostrando duas IES
+   decidindo equivalência de crédito automaticamente.
 
-### 2. Backend Go (local)
+## 8. O que é mock e o que é real (falar isso proativamente, não esconder)
+
+| Peça | Status |
+| :--- | :--- |
+| Programa SAS on-chain, PDAs, transações | **Real** — devnet, programa nativo da Solana Foundation |
+| Soulbound + revogação (Token-2022) | **Real** — mesmo mecanismo de produção |
+| Hash da ementa/diploma | **Real** (SHA-256), mas o texto fonte é mockado pra demo |
+| Sistema acadêmico da IES (LMS) que dispara a emissão | **Mockado** — chamamos os scripts direto |
+| Universidade B (equivalência de créditos) | **Mockada** — sem integração real com outra IES |
+| Assinatura ICP-Brasil / e-CNPJ | **Fora de escopo desta demo** — ver `docs/06_security_lgpd_icp.md` e ADR-006 antigos pra a versão "produção" caso o júri pergunte sobre validade jurídica formal (RND/MEC) |
+| Código Python em `sas/`/`ai/` | Escrito contra o source real do programa, mas **não executado** no ambiente onde foi gerado (sem Python/Solana CLI instalados ali) — testar numa máquina de verdade antes da demo, ver `sas/README.md` |
+
+## 9. Perguntas difíceis — respostas prontas
+
+- **"Por que blockchain e não só um banco de dados?"** → §3 acima:
+  propriedade do aluno + verificação sem confiar em ninguém + a IES não
+  pode negar acesso.
+- **"O que impede vender o diploma?"** → §4: NonTransferable, garantido
+  pelo token program, não pela aplicação.
+- **"E se a universidade errar ou for fraude?"** → PermanentDelegate:
+  revogação on-chain, instantânea, sem precisar do aluno. Demonstrado ao
+  vivo em `sas/06_revoke.py`.
+- **"Isso substitui o RND do MEC?"** → Não, é uma camada complementar de
+  integridade e portabilidade (framing do plano antigo em
+  `docs/01_architecture_overview.md` §1 continua válido).
+- **"Vocês escreveram o smart contract?"** → Não precisamos: o SAS é uma
+  primitiva nativa e auditada da Solana Foundation. Nosso trabalho técnico
+  foi integrar com ela sem SDK oficial em Python (não existe), montando as
+  instruções à mão a partir do código-fonte — ver `sas/README.md`.
+
+## 10. Setup rápido
+
 ```bash
-cd api
-export EDUCORE_SOLANA_HELIUS_RPC_URL="https://devnet.helius-rpc.com/?api-key=<key>"
-export EDUCORE_SOLANA_PROGRAM_ID="<program_id>"
-export EDUCORE_SUPABASE_URL="https://<ref>.supabase.co"
-export EDUCORE_SUPABASE_SERVICE_ROLE_KEY="<key>"
-go run ./cmd        # escuta :8080
+cd sas && pip install -r requirements.txt
+cd ../ai && pip install -r requirements.txt
+export ANTHROPIC_API_KEY=...     # pra ai/trust_report.py e equivalence_check.py
+python sas/00_setup_wallets.py   # gera carteiras devnet + airdrop
+# ... seguir demo/RUNBOOK.md
 ```
-> Nota: o build está atualmente quebrado por imports de module path (issue I-1 em `docs/00_index.md`).
-
-### 3. Deploy Fly.io
-```bash
-fly launch --no-deploy --name educore-relayer --region gru --config api/fly.toml
-fly secrets set EDUCORE_SOLANA_HELIUS_RPC_URL=... EDUCORE_SUPABASE_URL=... ...
-fly deploy --config api/fly.toml
-```
-
-### 4. Smart Contracts
-```bash
-cd educore_contracts
-anchor build && anchor test    # requer Anchor.toml (a criar — ver docs/03 §7)
-```
-
-### 5. Banco (Supabase)
-```bash
-supabase db push               # aplica supabase/migrations
-# ⚠️ corrigir bip44_index UINT → INTEGER antes (issue I-2)
-```
-
----
-
-## 🔐 Assinatura ICP-Brasil — MVP vs Produção
-
-- **MVP (atual)**: assinatura **mock** gerada no relayer (`MOCK_ICP_BRASIL_SIGNATURE_*`). Rotulada e sem valor jurídico. Apenas Devnet.
-- **Produção (arquitetura final, a implementar)**: **AWS CloudHSM (FIPS 140-2 L3) + Lambda signer** — a chave e-CNPJ (A1) da IES vive dentro do HSM, importada em cerimônia; o Lambda assina o `document_hash` sob demanda via PKCS#11, com trilha de auditoria completa (CloudTrail). Alternativa por IES: serviços de assinatura remota (Valid, Certisign, Lacuna).
-- On-chain grava-se apenas o **hash da assinatura** (a PKCS#7 completa, 1-4KB, fica off-chain).
-
-Detalhes: [`docs/08_key_management.md`](docs/08_key_management.md) e [`docs/adr/006-icp-brasil-signing.md`](docs/adr/006-icp-brasil-signing.md).
-
----
-
-## 🛡️ Conformidade & Segurança
-- **LGPD**: PII (nome, CPF, e-mail, PDF) exclusivamente off-chain no Supabase; on-chain apenas hash + assinatura + pubkeys (pseudonimização). Direito ao esquecimento via soft delete off-chain. DPIA esqueleto em `docs/09_threat_model.md` §9.
-- **ICP-Brasil**: Portarias MEC 330/2018 e 554/2019 — camada complementar ao RND (não o substitui).
-- **RLS**: policies por papel (student/institution/service_role) em todas as tabelas.
-- Docs: [`06_security_lgpd_icp.md`](docs/06_security_lgpd_icp.md) • [`09_threat_model.md`](docs/09_threat_model.md) • [`10_runbooks.md`](docs/10_runbooks.md)

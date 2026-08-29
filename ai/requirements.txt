@@ -1,0 +1,4 @@
+anthropic>=0.40
+# + as dependências de ../sas/requirements.txt (solana, solders) — os
+# scripts aqui importam sas_core/sas_client diretamente.
+-r ../sas/requirements.txt
