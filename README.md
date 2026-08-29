@@ -1,5 +1,5 @@
 # LattesChain — Passaporte Acadêmico Descentralizado 🎓⛓️
-
+.
 [![Solana](https://img.shields.io/badge/Blockchain-Solana%20Devnet-9945FF?logo=solana)](https://solana.com)
 [![SAS](https://img.shields.io/badge/Protocolo-Solana%20Attestation%20Service-14F195)](https://attest.solana.com)
 [![Python](https://img.shields.io/badge/Skeleton-Python%203.10%2B-3776AB?logo=python)](https://python.org)
