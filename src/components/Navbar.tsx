@@ -1,18 +1,44 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { GraduationCap, ShieldCheck, UserCheck, Building2, ExternalLink } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import {
+  GraduationCap,
+  ShieldCheck,
+  UserCheck,
+  Building2,
+  LogIn,
+  LogOut,
+  UserCircle2,
+  Loader2,
+} from "lucide-react";
+import { useSession } from "@/lib/useSession";
+
+const ROLE_HOME: Record<string, string> = {
+  STUDENT: "/student",
+  INSTITUTION: "/university",
+  EMPLOYER: "/validator",
+};
 
 export function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { session, profile, loading, signOut } = useSession();
 
   const navItems = [
-    { href: "/", label: "Início", icon: GraduationCap },
-    { href: "/validator", label: "Validador RH", icon: ShieldCheck },
-    { href: "/student", label: "Meu Passaporte", icon: UserCheck },
-    { href: "/university", label: "Portal IES", icon: Building2 },
+    { href: "/", label: "Início", icon: GraduationCap, public: true },
+    { href: "/validator", label: "Validador RH", icon: ShieldCheck, public: true },
+    { href: "/student", label: "Meu Passaporte", icon: UserCheck, public: false },
+    { href: "/university", label: "Portal IES", icon: Building2, public: false },
   ];
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push("/");
+    router.refresh();
+  };
+
+  const roleHome = profile ? ROLE_HOME[profile.role] || "/" : "/";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-800 bg-[#080c14]/85 backdrop-blur-md">
@@ -57,13 +83,38 @@ export function Navbar() {
             <span className="h-2 w-2 rounded-full bg-solana-green animate-pulse" />
             Solana Devnet
           </div>
-          <Link
-            href="/validator"
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 px-4 py-2 text-xs font-bold text-navy-900 shadow-md shadow-solana-green/20 transition-transform hover:scale-[1.02] active:scale-[0.98]"
-          >
-            <ShieldCheck className="h-4 w-4" />
-            Validar Documento
-          </Link>
+
+          {loading ? (
+            <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
+          ) : session ? (
+            <div className="flex items-center gap-2">
+              <Link
+                href={roleHome}
+                className="hidden sm:flex items-center gap-2 rounded-xl border border-slate-700 bg-navy-800/60 px-3 py-2 text-xs font-semibold text-slate-200 hover:border-solana-green/40 hover:text-white"
+                title={profile?.email || session.user.email}
+              >
+                <UserCircle2 className="h-4 w-4 text-solana-green" />
+                <span className="max-w-[140px] truncate">
+                  {profile?.full_name?.split(" ")[0] || "Conta"}
+                </span>
+              </Link>
+              <button
+                onClick={handleSignOut}
+                className="flex items-center gap-2 rounded-xl border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-300 transition-colors hover:border-red-400/50 hover:text-red-300"
+              >
+                <LogOut className="h-4 w-4" />
+                Sair
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 px-4 py-2 text-xs font-bold text-navy-900 shadow-md shadow-solana-green/20 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <LogIn className="h-4 w-4" />
+              Entrar
+            </Link>
+          )}
         </div>
       </div>
     </header>

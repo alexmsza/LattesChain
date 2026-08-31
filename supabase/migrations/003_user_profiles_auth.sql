@@ -67,7 +67,7 @@ BEGIN
     INSERT INTO public.user_profiles (user_id, role, full_name, email, cpf, cnpj, institution_name, company_name, phone)
     VALUES (
         NEW.id,
-        COALESCE((NEW.raw_user_meta_data->>'role')::user_role, 'STUDENT'),
+        COALESCE((NEW.raw_user_meta_data->>'role')::public.user_role, 'STUDENT'),
         COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.email),
         NEW.email,
         NEW.raw_user_meta_data->>'cpf',
@@ -78,7 +78,7 @@ BEGIN
     );
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
