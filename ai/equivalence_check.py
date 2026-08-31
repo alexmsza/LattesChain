@@ -115,23 +115,13 @@ def main():
     disciplina_a = fetch_disciplina_a_direto()
     prompt = render_prompt(disciplina_a, EMENTA_UNIVERSIDADE_B)
 
-    try:
-        import anthropic
-    except ImportError:
-        print("[aviso] pacote `anthropic` não instalado (`pip install anthropic`).")
-        print("Dados coletados (sem veredito por IA):\n")
-        print(json.dumps({"disciplina_a": disciplina_a, "disciplina_b": EMENTA_UNIVERSIDADE_B}, ensure_ascii=False, indent=2))
-        return
+    from llm_client import complete_prompt
 
-    client = anthropic.Anthropic()
-    resp = client.messages.create(
-        model=MODEL,
-        max_tokens=400,
-        messages=[{"role": "user", "content": prompt}],
-    )
     print("=== Veredito de equivalência (IA) ===\n")
-    print(resp.content[0].text)
+    veredito = complete_prompt(prompt)
+    print(veredito)
 
 
 if __name__ == "__main__":
     main()
+

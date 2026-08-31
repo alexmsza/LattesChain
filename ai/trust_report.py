@@ -75,7 +75,7 @@ def collect_facts() -> dict:
         attestation = decode_attestation(bytes(acc.data))
         signer_ok = credential is not None and attestation.signer in credential.authorized_signers
         expiry_ok = attestation.expiry == 0 or attestation.expiry > int(time.time())
-        revogavel_ativo = str(attestation.token_account) != "11111111111111111111111111111111111111111"
+        revogavel_ativo = str(attestation.token_account) != "11111111111111111111111111111111"
 
         facts["atestacoes"].append(
             {
@@ -118,25 +118,13 @@ def main():
     facts = collect_facts()
     prompt = render_prompt(facts)
 
-    try:
-        import anthropic
-    except ImportError:
-        print("[aviso] pacote `anthropic` não instalado (`pip install anthropic`).")
-        print("Fatos coletados on-chain (sem resumo por IA):\n")
-        import json
+    from llm_client import complete_prompt
 
-        print(json.dumps(facts, ensure_ascii=False, indent=2))
-        return
-
-    client = anthropic.Anthropic()  # usa ANTHROPIC_API_KEY do ambiente
-    resp = client.messages.create(
-        model=MODEL,
-        max_tokens=400,
-        messages=[{"role": "user", "content": prompt}],
-    )
     print("=== Relatório de Confiança (gerado por IA a partir de fatos on-chain) ===\n")
-    print(resp.content[0].text)
+    report = complete_prompt(prompt)
+    print(report)
 
 
 if __name__ == "__main__":
     main()
+
