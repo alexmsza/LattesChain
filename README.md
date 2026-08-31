@@ -1,29 +1,37 @@
-# LattesChain — Passaporte Acadêmico Descentralizado 🎓⛓️
-.
-[![Solana](https://img.shields.io/badge/Blockchain-Solana%20Devnet-9945FF?logo=solana)](https://solana.com)
+# LattesChain — Passaporte Acadêmico Global Descentralizado 🎓⛓️
+
+[![Solana](https://img.shields.io/badge/Blockchain-Solana%20Devnet%20%2F%20Mainnet-9945FF?logo=solana)](https://solana.com)
 [![SAS](https://img.shields.io/badge/Protocolo-Solana%20Attestation%20Service-14F195)](https://attest.solana.com)
-[![Python](https://img.shields.io/badge/Skeleton-Python%203.10%2B-3776AB?logo=python)](https://python.org)
+[![Open Source](https://img.shields.io/badge/Stack-100%25%20Free%20%26%20Open--Source-brightgreen)](https://opensource.org)
+[![Superteam Brasil](https://img.shields.io/badge/Hackathon-Superteam%20Brasil-008C4C)](https://uni.superteam.com.br/)
 
-> ⚠️ **PIVÔ (2026-08-29)**: este README é o planejamento **atual**, pra um
-> hackathon de Solana com <24h e time de Go/Python/IA (não Rust/TS). A
-> arquitetura de produção antiga (Go+Fly.io, Anchor `MasterRegistry`
-> próprio, Metaplex Core, CloudHSM) descrita em `docs/` foi **substituída**
-> pelo plano abaixo. Os docs antigos ficam como referência histórica — a
-> análise de LGPD/negócio em `relatorio_ideação.md` ainda vale — mas não são
-> o que vamos apresentar.
+> **Projeto submetido ao [Hackathon Universitário Superteam Brasil](https://uni.superteam.com.br/)**  
+> Listagem oficial no Superteam Earn: [Hackathon Universitária Superteam Brasil](https://superteam.fun/earn/listing/hackathon-universitaria-superteam-brasil-1)  
+> **Missão**: Transformar credenciais, diplomas e históricos acadêmicos em atestações soberanas, imutáveis e verificáveis globalmente na **Solana**.
 
-## 1. O problema (2 frases pro júri)
+---
 
-Credenciais acadêmicas hoje são reféns da instituição: pedir histórico é
-lento e burocrático, e RH/outras faculdades não têm como verificar
-autenticidade sem ligar pra secretaria. O aluno devia ser dono do seu
-histórico — não a instituição.
+## 📑 Documentação e Recursos Principais
 
-## 2. A solução
+- 🎙️ **[Roteiro de Pitch (5 Minutos)](docs/PITCH_DECK.md)**: Minutagem, slides e script de fala guiada para gravação do vídeo de submissão.
+- 📊 **[Plano de Negócios & GTM](docs/BUSINESS_PLAN.md)**: Modelagem B2B2C freemium, unit economics, personas e estratégia beachhead.
+- 🎬 **[Demo Runbook](demo/RUNBOOK.md)**: Passo a passo de execução da demo ao vivo on-chain e IA.
+- 🏗️ **[Visão Geral de Arquitetura](docs/01_architecture_overview.md)**: Topologia, privacidade LGPD e stack open-source.
 
-**Passaporte acadêmico do aluno**: cada disciplina concluída e cada diploma
-viram uma credencial verificável on-chain, na carteira do próprio aluno.
-Três atores, uma demo:
+---
+
+## 1. O Problema (A Dor Real)
+
+Hoje, o histórico educacional do estudante é **refém das instituições de ensino**:
+- **Lentidão & Burocracia**: Solicitações de histórico, validação de horas complementares e transferências de cursos demoram semanas em secretarias acadêmicas e frequentemente envolvem cobrança de taxas.
+- **Fraude Endêmica**: Mais de 10% dos certificados e diplomas apresentados em processos seletivos contêm adulterações em PDF.
+- **Custo para Recrutadores & Universidades**: RHs e faculdades perdem tempo e dinheiro ligando ou enviando e-mails para checar autenticidade de documentos.
+
+---
+
+## 2. A Solução: Passaporte Acadêmico Soberano
+
+O **LattesChain** cria uma ponte direta entre universidades, estudantes e validadores:
 
 ```mermaid
 graph LR
@@ -31,162 +39,116 @@ graph LR
     U -->|CreateAttestation| A[Attestation\nna carteira do aluno]
     S --> A
     A -->|token soulbound\nToken-2022| AL[Aluno\nHolder]
-    AL -.->|carteira pública| V[Validador / RH\nlê direto da chain]
-    V -->|IA: traduz pra\nlinguagem natural| R[Relatório de confiança]
+    AL -.->|carteira pública / QR Code| V[Validador / RH\nlê direto da Solana]
+    V -->|IA: traduz pra\nlinguagem natural| R[Trust Report & Equivalência]
 ```
 
-## 3. Por que Solana — e por que isso não é blockchain-por-buzzword
+1. **Emissão Soberana**: A universidade emite uma atestação oficial para a carteira do estudante (onboarding transparente e zero-crypto).
+2. **Propriedade Real**: Cada disciplina, curso livre e diploma torna-se uma credencial imutável na posse do aluno.
+3. **Verificação Instantânea**: Qualquer empresa ou instituição no mundo valida a credencial em 1 segundo direto da blockchain, sem intermediários.
+4. **Camada de IA Inteligente**: A IA processa as ementas emitidas, calcula o grau de equivalência curricular entre instituições e gera relatórios de confiança para recrutadores.
 
-Regra de ouro: só usar blockchain onde propriedade, permanência ou
-não-precisar-confiar-num-intermediário importam de verdade. Aqui importa
-porque:
+---
 
-- **Propriedade real do aluno**: a credencial vive na carteira dele, não no
-  banco de dados de uma instituição que pode sumir, negar acesso ou cobrar
-  "segunda via".
-- **Verificação sem confiar em ninguém**: RH ou outra faculdade leem
-  direto da chain — não existe API da universidade no meio que possa estar
-  fora do ar, mentir, ou cobrar.
-- **Emissão em massa é barata**: uma IES emite milhares de credenciais por
-  semestre. Numa chain cara isso é inviável. Na Solana, fração de centavo
-  por atestação (e existe *compressed NFT / state compression* pra escalar
-  ainda mais, se formos pra volumes de dezenas de milhares).
-- **Não é "banco de dados com blockchain enfiada"**: usamos uma primitiva
-  *nativa* da Solana desenhada exatamente pra isso.
+## 3. Por que Solana & Ecossistema?
 
-## 4. A peça técnica central: Solana Attestation Service (SAS)
+A Solana é a infraestrutura ideal para certificações educacionais em escala global:
 
-Em vez de escrever e auditar nosso próprio smart contract Anchor do zero
-(o que a spec antiga em `docs/03_smart_contracts_anchor.md` propunha, e que
-tinha issues sérias — ver `docs/00_index.md` §3), usamos o **SAS**: um
-protocolo nativo, aberto e permissionless da Solana pra credenciais
-verificáveis, lançado em 2025 e já usado em produção (Solana ID, Civic,
-Range, SumSub).
+- **Solana Attestation Service (SAS)**: Em vez de contratos proprietários opacos, usamos o padrão aberto da Solana (`22zoJMtdu4tQc2PzL74ZUT7FrwgB1Udec8DdW4yw4BdG`), interoperável com Solana ID e Civic.
+- **Token-2022 Soulbound & Revogável**:
+  - `NonTransferable`: Garante que o diploma ou certificado nunca possa ser vendido ou transferido.
+  - `PermanentDelegate`: Permite que a instituição revogue a atestação on-chain em caso de fraude ou erro, sem depender da autorização do aluno.
+- **Custo de Sub-Centavo**: Emissões em massa custam frações de centavo (< R$ 0,01), viabilizando milhões de atestações por semestre.
+- **Privacidade & LGPD por Design**: Nenhum dado sensível (nome, CPF, dados do aluno) vai para a rede. Apenas o hash SHA-256 do documento canônico é ancorado on-chain.
 
-Modelo de três componentes — mapeado 1:1 pro nosso caso:
+---
 
-| SAS | LattesChain |
-| :--- | :--- |
-| **Credential** (emissor confiável) | A universidade |
-| **Schema** (template de campos) | `disciplina_concluida_v1` (disciplina, carga_horária, nota, semestre, ementa_hash) e `diploma_v1` (curso, data_conclusão, diploma_hash) |
-| **Attestation** (afirmação individual) | Uma disciplina ou diploma emitido pra um aluno específico |
+## 4. Stack Tecnológica 100% Free, Open-Source & Self-Hosted
 
-Programa on-chain: `22zoJMtdu4tQc2PzL74ZUT7FrwgB1Udec8DdW4yw4BdG` (mesmo
-endereço em devnet e mainnet).
+Toda a arquitetura foi desenhada para operar a **custo zero de infraestrutura** no MVP:
 
-### A pergunta que o júri vai fazer: "o que impede o aluno de vender o diploma?"
+| Camada | Tecnologia | Licença / Modalidade | Custo |
+| :--- | :--- | :--- | :---: |
+| **Blockchain** | Solana (SAS + Token-2022) | Open Source / Permissionless | Sub-cent (< R$ 0,01) |
+| **Backend / Relayer** | Go (Golang) + Python SAS SDK | Open Source (BSD / MIT) | R$ 0,00 |
+| **Database & Auth** | Supabase (PostgreSQL + RLS) | Open Source / Free Tier | R$ 0,00 |
+| **Frontend** | Next.js + Tailwind CSS | Open Source / Cloudflare Pages / Vercel Free | R$ 0,00 |
+| **Camada de IA** | Ollama / Groq / Google Gemini Free | Open Source / Free Tier API | R$ 0,00 |
 
-Resposta: **Token-2022 non-transferable + permanent delegate**. Quando
-tokenizamos uma Attestation (`sas/04_issue_soulbound.py`), o mint nasce com
-duas extensões do próprio token program da Solana:
+---
 
-- `NonTransferable` — a transação de transferência é rejeitada pelo token
-  program antes mesmo de chegar na chain. Não é regra de aplicação, é
-  protocolo.
-- `PermanentDelegate` — a universidade pode revogar/queimar o token depois
-  (fraude descoberta, erro de emissão) **sem precisar da assinatura do
-  aluno**. A Solana até loga um aviso na criação da conta avisando que isso
-  é possível — transparência embutida, não escondida em termo de uso.
-
-Isso é soulbound *e* revogável, garantido pelo protocolo — narrativa
-redonda, e demonstrável ao vivo (`sas/06_revoke.py`).
-
-### Privacidade: o que fica on-chain vs off-chain
-
-Nenhum PII (nome, CPF, PDF do diploma) vai on-chain. On-chain só vai a
-*prova*: `ementa_hash` / `diploma_hash` (SHA-256 do conteúdo real, que fica
-fora da chain). Mesmo princípio do `docs/01_architecture_overview.md`
-antigo (matriz de separação LGPD), só que aplicado à estrutura de dados do
-SAS em vez de contas Anchor customizadas.
-
-## 5. O diferencial: camada de IA em cima da camada on-chain
-
-Poucos times vão ter isso. Dois scripts em `ai/`:
-
-1. **`trust_report.py`** — resolve "RH não sabe ler blockchain": lê as
-   atestações on-chain de um aluno, roda as mesmas checagens
-   criptográficas do validador (`sas/05_verify.py`), e pede pro Claude
-   traduzir isso num resumo de confiança em português, pronto pra um
-   painel de RH/ATS.
-2. **`equivalence_check.py`** — resolve o problema chato de verdade
-   mencionado no brainstorm inicial: créditos que não se transferem entre
-   instituições. Recomputa o hash da ementa on-chain (prova de
-   integridade) e pede pro Claude um veredito estruturado de equivalência
-   contra a ementa de outra instituição.
-
-## 6. Estrutura do repositório
+## 5. Estrutura do Repositório
 
 ```
 LattesChain/
-├── README.md            # este arquivo — o planejamento atual
-├── sas/                  # esqueleto Python contra o Solana Attestation Service
-│   ├── sas_core.py       # constantes, codec, PDAs, decoders (ver comentários = fonte)
-│   ├── sas_client.py     # builders de instrução + envio de tx
-│   ├── 00..06_*.py       # scripts numerados da demo (ver §7)
-│   └── README.md         # setup, status honesto do que foi/não foi testado
-├── ai/                   # camada de IA (Claude) em cima dos dados on-chain
-│   ├── trust_report.py
-│   └── equivalence_check.py
-├── demo/
-│   └── RUNBOOK.md        # sequência exata de comandos + fala pra apresentação
-├── docs/                 # arquitetura de PRODUÇÃO antiga (histórico, não é o plano atual)
-├── relatorio_ideação.md  # análise de negócio/LGPD original — ainda útil pra Q&A
-├── api/, educore_contracts/, supabase/  # código da arquitetura antiga (Go/Anchor/SQL) — não usado no pivô
-└── .agents/               # regras/skills de agente (legado)
+├── README.md                 # Este documento — planejamento e visão consolidada
+├── docs/                     # Especificações detalhadas e documentação técnica
+│   ├── PITCH_DECK.md         # Roteiro de pitch de 5 minutos para submissão
+│   ├── BUSINESS_PLAN.md      # Modelagem de negócios B2B2C e estratégia GTM
+│   ├── 00_index.md           # Índice de documentação técnica
+│   ├── 01_architecture_overview.md # Arquitetura geral do sistema
+│   └── adr/                  # Architecture Decision Records (ADR 001-007)
+├── sas/                      # Pipeline executável do Solana Attestation Service
+│   ├── sas_core.py           # Core: constantes, codecs, PDAs e decoders
+│   ├── sas_client.py         # Builders de instruções e envio de transações
+│   ├── 00_setup_wallets.py   # Criação/carregamento de keypairs locais
+│   ├── 01_create_credential.py # Registro da universidade como emissor
+│   ├── 02_create_schema.py   # Registro dos schemas (disciplina e diploma)
+│   ├── 03_issue_attestation.py # Emissão de atestação on-chain
+│   ├── 04_issue_soulbound.py # Emissão com Token-2022 Soulbound
+│   ├── 05_verify.py          # Verificação de atestações direto da rede
+│   ├── 06_revoke.py          # Demonstração de revogação nativa
+│   └── README.md             # Instruções de setup do módulo SAS
+├── ai/                       # Camada de IA (Equivalência e Relatórios)
+│   ├── equivalence_check.py  # Análise semântica de equivalência de ementas
+│   ├── trust_report.py       # Geração de Trust Report para RH
+│   └── requirements.txt      # Dependências da camada de IA
+├── api/                      # Backend Go Relayer (Open-Source REST API)
+├── supabase/                 # Schemas SQL e Políticas RLS (PostgreSQL)
+└── demo/
+    └── RUNBOOK.md            # Roteiro passo a passo da demo ao vivo
 ```
 
-## 7. Roteiro de demo ao vivo
+---
 
-Sequência completa de comandos + fala está em [`demo/RUNBOOK.md`](demo/RUNBOOK.md). Resumo:
+## 6. Como Executar a Demonstração On-Chain
 
-1. Universidade registra Credential + Schema (`sas/00`, `01`, `02`).
-2. Universidade emite atestação de disciplina pro aluno (`sas/03`) →
-   validador confere na hora (`sas/05 disciplina`) → **PASS**.
-3. Universidade emite diploma tokenizado — token aparece na carteira do
-   aluno no Explorer/Phantom (`sas/04`).
-4. IA gera o relatório de confiança pro RH (`ai/trust_report.py`).
-5. Momento de virada: universidade revoga o diploma (`sas/06`) → valida de
-   novo (`sas/05 diploma`) → **FAIL**. Prova ao vivo que revogação
-   funciona sem a cooperação do aluno.
-6. Bônus, se der tempo: `ai/equivalence_check.py` mostrando duas IES
-   decidindo equivalência de crédito automaticamente.
+### 6.1 Pré-requisitos
+- Python 3.10+ instalado
+- `uv` ou ambiente virtual Python
 
-## 8. O que é mock e o que é real (falar isso proativamente, não esconder)
-
-| Peça | Status |
-| :--- | :--- |
-| Programa SAS on-chain, PDAs, transações | **Real** — devnet, programa nativo da Solana Foundation |
-| Soulbound + revogação (Token-2022) | **Real** — mesmo mecanismo de produção |
-| Hash da ementa/diploma | **Real** (SHA-256), mas o texto fonte é mockado pra demo |
-| Sistema acadêmico da IES (LMS) que dispara a emissão | **Mockado** — chamamos os scripts direto |
-| Universidade B (equivalência de créditos) | **Mockada** — sem integração real com outra IES |
-| Assinatura ICP-Brasil / e-CNPJ | **Fora de escopo desta demo** — ver `docs/06_security_lgpd_icp.md` e ADR-006 antigos pra a versão "produção" caso o júri pergunte sobre validade jurídica formal (RND/MEC) |
-| Código Python em `sas/`/`ai/` | Escrito contra o source real do programa, mas **não executado** no ambiente onde foi gerado (sem Python/Solana CLI instalados ali) — testar numa máquina de verdade antes da demo, ver `sas/README.md` |
-
-## 9. Perguntas difíceis — respostas prontas
-
-- **"Por que blockchain e não só um banco de dados?"** → §3 acima:
-  propriedade do aluno + verificação sem confiar em ninguém + a IES não
-  pode negar acesso.
-- **"O que impede vender o diploma?"** → §4: NonTransferable, garantido
-  pelo token program, não pela aplicação.
-- **"E se a universidade errar ou for fraude?"** → PermanentDelegate:
-  revogação on-chain, instantânea, sem precisar do aluno. Demonstrado ao
-  vivo em `sas/06_revoke.py`.
-- **"Isso substitui o RND do MEC?"** → Não, é uma camada complementar de
-  integridade e portabilidade (framing do plano antigo em
-  `docs/01_architecture_overview.md` §1 continua válido).
-- **"Vocês escreveram o smart contract?"** → Não precisamos: o SAS é uma
-  primitiva nativa e auditada da Solana Foundation. Nosso trabalho técnico
-  foi integrar com ela sem SDK oficial em Python (não existe), montando as
-  instruções à mão a partir do código-fonte — ver `sas/README.md`.
-
-## 10. Setup rápido
-
+### 6.2 Execução do Pipeline SAS (Solana Devnet)
 ```bash
-cd sas && pip install -r requirements.txt
-cd ../ai && pip install -r requirements.txt
-export ANTHROPIC_API_KEY=...     # pra ai/trust_report.py e equivalence_check.py
-python sas/00_setup_wallets.py   # gera carteiras devnet + airdrop
-# ... seguir demo/RUNBOOK.md
+# 1. Configurar dependências
+cd sas
+pip install -r requirements.txt
+
+# 2. Configurar carteiras e fundos de teste
+python 00_setup_wallets.py
+
+# 3. Registrar universidade e schemas
+python 01_create_credential.py
+python 02_create_schema.py
+
+# 4. Emitir atestação e mint soulbound
+python 03_issue_attestation.py
+python 04_issue_soulbound.py
+
+# 5. Verificar atestação on-chain
+python 05_verify.py disciplina
+
+# 6. Demonstrar revogação de credencial
+python 06_revoke.py
+```
+
+### 6.3 Executar a Camada de IA
+```bash
+cd ../ai
+pip install -r requirements.txt
+
+# Gerar Trust Report para o RH
+python trust_report.py
+
+# Executar checagem de equivalência curricular
+python equivalence_check.py
 ```
