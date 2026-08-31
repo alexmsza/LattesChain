@@ -30,7 +30,8 @@
 | Smart contracts Anchor | 🟡 Código escrito, **sem testes, sem build verificado** | `educore_contracts/programs/.../lib.rs` (495 linhas) |
 | Migrations SQL | 🟡 Escritas, **não aplicadas** (e com 1 bug: `UINT`) | `supabase/migrations/001+002` |
 | Backend Go | 🟡 Esqueleto completo, **não compila** (imports), sem tx real | `api/` |
-| Frontend Next.js | 🔴 **Não existe** (nenhum arquivo em `src/`) | — |
+| Frontend Next.js | 🟢 **Implementado e build verificado** (`/`, `/validator`, `/student`, `/university`) | `src/` |
+| Supabase DB & RLS | 🟢 **Conectado e Migrações Aplicadas** (`001 + 002`) | `supabase/migrations/` |
 | Metaplex Core mint | 🔴 Placeholder `not implemented` | `solana.go::MintMetaplexCoreSBT` |
 | Verificação on-chain | 🔴 Placeholder `not implemented` | `solana.go::VerifyDocumentOnChain` |
 | Vault + derivação | 🔴 `GetMasterSeed` placeholder; derivação usa curva errada | `supabase.go`, `crypto.go` |
