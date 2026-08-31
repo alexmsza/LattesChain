@@ -8,6 +8,7 @@
 | Doc | Título | Função |
 | :--- | :--- | :--- |
 | `00_index.md` | **Este arquivo** | Índice, status do projeto, issues conhecidas, Definition of Ready |
+| `ARQUITETURA_E_FLUXOS_GERAL.md` | **Manual Completo de Arquitetura & Fluxos** | Guia de ponta a ponta: todas as tecnologias, fluxos operacionais, autenticação e LGPD |
 | `PITCH_DECK.md` | Roteiro de Pitch (5 Min) | Script e minutagem para vídeo do Hackathon Superteam Brasil |
 | `BUSINESS_PLAN.md` | Plano de Negócios & GTM | Modelo B2B2C, personas, análise competitiva e pricing |
 | `01_architecture_overview.md` | Visão Geral | Topologia, componentes, ambientes, custos, DR |
