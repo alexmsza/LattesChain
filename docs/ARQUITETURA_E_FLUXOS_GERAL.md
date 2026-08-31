@@ -79,7 +79,7 @@ graph TD
 
 ## 3. Matriz de Autenticação e Acesso
 
-O sistema opera com 3 papéis principais com modelos de autenticação distintos:
+O sistema opera com 3 papéis principais, todos com login via Supabase Auth e **aprovação manual de cadastro por email** (o admin da LattesChain recebe links de Aprovar/Reprovar na caixa LattesChain@jovian.foo):
 
 ```mermaid
 graph LR
@@ -90,28 +90,48 @@ graph LR
     end
 
     subgraph Autenticacao
-        Auth1[Supabase Auth JWT + Carteira Derivada]
-        Auth2[Supabase Auth + Chave Privada Solana do Emissor]
-        Auth3[Público / Walletless / Loginless]
+        Auth1["Supabase Auth + Perfil STUDENT + Aprovação Admin"]
+        Auth2["Supabase Auth + Perfil INSTITUTION + Aprovação Admin"]
+        Auth3A["RH logado (EMPLOYER) + Aprovação Admin"]
+        Auth3B[Verificação pública sem login]
     end
 
     A --> Auth1
     U --> Auth2
-    V --> Auth3
+    V --> Auth3A
+    V --> Auth3B
 ```
 
+### Fluxo de cadastro e aprovação (comum aos 3 papéis)
+1. Usuário preenche `/cadastro` escolhendo o perfil (Estudante/IES/RH) — CPF (estudante) e CNPJ (IES) são validados por dígito verificador.
+2. `POST /api/auth/signup` cria a conta no Supabase Auth com perfil `PENDING` (tabela `user_profiles`, criada por trigger `on_auth_user_created`).
+3. O **email oficial** (LattesChain@jovian.foo) recebe um email com links assinados (HMAC-SHA256, validade 72h) para **Aprovar** ou **Reprovar** o cadastro.
+4. Aprovação → status `APPROVED`, usuário desbanido e notificado por email. Reprovação → status `REJECTED`, usuário banido no GoTrue e notificado com o motivo.
+5. O login (`/login`) só libera sessão para perfis `APPROVED`; `PENDING` recebe aviso de análise e `REJECTED` recebe aviso de reprovação.
+
+### Recuperação de acesso
+- `/recuperar-senha` → email com link uso único (1h) → `/redefinir-senha?token=...` → nova senha.
+- Tokens são guardados como SHA-256 hash na tabela `password_reset_tokens`; reuso e expiração são verificados server-side.
+
+### Rotas protegidas (middleware `src/middleware.ts`)
+| Rota | Perfis autorizados |
+| :--- | :--- |
+| `/student` | `STUDENT`, `ADMIN` |
+| `/university` | `INSTITUTION`, `ADMIN` |
+| `/validator` | Público (verificação sem login) + `EMPLOYER` logado |
+
 ### 1. Estudante (Aluno)
-- **Como autentica**: Via Supabase Auth (E-mail/Senha, Google ou Magic Link).
+- **Como autentica**: E-mail/senha no Supabase Auth (perfil `STUDENT` aprovado).
 - **Gerenciamento de Carteira (Account Abstraction)**: O estudante não precisa instalar extensões cripto ou gerenciar seed phrases. O sistema provisiona ou associa uma chave pública Solana derivada.
 - **Permissões**: Visualizar suas credenciais, emitir QR Code público e solicitar equivalência curricular.
 
 ### 2. Universidade (Emissor Autorizado)
-- **Como autentica**: Login institucional no Supabase Auth + posse do Keypair da autoridade emissora da Solana.
+- **Como autentica**: E-mail/senha (perfil `INSTITUTION` aprovado) + posse do Keypair da autoridade emissora da Solana.
 - **Registro On-Chain**: A universidade registra previamente uma conta `Credential` no SAS on-chain.
 - **Permissões**: Criar Schemas de disciplinas/diplomas, emitir atestações para carteiras de alunos e revogar certificados em caso de fraude.
 
 ### 3. Validador Público (Recrutadores, Empresas, RH e Universidades Parceiras)
-- **Como autentica**: **Zero autenticação** (Público, sem login e sem carteira).
+- **Como autentica**: Verificação pública de documentos **sem login** em `/validator` (upload do PDF ou hash). Recrutadores também podem criar conta `EMPLOYER` (aprovada por email) para histórico de verificações.
 - **Como funciona**: Acessa `/validator`, faz upload do PDF ou digita o hash/assinatura. O frontend/backend computa o SHA-256 e consulta o estado on-chain na Solana e no Supabase.
 
 ---
@@ -273,15 +293,35 @@ LattesChain/
 │   │   ├── layout.tsx        # Layout raiz com Navbar e Footer
 │   │   ├── page.tsx          # Landing page institucional
 │   │   ├── globals.css       # Estilos globais e glassmorphism
+│   │   ├── login/page.tsx    # Login (Estudante, IES, RH)
+│   │   ├── cadastro/page.tsx # Solicitação de cadastro (aprovação por email)
+│   │   ├── recuperar-senha/page.tsx # Esqueci minha senha (envia link)
+│   │   ├── redefinir-senha/page.tsx # Redefinição com token uso único
 │   │   ├── validator/page.tsx # Validador público de certificados com IA
 │   │   ├── student/page.tsx   # Passaporte do aluno com horas e QR Code
 │   │   ├── university/page.tsx # Portal de emissão da universidade
-│   │   └── api/ai/trust-report/route.ts # Rota de API para Trust Report
+│   │   └── api/
+│   │       ├── ai/trust-report/route.ts # Rota de API para Trust Report
+│   │       └── auth/          # Rotas de autenticação
+│   │           ├── signup/route.ts       # Cria conta PENDING + email admin
+│   │           ├── approve/route.ts     # Link HMAC de aprovação (72h)
+│   │           ├── reject/route.ts      # Link HMAC de reprovação (72h)
+│   │           ├── forgot-password/route.ts # Gera token reset (1h) + email
+│   │           └── reset-password/route.ts  # Redefine senha com token
 │   ├── components/
-│   │   ├── Navbar.tsx        # Navegação responsiva
+│   │   ├── Navbar.tsx        # Navegação responsiva com estado de sessão
 │   │   └── Footer.tsx        # Rodapé institucional
+│   ├── middleware.ts         # Guards de rota (sessão + perfil + aprovação)
 │   └── lib/
-│       └── supabaseClient.ts # Instância configurada do Supabase
+│   │   ├── supabaseClient.ts # Instância Supabase (browser, anon key)
+│   │   ├── useSession.ts     # Hook de sessão + perfil (client)
+│   │   └── server/           # MÓDULOS SERVER-ONLY (service role, SMTP)
+│   │       ├── supabaseAdmin.ts # Cliente com service role (RLS bypass)
+│   │       ├── mailer.ts     # Nodemailer + templates de email da marca
+│   │       ├── validators.ts # CPF/CNPJ (dígito verificador), email, senha
+│   │       ├── tokens.ts     # HMAC de aprovação + tokens reset (SHA-256)
+│   │       ├── rateLimit.ts  # Janela deslizante por IP
+│   │       └── session.ts    # Cliente SSR Supabase (cookies)
 ├── sas/                      # PIPELINE SOLANA ATTESTATION SERVICE (PYTHON)
 │   ├── sas_core.py           # Codecs, PDAs e discriminants SAS
 │   ├── sas_client.py         # Envio de transações na Solana Devnet
@@ -301,7 +341,8 @@ LattesChain/
 ├── supabase/                 # BANCO DE DADOS E POLÍTICAS DE SEGURANÇA
 │   └── migrations/
 │       ├── 001_initial_schema.sql # Tabelas: institutions, students, records, logs
-│       └── 002_rls_policies.sql   # Políticas de isolamento RLS
+│       ├── 002_rls_policies.sql   # Políticas de isolamento RLS
+│       └── 003_user_profiles_auth.sql # user_profiles, password_reset_tokens, trigger auth
 ├── demo/
 │   └── RUNBOOK.md            # Roteiro passo a passo para apresentação do vídeo
 └── docs/                     # DOCUMENTAÇÃO TÉCNICA E ESTRATÉGICA
@@ -320,10 +361,22 @@ LattesChain/
 # 1. Instalar dependências
 npm install
 
-# 2. Iniciar servidor de desenvolvimento
+# 2. Configurar variáveis de ambiente (copiar .env.example -> .env.local e preencher)
+#    SMTP Lark, APP_SECRET (HMAC), Supabase keys
+
+# 3. Iniciar servidor de desenvolvimento
 npm run dev
 # Acesse http://localhost:3000
 ```
+
+### 7.1b Autenticação e Aprovação de Cadastro (como testar)
+1. Acesse `/cadastro`, escolha o perfil (Estudante/IES/RH) e envie a solicitação.
+2. Na caixa **LattesChain@jovian.foo** chega o email "Aprovar cadastro" com dois botões: **Aprovar** e **Reprovar** (links HMAC válidos por 72h).
+3. Clique em Aprovar → o usuário recebe email de boas-vindas e já pode entrar em `/login`.
+4. Fluxo de senha: `/recuperar-senha` → email com link uso único (1h) → definir nova senha.
+5. Contas de demonstração criadas nos testes E2E (31/08/2026):
+   - `latteschain@jovian.foo` (INSTITUTION/APPROVED) — senha `NovaSenha456`
+   - `ana.estudante.teste@jovian.foo` (STUDENT/APPROVED) — senha `SenhaAluno123`
 
 ### 7.2 Executar o Pipeline On-Chain (Solana SAS)
 ```bash

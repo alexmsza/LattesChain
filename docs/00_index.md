@@ -1,7 +1,7 @@
 # EduCore Protocol — Índice da Documentação
 
 > Ponto de entrada único da documentação. Este arquivo substitui o papel de "SPEC consolidada" apontado no relatório de ideação (passo 6).
-> Última atualização: 2026-08-29.
+> Última atualização: 2026-08-31.
 
 ## 1. Mapa dos Documentos
 
@@ -32,6 +32,9 @@
 | Migrations SQL | 🟡 Escritas, **não aplicadas** (e com 1 bug: `UINT`) | `supabase/migrations/001+002` |
 | Backend Go | 🟡 Esqueleto completo, **não compila** (imports), sem tx real | `api/` |
 | Frontend Next.js | 🟢 **Implementado e build verificado** (`/`, `/validator`, `/student`, `/university`) | `src/` |
+| Autenticação multi-perfil (Estudante/IES/RH) | 🟢 **Implementado, E2E verificado** (`/login`, `/cadastro`, `/recuperar-senha`, `/redefinir-senha` + APIs + middleware de guards) | `src/app/login`, `src/app/api/auth/*`, `src/middleware.ts` |
+| Aprovação de cadastro via email (Lark SMTP/IMAP) | 🟢 **Funcional e verificado E2E** (links HMAC de aprovar/reprovar chegam ao admin e funcionam) | `src/lib/server/mailer.ts`, `src/app/api/auth/approve|reject` |
+| Recuperação de senha por email | 🟢 **Funcional e verificado E2E** (token uso único 1h, hash SHA-256 no banco) | `password_reset_tokens`, `src/app/api/auth/forgot|reset-password` |
 | Supabase DB & RLS | 🟢 **Conectado e Migrações Aplicadas** (`001 + 002`) | `supabase/migrations/` |
 | Metaplex Core mint | 🔴 Placeholder `not implemented` | `solana.go::MintMetaplexCoreSBT` |
 | Verificação on-chain | 🔴 Placeholder `not implemented` | `solana.go::VerifyDocumentOnChain` |
@@ -59,6 +62,8 @@
 | I-11 | 🟡 | Sem tests Go; sem `Anchor.toml`/workspace completo | `api/`, `educore_contracts/` | Ver doc 03 §7 e doc 04 §8 |
 | I-12 | 🟢 | Health check estático (não probeia Supabase/RPC) | `handlers.go` | Pings reais |
 | I-13 | 🟢 | `verifier_ip` INET cru = PII | `001_schema.sql` | Truncar/hash + retenção |
+| I-14 | 🟡 | Rate limit de auth é **em memória** (janela deslizante por instância serverless) — escala horizontal requer Upstash Redis | `src/lib/server/rateLimit.ts` | Migrar p/ Redis em produção |
+| I-15 | 🟡 | Contas em `PENDING`/`REJECTED` existem no `auth.users` com `email_confirm=true` (login checado no app, não no GoTrue) — divulgação limitada, aceitável no MVP | `src/app/api/auth/signup` | Hook `before_user_created` ou fluxo de convite via `inviteUserByEmail` |
 
 ## 4. Decisões de Arquitetura (resumo — detalhes em `docs/adr/`)
 
