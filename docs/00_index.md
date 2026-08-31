@@ -8,6 +8,8 @@
 | Doc | Título | Função |
 | :--- | :--- | :--- |
 | `00_index.md` | **Este arquivo** | Índice, status do projeto, issues conhecidas, Definition of Ready |
+| `PITCH_DECK.md` | Roteiro de Pitch (5 Min) | Script e minutagem para vídeo do Hackathon Superteam Brasil |
+| `BUSINESS_PLAN.md` | Plano de Negócios & GTM | Modelo B2B2C, personas, análise competitiva e pricing |
 | `01_architecture_overview.md` | Visão Geral | Topologia, componentes, ambientes, custos, DR |
 | `02_data_models.md` | Modelagem de Dados | ER off-chain, contas on-chain, RLS, issues do schema |
 | `03_smart_contracts_anchor.md` | Smart Contracts | Instruções, eventos, erros, build/test/deploy, lacunas |
