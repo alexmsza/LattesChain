@@ -35,26 +35,33 @@ só um stub do Windows Store). Antes da demo ao vivo:
    validar o número exato sem rodar contra o programa real — ver o TODO no
    código).
 
-## Ordem de execução
+## Ordem de Execução (com `uv`)
 
 ```bash
-cd sas
-pip install -r requirements.txt
+# Na raiz do projeto:
+uv venv .venv
+.venv\Scripts\activate
+uv pip install -r sas/requirements.txt -r ai/requirements.txt
 
-python 00_setup_wallets.py       # gera carteiras devnet (universidade + aluno) + airdrop
-python 01_create_credential.py   # universidade vira Issuer (Credential) no SAS
-python 02_create_schema.py       # define o schema "disciplina_concluida_v1"
-python 03_issue_attestation.py   # emite atestação simples (trilha barata, tipo "horas")
-python 05_verify.py disciplina   # "RH" verifica direto da chain -> PASS
+# Execução do pipeline SAS:
+python sas/00_setup_wallets.py       # gera carteiras devnet (universidade + aluno)
+python sas/01_create_credential.py   # universidade vira Issuer (Credential) no SAS
+python sas/02_create_schema.py       # define o schema "disciplina_concluida_v1" e "diploma_v1"
+python sas/03_issue_attestation.py   # emite atestação simples (trilha rápida, tipo "horas/disciplina")
+python sas/05_verify.py disciplina   # "RH" verifica direto da chain -> PASS
 
-python 04_issue_soulbound.py     # trilha "diploma": token Token-2022 soulbound na carteira do aluno
-python 05_verify.py diploma      # verifica o diploma tokenizado -> PASS
-python 06_revoke.py              # universidade revoga (fraude/erro) -> token some
-python 05_verify.py diploma      # verifica de novo -> FAIL
+python sas/04_issue_soulbound.py     # trilha "diploma": Token-2022 soulbound na carteira do aluno
+python sas/05_verify.py diploma      # verifica o diploma tokenizado -> PASS
+python sas/06_revoke.py              # universidade revoga (fraude/erro) -> token some
+python sas/05_verify.py diploma      # verifica de novo -> FAIL
+
+# Camada de IA (Multi-provedor ou Fallback local):
+python ai/trust_report.py            # gera resumo de confiança para RH
+python ai/equivalence_check.py       # analisa equivalência de ementa
 ```
 
-O estado (pubkeys geradas a cada etapa) fica em `sas/.demo_state.json` —
-apague esse arquivo pra recomeçar do zero.
+O estado (pubkeys geradas a cada etapa) fica em `sas/.demo_state.json` (ignorado pelo git) —
+apague esse arquivo para reiniciar a demonstração do zero.
 
 ## Modelo de dados
 

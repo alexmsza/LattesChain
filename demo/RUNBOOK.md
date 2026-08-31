@@ -1,12 +1,19 @@
 # Runbook da demo ao vivo
 
-Preparação (fazer **antes**, não na frente do júri):
+Preparação prévia:
 
 ```bash
-cd sas && pip install -r requirements.txt
-cd ../ai && pip install -r requirements.txt
-export ANTHROPIC_API_KEY=...          # pra ai/trust_report.py e equivalence_check.py
-export EDUCORE_RPC_URL=...            # opcional: Helius/QuickNode devnet (senão usa o RPC público)
+# Setup de ambiente com uv
+uv venv .venv
+.venv\Scripts\activate
+uv pip install -r sas/requirements.txt -r ai/requirements.txt
+
+# Configurações opcionais de ambiente:
+# export ANTHROPIC_API_KEY=...       # Provedor Anthropic Claude
+# export GROQ_API_KEY=...            # Provedor Groq Free Tier
+# export GEMINI_API_KEY=...          # Provedor Google Gemini Free Tier
+# (Se nenhuma chave for definida, roda com fallback determinístico local a custo zero)
+# export EDUCORE_RPC_URL=...         # RPC dedicado Solana devnet (Helius/QuickNode)
 ```
 
 Rode a sequência inteira uma vez antes da apresentação pra confirmar que
