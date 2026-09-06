@@ -266,14 +266,27 @@ Para mais detalhes sobre a execução do pipeline Python SAS e testes isolados, 
 - **100% LGPD por Design**: Nenhum dado pessoal identificável (PII) é registrado na blockchain. Apenas a função de mão única SHA-256 do documento canônico é ancorada na rede. O documento original permanece armazenado com segurança pela instituição emissora.
 - **Portaria MEC nº 330/2018 e nº 554/2019**: O protocolo foi concebido para incorporar os requisitos do Diploma Digital do MEC, permitindo a validação de arquivos XML assinados com certificados digitais padrão ICP-Brasil acoplados à atestação on-chain.
 - **Circuit Breakers & Defesa em Profundidade**: Todos os contratos do protocolo contam com verificação de integridade e mecanismos de pausa de emergência protegidos por chaves multisig.
+- **Client-Side SecurityGuard & Anti-Scraping**: Proteção ativa contra inspeção indevida e cópia não autorizada de código/fontes críticas, bloqueando atalhos de devtools (`F12`, `Ctrl+Shift+I/J/C`, `Ctrl+U`, `Ctrl+S`), interceptando clique direito com toast institucional e desabilitando arraste de elementos (`dragstart`).
+- **HTTP Security Headers**: Configuração de `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy` e `X-XSS-Protection` com remoção do cabeçalho `X-Powered-By`.
 
 ---
 
-## 10. Equipe e Reconhecimentos
+## 10. Guia de Conexão com a Carteira Solana
 
-Desenvolvido para o **Hackathon Universitário Superteam Brasil**:
-- **Solana Attestation Service (SAS)**
-- **Token-2022 Extensions (NonTransferable & PermanentDelegate)**
-- **Superteam Brasil Community**
+O LattesChain inclui um **[Guia Interativo de Conexão (/guia-carteira)](src/app/guia-carteira/page.tsx)** dedicado para todos os participantes do ecossistema:
+- **Estudantes**: Instalação da Phantom/Solflare/Backpack, criação de chave pública e obtenção de SOL na Devnet.
+- **Faculdades (IES)**: Conexão via Master Authority e PDA de Emissor Credenciado.
+- **Recrutadores e RH**: Verificação de atestações via link/hash público sem necessidade de tokens cripto.
 
-Para suporte, parcerias e credenciamento de novas universidades, consulte **[docs/12_tripartite_and_business_architecture.md](docs/12_tripartite_and_business_architecture.md)** ou entre em contato com a equipe Jovian Tech.
+Consulte o documento completo: **[docs/14_solana_wallet_connection_and_security.md](docs/14_solana_wallet_connection_and_security.md)**.
+
+---
+
+## 11. Autoria, Engenharia e Reconhecimentos
+
+- **Liderança Técnica & Desenvolvimento**: [Alex Miqueias](https://www.linkedin.com/in/alexmiqueias/) · [Instagram (@alexmsza)](https://www.instagram.com/alexmsza/)
+- **Empresa Parceira / Hub de Inovação**: [Jovian Tech](https://jovian.foo/) · [LinkedIn da Jovian](https://www.linkedin.com/company/jovian-tech-foo/)
+- **Ecossistema**: Desenvolvido com suporte e foco no **Hackathon Universitário Superteam Brasil**, alavancando **Solana Attestation Service (SAS)** e **Token-2022 Extensions**.
+
+Para suporte institucional, credenciamento de IES ou integração empresarial, consulte **[docs/12_tripartite_and_business_architecture.md](docs/12_tripartite_and_business_architecture.md)**.
+

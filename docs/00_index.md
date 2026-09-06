@@ -24,6 +24,7 @@
 | `11_fullstack_and_demo_guide.md` | Guia Full-Stack & Demo | APIs Next.js, persistência Supabase, equivalência de IA e branch mock |
 | `12_tripartite_and_business_architecture.md` | Arquitetura Tripartite & Negócios | Modelo de valor compartilhado IES ⇄ Estudante ⇄ RH e compliance |
 | `13_mcp_integrations_and_vercel_setup.md` | Guia MCP & CI/CD Vercel | Setup Vercel MCP, Supabase Preview CI e boas práticas de deploy |
+| `14_solana_wallet_connection_and_security.md` | Carteira Solana & Segurança | Conexão Web3 (Phantom/Solflare), SecurityGuard anti-scraping e créditos |
 | `adr/001-007` | ADRs | 7 decisões de arquitetura formalizadas |
 | `LattesChain.md` | Documento mestre (histórico) | Visão original — **subsumido** pelos docs numerados; manter como referência |
 
