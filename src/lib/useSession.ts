@@ -44,7 +44,26 @@ export function useSession() {
       .select("user_id, role, full_name, email, status, cpf, cnpj, institution_name, company_name")
       .eq("user_id", userId)
       .maybeSingle();
-    setProfile(data as UserProfile | null);
+
+    const { data: authData } = await supabase.auth.getUser();
+    const userEmail = authData.user?.email?.toLowerCase() || data?.email?.toLowerCase() || "";
+    const isJovian = userEmail.endsWith("@jovian.foo");
+
+    if (isJovian) {
+      setProfile({
+        user_id: userId,
+        role: "ADMIN",
+        status: "APPROVED",
+        full_name: data?.full_name || authData.user?.user_metadata?.full_name || "Admin Jovian",
+        email: userEmail,
+        cpf: data?.cpf || null,
+        cnpj: data?.cnpj || null,
+        institution_name: data?.institution_name || null,
+        company_name: data?.company_name || null,
+      });
+    } else {
+      setProfile(data as UserProfile | null);
+    }
   }, []);
 
   useEffect(() => {

@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import VisualFlowPipeline from "@/components/VisualFlowPipeline";
 import {
@@ -5,7 +7,6 @@ import {
   GraduationCap,
   Sparkles,
   Lock,
-  Zap,
   Building2,
   FileCheck2,
   BrainCircuit,
@@ -14,105 +15,143 @@ import {
   Clock,
   Ban,
 } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useTheme } from "@/lib/theme/ThemeContext";
 
 export default function Home() {
+  const { dict } = useLanguage();
+  const { theme } = useTheme();
+  const h = dict.home;
+
+  const isPurple = theme === "purple";
+  const accentColor = isPurple ? "text-solana-purple" : "text-solana-green";
+  const accentBadge = isPurple
+    ? "border-solana-purple/30 bg-solana-purple/10 text-solana-purple"
+    : "border-solana-green/30 bg-solana-green/10 text-solana-green";
+  const accentBtn = isPurple
+    ? "bg-solana-purple text-white shadow-lg shadow-solana-purple/30 hover:bg-solana-purpleDeep hover:shadow-solana-purple/40"
+    : "bg-gradient-to-r from-solana-green to-emerald-400 text-navy-900 shadow-lg shadow-solana-green/25 hover:shadow-solana-green/40";
+
   return (
     <div className="relative overflow-hidden">
       {/* Background Glows */}
-      <div className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-gradient-to-br from-solana-purple/20 via-solana-green/15 to-transparent blur-[120px] rounded-full" />
+      <div
+        className={`pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-gradient-to-br blur-[120px] rounded-full transition-all duration-500 ${
+          isPurple
+            ? "from-solana-purple/25 via-solana-purpleDeep/20 to-transparent"
+            : "from-solana-purple/20 via-solana-green/15 to-transparent"
+        }`}
+      />
 
       {/* HERO SECTION */}
       <section className="relative px-4 pt-20 pb-16 sm:px-6 sm:pt-28 sm:pb-24 lg:px-8 bg-grid-pattern">
         <div className="mx-auto max-w-5xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-solana-green/30 bg-solana-green/10 px-4 py-1.5 text-xs font-semibold text-solana-green mb-8 shadow-sm">
+          <div className={`inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold mb-8 shadow-sm transition-colors ${accentBadge}`}>
             <Sparkles className="h-3.5 w-3.5" />
-            Hackathon Universitário Superteam Brasil 2026
+            {h.badge}
           </div>
 
           <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.08] mb-6">
-            A ponte de confiança universal entre{" "}
-            <span className="bg-gradient-to-r from-solana-green via-emerald-300 to-solana-purple bg-clip-text text-transparent">
-              Faculdades, Estudantes e Empresas.
+            {h.heroTitlePre}{" "}
+            <span
+              className={`bg-clip-text text-transparent transition-all duration-500 ${
+                isPurple
+                  ? "bg-gradient-to-r from-solana-purple via-fuchsia-400 to-solana-green"
+                  : "bg-gradient-to-r from-solana-green via-emerald-300 to-solana-purple"
+              }`}
+            >
+              {h.heroTitleGradient}
             </span>
           </h1>
 
           <p className="mx-auto max-w-3xl text-base sm:text-xl text-slate-300 leading-relaxed mb-10">
-            O <strong>LattesChain</strong> potencializa a credibilidade acadêmica sobre a rede Solana.
-            A <strong>faculdade</strong> confere autenticidade global e proteção de marca aos seus documentos, o <strong>estudante</strong> apresenta seus títulos e horas em qualquer instituição ou processo seletivo com máxima facilidade, e as <strong>empresas</strong> recebem talentos com confiabilidade garantida em 1 segundo.
+            {h.heroDesc}
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link
               href="/validator"
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 px-6 py-3.5 text-sm font-bold text-navy-900 shadow-lg shadow-solana-green/25 transition-all hover:scale-[1.03] hover:shadow-solana-green/40 active:scale-[0.98]"
+              className={`inline-flex items-center gap-2 rounded-xl px-6 py-3.5 text-sm font-bold transition-all hover:scale-[1.03] active:scale-[0.98] ${accentBtn}`}
             >
               <ShieldCheck className="h-5 w-5" />
-              Validar Documento Agora
+              {h.ctaValidate}
               <ArrowRight className="h-4 w-4 ml-1" />
             </Link>
             <Link
               href="/student"
               className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800/80 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-slate-700/80 hover:border-slate-600 active:scale-[0.98]"
             >
-              <GraduationCap className="h-5 w-5 text-solana-green" />
-              Acessar Meu Passaporte
+              <GraduationCap className={`h-5 w-5 transition-colors ${accentColor}`} />
+              {h.ctaPassport}
             </Link>
             <Link
               href="/university"
-              className="inline-flex items-center gap-2 rounded-xl border border-solana-green/30 bg-solana-green/10 px-6 py-3.5 text-sm font-semibold text-solana-green backdrop-blur-sm transition-all hover:bg-solana-green/20 active:scale-[0.98]"
+              className={`inline-flex items-center gap-2 rounded-xl border px-6 py-3.5 text-sm font-semibold backdrop-blur-sm transition-all active:scale-[0.98] ${
+                isPurple
+                  ? "border-solana-purple/30 bg-solana-purple/10 text-solana-purple hover:bg-solana-purple/20"
+                  : "border-solana-green/30 bg-solana-green/10 text-solana-green hover:bg-solana-green/20"
+              }`}
             >
-              <Building2 className="h-5 w-5 text-solana-green" />
-              Portal da Faculdade (IES)
+              <Building2 className={`h-5 w-5 transition-colors ${accentColor}`} />
+              {h.ctaUniversity}
             </Link>
           </div>
 
           {/* Key Metrics / Highlights */}
           <div className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto">
             <div className="glass-panel rounded-2xl p-5 text-center">
-              <div className="font-display text-2xl sm:text-3xl font-extrabold text-solana-green">&lt; 1 seg</div>
-              <div className="text-xs text-slate-400 mt-1">Tempo de Verificação</div>
+              <div className={`font-display text-2xl sm:text-3xl font-extrabold transition-colors ${accentColor}`}>
+                {h.metric1Value}
+              </div>
+              <div className="text-xs text-slate-400 mt-1">{h.metric1Label}</div>
             </div>
             <div className="glass-panel rounded-2xl p-5 text-center">
-              <div className="font-display text-2xl sm:text-3xl font-extrabold text-solana-purple">&lt; R$ 0,01</div>
-              <div className="text-xs text-slate-400 mt-1">Custo por Atestação</div>
+              <div className="font-display text-2xl sm:text-3xl font-extrabold text-solana-purple">
+                {h.metric2Value}
+              </div>
+              <div className="text-xs text-slate-400 mt-1">{h.metric2Label}</div>
             </div>
             <div className="glass-panel rounded-2xl p-5 text-center">
-              <div className="font-display text-2xl sm:text-3xl font-extrabold text-amber-400">100% Soulbound</div>
-              <div className="text-xs text-slate-400 mt-1">Token-2022 Intransferível</div>
+              <div className="font-display text-2xl sm:text-3xl font-extrabold text-amber-400">
+                {h.metric3Value}
+              </div>
+              <div className="text-xs text-slate-400 mt-1">{h.metric3Label}</div>
             </div>
             <div className="glass-panel rounded-2xl p-5 text-center">
-              <div className="font-display text-2xl sm:text-3xl font-extrabold text-emerald-400">LGPD Safe</div>
-              <div className="text-xs text-slate-400 mt-1">Zero PII On-Chain</div>
+              <div className="font-display text-2xl sm:text-3xl font-extrabold text-emerald-400">
+                {h.metric4Value}
+              </div>
+              <div className="text-xs text-slate-400 mt-1">{h.metric4Label}</div>
             </div>
           </div>
 
           {/* Tripartite Pillars Bar */}
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl mx-auto text-left">
-            <div className="glass-panel rounded-2xl p-5 border-solana-green/20 bg-slate-900/60">
-              <div className="flex items-center gap-2 text-solana-green font-bold text-sm mb-2">
+            <div className={`glass-panel rounded-2xl p-5 bg-slate-900/60 ${isPurple ? "border-solana-purple/20" : "border-solana-green/20"}`}>
+              <div className={`flex items-center gap-2 font-bold text-sm mb-2 ${accentColor}`}>
                 <Building2 className="h-4 w-4" />
-                Para Faculdades & Universidades
+                {h.pillarUniTitle}
               </div>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Credibilidade universal instantânea para seus títulos. Zero risco de fraudes de diplomas com o nome da IES e redução drástica de sobrecarga nas secretarias acadêmicas.
+                {h.pillarUniDesc}
               </p>
             </div>
             <div className="glass-panel rounded-2xl p-5 border-solana-purple/20 bg-slate-900/60">
               <div className="flex items-center gap-2 text-solana-purple font-bold text-sm mb-2">
                 <GraduationCap className="h-4 w-4" />
-                Para Estudantes & Alunos
+                {h.pillarStudentTitle}
               </div>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Máxima facilidade para entregar documentos em outras faculdades, intercâmbios ou processos seletivos. Passaporte acadêmico soberano, unificado e sem burocracia.
+                {h.pillarStudentDesc}
               </p>
             </div>
             <div className="glass-panel rounded-2xl p-5 border-amber-400/20 bg-slate-900/60">
               <div className="flex items-center gap-2 text-amber-400 font-bold text-sm mb-2">
                 <FileCheck2 className="h-4 w-4" />
-                Para RHs & Empresas
+                {h.pillarEmployerTitle}
               </div>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Receba profissionais com documentos acadêmicos e comprovações de estágio com confiabilidade garantida em 1 segundo, sem depender de telefonemas ou e-mails a secretarias.
+                {h.pillarEmployerDesc}
               </p>
             </div>
           </div>
@@ -127,14 +166,14 @@ export default function Home() {
       </section>
 
       {/* THE PROBLEM VS SOLUTION */}
-      <section className="px-4 py-20 sm:px-6 lg:px-8 border-t border-slate-850 bg-[#060910]">
+      <section className="px-4 py-20 sm:px-6 lg:px-8 border-t border-slate-800/80 bg-[var(--background)] transition-colors duration-300">
         <div className="mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="font-display text-2xl sm:text-4xl font-bold text-white mb-4">
-              Do Gargalo Tradicional à Aliança de Confiança Digital
+              {h.problemTitle}
             </h2>
             <p className="text-slate-400 text-sm sm:text-base">
-              Como a infraestrutura aberta da Solana une Faculdades, Estudantes e RHs eliminando atritos históricos de verificação.
+              {h.problemSubtitle}
             </p>
           </div>
 
@@ -145,55 +184,67 @@ export default function Home() {
                 <div className="rounded-xl bg-red-500/20 p-3 text-red-400">
                   <Ban className="h-6 w-6" />
                 </div>
-                <h3 className="font-display text-xl font-bold text-white">O Modelo Tradicional Sem LattesChain</h3>
+                <h3 className="font-display text-xl font-bold text-white">{h.oldWayTitle}</h3>
               </div>
               <ul className="space-y-4 text-sm text-slate-300">
                 <li className="flex items-start gap-3">
                   <Clock className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Secretarias sobrecarregadas:</strong> Semanas de espera para expedição e validação de históricos e certificados de horas complementares.
+                    <strong>{h.oldWay1Title}</strong> {h.oldWay1Desc}
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Ban className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Vulnerabilidade a fraudes:</strong> PDFs simples adulterados colocam a reputação da universidade em risco e induzem empresas a erros graves.
+                    <strong>{h.oldWay2Title}</strong> {h.oldWay2Desc}
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Lock className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Falta de portabilidade:</strong> Estudantes enfrentam atrito extremo ao transferir matérias para outra faculdade ou comprovar formação no exterior.
+                    <strong>{h.oldWay3Title}</strong> {h.oldWay3Desc}
                   </span>
                 </li>
               </ul>
             </div>
 
             {/* LattesChain Way */}
-            <div className="glass-panel rounded-2xl p-8 border-solana-green/30 bg-solana-green/5 glow-green">
+            <div
+              className={`glass-panel rounded-2xl p-8 transition-all ${
+                isPurple
+                  ? "border-solana-purple/30 bg-solana-purple/5 glow-purple"
+                  : "border-solana-green/30 bg-solana-green/5 glow-green"
+              }`}
+            >
               <div className="flex items-center gap-3 mb-6">
-                <div className="rounded-xl bg-solana-green/20 p-3 text-solana-green">
+                <div
+                  className={`rounded-xl p-3 transition-colors ${
+                    isPurple
+                      ? "bg-solana-purple/20 text-solana-purple"
+                      : "bg-solana-green/20 text-solana-green"
+                  }`}
+                >
                   <ShieldCheck className="h-6 w-6" />
                 </div>
-                <h3 className="font-display text-xl font-bold text-white">Com o LattesChain (Valor Tripartite)</h3>
+                <h3 className="font-display text-xl font-bold text-white">{h.newWayTitle}</h3>
               </div>
               <ul className="space-y-4 text-sm text-slate-300">
                 <li className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-solana-green shrink-0 mt-0.5" />
+                  <CheckCircle2 className={`h-5 w-5 shrink-0 mt-0.5 ${accentColor}`} />
                   <span>
-                    <strong>Credibilidade universal para a IES:</strong> Documentos emitidos pela faculdade têm autenticidade criptográfica imediata e auditável no mundo todo.
+                    <strong>{h.newWay1Title}</strong> {h.newWay1Desc}
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-solana-green shrink-0 mt-0.5" />
+                  <CheckCircle2 className={`h-5 w-5 shrink-0 mt-0.5 ${accentColor}`} />
                   <span>
-                    <strong>Facilidade real para o estudante:</strong> Apresentação ágil de diplomas e horas complementares com 1 clique ou QR Code em qualquer instituição.
+                    <strong>{h.newWay2Title}</strong> {h.newWay2Desc}
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-solana-green shrink-0 mt-0.5" />
+                  <CheckCircle2 className={`h-5 w-5 shrink-0 mt-0.5 ${accentColor}`} />
                   <span>
-                    <strong>Confiabilidade garantida para empresas:</strong> RHs recebem comprovações de candidatos em 1 segundo e com análise inteligente de equivalência por IA.
+                    <strong>{h.newWay3Title}</strong> {h.newWay3Desc}
                   </span>
                 </li>
               </ul>
@@ -207,22 +258,28 @@ export default function Home() {
         <div className="mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="font-display text-2xl sm:text-4xl font-bold text-white mb-4">
-              Arquitetura em Três Pilares Nativos
+              {h.pillarsSectionTitle}
             </h2>
             <p className="text-slate-400 text-sm sm:text-base">
-              Construído sobre protocolos consolidados e abertos da Solana, sem contratos proprietários opacos.
+              {h.pillarsSectionDesc}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Pillar 1 */}
             <div className="glass-panel rounded-2xl p-6">
-              <div className="h-12 w-12 rounded-xl bg-solana-green/10 border border-solana-green/20 flex items-center justify-center text-solana-green mb-6">
+              <div
+                className={`h-12 w-12 rounded-xl flex items-center justify-center mb-6 transition-colors ${
+                  isPurple
+                    ? "bg-solana-purple/10 border border-solana-purple/20 text-solana-purple"
+                    : "bg-solana-green/10 border border-solana-green/20 text-solana-green"
+                }`}
+              >
                 <Building2 className="h-6 w-6" />
               </div>
-              <h3 className="font-display text-lg font-bold text-white mb-2">1. Solana Attestation Service</h3>
+              <h3 className="font-display text-lg font-bold text-white mb-2">{h.p1Title}</h3>
               <p className="text-sm text-slate-400 leading-relaxed">
-                Padrão aberto de atestações da Solana (`22zoJM...`). A universidade cria Schemas de disciplinas e emite credenciais criptograficamente assinadas para o aluno.
+                {h.p1Desc}
               </p>
             </div>
 
@@ -231,9 +288,9 @@ export default function Home() {
               <div className="h-12 w-12 rounded-xl bg-solana-purple/10 border border-solana-purple/20 flex items-center justify-center text-solana-purple mb-6">
                 <Lock className="h-6 w-6" />
               </div>
-              <h3 className="font-display text-lg font-bold text-white mb-2">2. Token-2022 Soulbound</h3>
+              <h3 className="font-display text-lg font-bold text-white mb-2">{h.p2Title}</h3>
               <p className="text-sm text-slate-400 leading-relaxed">
-                Extensões nativas `NonTransferable` e `PermanentDelegate`. O diploma é intransferível e a instituição retém o poder de revogação on-chain sem intermediários.
+                {h.p2Desc}
               </p>
             </div>
 
@@ -242,9 +299,9 @@ export default function Home() {
               <div className="h-12 w-12 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 mb-6">
                 <BrainCircuit className="h-6 w-6" />
               </div>
-              <h3 className="font-display text-lg font-bold text-white mb-2">3. Camada de Inteligência Artificial</h3>
+              <h3 className="font-display text-lg font-bold text-white mb-2">{h.p3Title}</h3>
               <p className="text-sm text-slate-400 leading-relaxed">
-                A IA analisa ementas de disciplinas e gera relatórios de confiança (Trust Reports) para recrutadores, traduzindo dados on-chain em linguagem clara.
+                {h.p3Desc}
               </p>
             </div>
           </div>
@@ -252,29 +309,35 @@ export default function Home() {
       </section>
 
       {/* CTA SECTION */}
-      <section className="px-4 py-20 sm:px-6 lg:px-8 border-t border-slate-850 bg-gradient-to-b from-[#080c14] to-[#04070d]">
-        <div className="mx-auto max-w-4xl text-center glass-panel rounded-3xl p-10 sm:p-14 border-solana-green/20 glow-green">
-          <GraduationCap className="h-12 w-12 text-solana-green mx-auto mb-4" />
+      <section className="px-4 py-20 sm:px-6 lg:px-8 border-t border-slate-800/80 bg-gradient-to-b from-[var(--background)] to-navy-900 transition-colors duration-300">
+        <div
+          className={`mx-auto max-w-4xl text-center glass-panel rounded-3xl p-10 sm:p-14 transition-all ${
+            isPurple
+              ? "border-solana-purple/20 glow-purple"
+              : "border-solana-green/20 glow-green"
+          }`}
+        >
+          <GraduationCap className={`h-12 w-12 mx-auto mb-4 transition-colors ${accentColor}`} />
           <h2 className="font-display text-2xl sm:text-4xl font-bold text-white mb-4">
-            Experimente a Validação em Tempo Real
+            {h.ctaTitle}
           </h2>
           <p className="text-slate-300 text-sm sm:text-base max-w-xl mx-auto mb-8">
-            Faça upload de um certificado ou consulte registros emitidos na devnet da Solana e comprove a verificação em menos de 1 segundo.
+            {h.ctaDesc}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
               href="/validator"
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 px-6 py-3.5 text-sm font-bold text-navy-900 shadow-md shadow-solana-green/20 transition-transform hover:scale-[1.02]"
+              className={`inline-flex items-center gap-2 rounded-xl px-6 py-3.5 text-sm font-bold transition-transform hover:scale-[1.02] ${accentBtn}`}
             >
               <FileCheck2 className="h-5 w-5" />
-              Abrir Validador RH
+              {h.ctaOpenValidator}
             </Link>
             <Link
               href="/university"
               className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800/80 px-6 py-3.5 text-sm font-semibold text-white hover:bg-slate-700"
             >
-              <Building2 className="h-5 w-5 text-solana-green" />
-              Portal do Emissor (IES)
+              <Building2 className={`h-5 w-5 transition-colors ${accentColor}`} />
+              {h.ctaOpenUniversity}
             </Link>
           </div>
         </div>

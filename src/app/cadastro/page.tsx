@@ -111,10 +111,10 @@ export default function SignupPage() {
               Guarde este protocolo. A análise é feita manualmente pela equipe LattesChain e você será notificado por email.
             </p>
             <Link
-              href="/"
-              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 px-5 py-2.5 text-sm font-bold text-navy-900"
+              href={email.endsWith("@jovian.foo") ? "/login" : "/"}
+              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 px-5 py-2.5 text-sm font-bold text-navy-900 hover:scale-[1.01] transition-all"
             >
-              Voltar ao início
+              {email.endsWith("@jovian.foo") ? "Fazer Login como Administrador" : "Voltar ao início"}
             </Link>
           </div>
         </div>

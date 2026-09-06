@@ -177,6 +177,24 @@ Implementado interativamente na landing page ([`VisualFlowPipeline.tsx`](src/com
    - **"Testar no Validador RH"**: Abre a verificação pública imediata da atestação recém-emitida.
    - **"Ver no Passaporte do Aluno"**: Confere a credencial refletida instantaneamente na carteira do estudante.
 
+### 5.4 Para Administradores Jovian Tech (`@jovian.foo`)
+1. Todo e-mail com domínio `@jovian.foo` possui acesso administrativo padrão com papel `ADMIN` e status `APPROVED`.
+2. Para obter acesso inicial ou redefinir credenciais:
+   - Acesse `/login`.
+   - Clique em **"Primeiro acesso ou esqueceu a senha?"**.
+   - Digite o e-mail sob o domínio `jovian.foo` (ex: `admin@jovian.foo` ou `contact@jovian.foo`).
+   - O sistema auto-provisiona a conta administrativa de imediato e envia o link de criação de senha válido por 1 hora.
+   - Após definir a senha em `/redefinir-senha`, o login direciona diretamente para o **Painel Geral do Dono do Protocolo** (`/admin-protocol`).
+3. **E-mail Oficial de Contato**: Para evitar informações inventadas, o canal oficial da Jovian Tech é exclusivamente `contact@jovian.foo`.
+
+### 5.5 Alternância Dinâmica de Temas de Cores (Theme Switcher)
+1. **Botão no Navbar**: Clique no botão de paleta cromática (`Palette`) posicionado no cabeçalho ao lado do seletor de idiomas.
+2. **Temas Suportados**:
+   - **Solana Emerald (Padrão)**: Fundo escuro profundo (`#080c14`), cartões em azul marinho (`#101d32`), acentos em verde Solana (`#14F195`) e glows esmeralda.
+   - **Elementus Purple System**: Fundo purple-black ink (`#0e0a18`), cartões e superfícies navy em violeta escuro (`#1b152c`), acentos em roxo Elementus (`#8a33f5`), lavanda suave (`#d1abf9`) e glows púrpura.
+3. **Isolamento Estrito**: A alternância cromática afeta apenas variáveis CSS e tokens do Tailwind, mantendo absolutamente todos os elementos, textos, cards, recursos e lógicas das páginas inalterados.
+4. **Persistência**: A escolha é armazenada em `localStorage` (`educore_theme`) e aplicada de forma síncrona no carregamento da página.
+
 ---
 
 ## 6. Mapeamento de Rotas da Interface & Endpoints de API
@@ -190,10 +208,14 @@ Implementado interativamente na landing page ([`VisualFlowPipeline.tsx`](src/com
 | `/student` | Passaporte acadêmico do aluno com barra de horas MEC, QR code e solicitações | Estudante |
 | `/university` | Portal do emissor IES com emissão on-chain, triagem de pedidos e diretório | IES |
 | `/admin-protocol` | Governança de autoridades IES e homologação de novos usuários com 1 clique | Administrador |
-| `/precos` | Planos comerciais para Universidades, RHs e gratuidade para estudantes | Público |
+| `/precos` | Planos comerciais (Plano Start R$ 0 / mês com 1 mês de teste, Campus Pro, Enterprise e RH) | Público |
 | `/sobre` | Detalhamento institucional do protocolo LattesChain e Jovian Tech | Público |
-| `/login` | Autenticação com verificação de perfil aprovado (Supabase Auth) | Público |
-| `/cadastro` | Solicitação de cadastro com validação de CPF/CNPJ e ticket de protocolo | Público |
+| `/login` | Autenticação com redirecionamento de papéis e atalho para primeiro acesso | Público |
+| `/recuperar-senha` | Primeiro Acesso e recuperação de senha com auto-provisionamento `@jovian.foo` | Público |
+| `/redefinir-senha` | Definição de senha com token de uso único (1 hora de validade) | Público |
+| `/cadastro` | Solicitação de cadastro com validação de CPF/CNPJ e aprovação automática para `@jovian.foo` | Público |
+| `/guia-carteira` | Guia passo a passo de conexão Phantom/Solana e tester de conexão em tempo real | Público |
+| `/privacidade` | Diretrizes LGPD & Privacy by Design com contato oficial DPO (`contact@jovian.foo`) | Público |
 
 ### 6.2 Endpoints REST da API
 

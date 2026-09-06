@@ -19,8 +19,11 @@ import {
   Smartphone,
   Laptop,
 } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function GuiaCarteiraPage() {
+  const { dict } = useLanguage();
+  const wg = dict.walletGuide;
   const [activeProfile, setActiveProfile] = useState<"STUDENT" | "INSTITUTION" | "EMPLOYER">("STUDENT");
   const [hasProvider, setHasProvider] = useState<boolean | null>(null);
   const [walletPubkey, setWalletPubkey] = useState<string | null>(null);
@@ -73,13 +76,13 @@ export default function GuiaCarteiraPage() {
       <div className="text-center max-w-3xl mx-auto space-y-4">
         <div className="inline-flex items-center gap-2 rounded-full border border-solana-green/40 bg-solana-green/10 px-4 py-1.5 text-xs font-semibold text-solana-green">
           <Sparkles className="h-4 w-4" />
-          Passo a Passo Web3 • Solana Devnet
+          {wg.badge}
         </div>
         <h1 className="font-display text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
-          Como Conectar sua Carteira Solana no LattesChain
+          {wg.title}
         </h1>
         <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-          Guia descomplicado para estudantes, faculdades e empresas criarem sua identidade digital descentralizada em menos de 2 minutos, sem custos e com segurança máxima.
+          {wg.subtitle}
         </p>
       </div>
 
@@ -89,12 +92,12 @@ export default function GuiaCarteiraPage() {
           <div className="space-y-1.5">
             <div className="flex items-center gap-2 text-sm font-bold text-solana-purple">
               <Wallet className="h-5 w-5 text-solana-green" />
-              Detector Automático de Carteira Solana
+              {wg.connectTestTitle}
             </div>
             <p className="text-xs text-slate-300">
               {hasProvider
-                ? "Extensão Phantom/Solana detectada no seu navegador. Você pode testar a conexão agora."
-                : "Nenhuma carteira detectada ainda no navegador. Siga o tutorial abaixo para instalar."}
+                ? wg.installedDetected
+                : wg.notInstalledNotice}
             </p>
           </div>
 
@@ -108,7 +111,7 @@ export default function GuiaCarteiraPage() {
                 <button
                   onClick={handleCopyPubkey}
                   className="text-slate-400 hover:text-white transition-colors"
-                  title="Copiar chave pública"
+                  title={wg.copyPubkey}
                 >
                   {copied ? <Check className="h-3.5 w-3.5 text-solana-green" /> : <Copy className="h-3.5 w-3.5" />}
                 </button>
@@ -120,7 +123,7 @@ export default function GuiaCarteiraPage() {
                 className="inline-flex items-center gap-2 rounded-xl bg-solana-green px-5 py-2.5 text-xs font-bold text-navy-950 shadow-md shadow-solana-green/20 hover:bg-emerald-400 transition-all disabled:opacity-50"
               >
                 <Wallet className="h-4 w-4" />
-                {connecting ? "Detectando..." : "Conectar Carteira Agora"}
+                {connecting ? wg.btnConnecting : wg.btnConnect}
               </button>
             )}
           </div>

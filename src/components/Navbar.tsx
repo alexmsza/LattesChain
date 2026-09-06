@@ -12,13 +12,14 @@ import {
   UserCircle2,
   Loader2,
   Activity,
-  Globe2,
   Info,
   Tag,
+  Palette,
 } from "lucide-react";
 import { useSession } from "@/lib/useSession";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { Language } from "@/lib/i18n/translations";
+import { useTheme } from "@/lib/theme/ThemeContext";
 
 const ROLE_HOME: Record<string, string> = {
   STUDENT: "/student",
@@ -32,6 +33,7 @@ export function Navbar() {
   const router = useRouter();
   const { session, profile, loading, signOut } = useSession();
   const { language, setLanguage, dict } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
 
   const baseNavItems = [
     { href: "/", label: dict.nav.home, icon: GraduationCap },
@@ -60,19 +62,32 @@ export function Navbar() {
   const roleHome = profile ? ROLE_HOME[profile.role] || "/" : "/";
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-800 bg-[#080c14]/90 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-slate-800/80 bg-[var(--header-bg)] backdrop-blur-md transition-colors duration-300">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-solana-purple to-solana-green p-0.5 shadow-lg shadow-solana-green/20">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-solana-purple to-solana-green p-0.5 shadow-lg shadow-solana-purple/20">
             <div className="flex h-full w-full items-center justify-center rounded-[10px] bg-navy-900 transition-colors group-hover:bg-navy-800">
-              <GraduationCap className="h-5 w-5 text-solana-green" />
+              <GraduationCap
+                className={`h-5 w-5 transition-colors duration-300 ${
+                  theme === "purple" ? "text-solana-purple" : "text-solana-green"
+                }`}
+              />
             </div>
           </div>
           <div className="flex flex-col">
             <span className="font-display text-lg font-bold tracking-tight text-white">
-              Lattes<span className="text-solana-green">Chain</span>
+              Lattes
+              <span
+                className={`transition-colors duration-300 ${
+                  theme === "purple" ? "text-solana-purple" : "text-solana-green"
+                }`}
+              >
+                Chain
+              </span>
             </span>
-            <span className="text-[10px] uppercase tracking-widest text-slate-400">Edu Core Protocol</span>
+            <span className="text-[10px] uppercase tracking-widest text-slate-400">
+              Edu Core Protocol
+            </span>
           </div>
         </Link>
 
@@ -84,10 +99,13 @@ export function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-all ${isActive
-                    ? "bg-solana-green/10 text-solana-green border border-solana-green/30 font-semibold"
+                className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-all ${
+                  isActive
+                    ? theme === "purple"
+                      ? "bg-solana-purple/15 text-solana-purple border border-solana-purple/30 font-semibold"
+                      : "bg-solana-green/10 text-solana-green border border-solana-green/30 font-semibold"
                     : "text-slate-300 hover:bg-slate-800/60 hover:text-white"
-                  }`}
+                }`}
               >
                 <Icon className="h-3.5 w-3.5" />
                 {item.label}
@@ -96,7 +114,41 @@ export function Navbar() {
           })}
         </nav>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2 sm:gap-2.5">
+          {/* COLOR THEME SWITCHER */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="flex items-center gap-1.5 rounded-xl border border-slate-800 bg-navy-900/80 px-2.5 py-1.5 text-[11px] font-semibold text-slate-300 hover:border-slate-700 hover:text-white transition-all shadow-sm group"
+            title={
+              language === "en"
+                ? `Color theme: ${theme === "purple" ? "Elementus Purple" : "Solana Emerald"}. Click to toggle.`
+                : language === "es"
+                ? `Tema de color: ${theme === "purple" ? "Elementus Púrpura" : "Solana Esmeralda"}. Clic para alternar.`
+                : `Tema de cores: ${theme === "purple" ? "Elementus Purple" : "Solana Emerald"}. Clique para alternar.`
+            }
+            aria-label="Alternar tema de cores"
+          >
+            <Palette
+              className={`h-3.5 w-3.5 transition-colors duration-300 ${
+                theme === "purple" ? "text-solana-purple" : "text-solana-green"
+              }`}
+            />
+            <span className="hidden md:inline capitalize">
+              {theme === "purple" ? "Purple" : "Emerald"}
+            </span>
+            <span
+              className="h-2 w-2 rounded-full transition-all duration-300 group-hover:scale-125"
+              style={{
+                backgroundColor: theme === "purple" ? "#8a33f5" : "#14F195",
+                boxShadow:
+                  theme === "purple"
+                    ? "0 0 8px rgba(138, 51, 245, 0.7)"
+                    : "0 0 8px rgba(20, 241, 149, 0.7)",
+              }}
+            />
+          </button>
+
           {/* LANGUAGE SELECTOR */}
           <div className="flex items-center rounded-xl border border-slate-800 bg-navy-900/80 p-0.5 text-[11px] font-semibold">
             {(["pt", "en", "es"] as Language[]).map((lang) => (
@@ -104,10 +156,13 @@ export function Navbar() {
                 key={lang}
                 type="button"
                 onClick={() => setLanguage(lang)}
-                className={`rounded-lg px-2 py-1 uppercase transition-all ${language === lang
-                    ? "bg-solana-green text-navy-900 font-bold shadow-sm"
+                className={`rounded-lg px-2 py-1 uppercase transition-all ${
+                  language === lang
+                    ? theme === "purple"
+                      ? "bg-solana-purple text-white font-bold shadow-sm"
+                      : "bg-solana-green text-navy-900 font-bold shadow-sm"
                     : "text-slate-400 hover:text-white"
-                  }`}
+                }`}
                 title={`Mudar idioma para ${lang.toUpperCase()}`}
               >
                 {lang}
@@ -115,8 +170,18 @@ export function Navbar() {
             ))}
           </div>
 
-          <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-solana-green/30 bg-solana-green/10 px-2.5 py-1 text-[11px] font-semibold text-solana-green">
-            <span className="h-1.5 w-1.5 rounded-full bg-solana-green animate-pulse" />
+          <div
+            className={`hidden sm:flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+              theme === "purple"
+                ? "border-solana-purple/30 bg-solana-purple/10 text-solana-purple"
+                : "border-solana-green/30 bg-solana-green/10 text-solana-green"
+            }`}
+          >
+            <span
+              className={`h-1.5 w-1.5 rounded-full animate-pulse ${
+                theme === "purple" ? "bg-solana-purple" : "bg-solana-green"
+              }`}
+            />
             Devnet
           </div>
 
@@ -126,10 +191,14 @@ export function Navbar() {
             <div className="flex items-center gap-1.5">
               <Link
                 href={roleHome}
-                className="hidden sm:flex items-center gap-1.5 rounded-xl border border-slate-700 bg-navy-800/60 px-2.5 py-1.5 text-xs font-semibold text-slate-200 hover:border-solana-green/40 hover:text-white"
+                className="hidden sm:flex items-center gap-1.5 rounded-xl border border-slate-700 bg-navy-800/60 px-2.5 py-1.5 text-xs font-semibold text-slate-200 hover:border-solana-purple/40 hover:text-white"
                 title={profile?.email || session.user.email}
               >
-                <UserCircle2 className="h-3.5 w-3.5 text-solana-green" />
+                <UserCircle2
+                  className={`h-3.5 w-3.5 ${
+                    theme === "purple" ? "text-solana-purple" : "text-solana-green"
+                  }`}
+                />
                 <span className="max-w-[100px] truncate">
                   {profile?.full_name?.split(" ")[0] || "Conta"}
                 </span>
@@ -145,7 +214,11 @@ export function Navbar() {
           ) : (
             <Link
               href="/login"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 px-3.5 py-1.5 text-xs font-bold text-navy-900 shadow-md shadow-solana-green/20 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all hover:scale-[1.02] active:scale-[0.98] ${
+                theme === "purple"
+                  ? "bg-solana-purple text-white shadow-md shadow-solana-purple/30 hover:bg-solana-purpleDeep"
+                  : "bg-gradient-to-r from-solana-green to-emerald-400 text-navy-900 shadow-md shadow-solana-green/20"
+              }`}
             >
               <LogIn className="h-3.5 w-3.5" />
               {dict.nav.login}

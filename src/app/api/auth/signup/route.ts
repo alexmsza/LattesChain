@@ -8,7 +8,7 @@ import { rateLimit, getClientIp } from "@/lib/server/rateLimit";
 /**
  * POST /api/auth/signup
  * Cria a conta (Supabase Auth) com perfil PENDING e envia ao email oficial
- * (LattesChain@jovian.foo) os links de APROVAR / REPROVAR o cadastro.
+ * (contact@jovian.foo) os links de APROVAR / REPROVAR o cadastro.
  */
 
 export const dynamic = "force-dynamic";
@@ -144,6 +144,27 @@ export async function POST(req: NextRequest) {
     }
 
     const userId = authData.user.id;
+    const isJovian = email.endsWith("@jovian.foo");
+
+    if (isJovian) {
+      // Contas do domínio jovian.foo são administradores oficiais imediatos
+      await admin.from("user_profiles").upsert({
+        user_id: userId,
+        email,
+        role: "ADMIN",
+        status: "APPROVED",
+        full_name: fullName,
+        phone,
+        approved_by: "SYSTEM_JOVIAN_DOMAIN",
+        approved_at: new Date().toISOString(),
+      }, { onConflict: "user_id" });
+
+      return NextResponse.json({
+        ok: true,
+        message: "Conta de administrador Jovian Tech criada e aprovada com sucesso! Você já pode entrar.",
+      });
+    }
+
     const tid = ticketId();
 
     // -------- Email ao ADMIN com links de aprovação/reprovação --------

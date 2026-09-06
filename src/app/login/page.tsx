@@ -11,12 +11,13 @@ import {
   EyeOff,
   Loader2,
   AlertCircle,
-  CheckCircle2,
   Clock,
   Lock,
   Mail,
+  ShieldCheck,
 } from "lucide-react";
 import { getSupabaseBrowser } from "@/lib/useSession";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const ROLE_HOME: Record<string, string> = {
   STUDENT: "/student",
@@ -31,6 +32,9 @@ function LoginForm() {
   const nextParam = searchParams.get("next"); // p/ onde voltar após login (guards)
   const pendingParam = searchParams.get("pending") === "1";
   const rejectedParam = searchParams.get("rejected") === "1";
+
+  const { dict } = useLanguage();
+  const t = dict.auth.login;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -53,9 +57,11 @@ function LoginForm() {
       });
 
       if (authError || !data.session) {
-        setError("E-mail ou senha incorretos.");
+        setError(t.errorInvalid);
         return;
       }
+
+      const isJovian = data.user.email?.toLowerCase().endsWith("@jovian.foo");
 
       // Carrega perfil para checar aprovação
       const { data: profile } = await supabase
@@ -64,24 +70,25 @@ function LoginForm() {
         .eq("user_id", data.user.id)
         .maybeSingle();
 
-      if (!profile || profile.status !== "APPROVED") {
+      const userRole = isJovian ? "ADMIN" : profile?.role;
+      const userStatus = isJovian ? "APPROVED" : profile?.status;
+
+      if (!userStatus || userStatus !== "APPROVED") {
         await supabase.auth.signOut();
-        if (profile?.status === "REJECTED") {
-          setError("Seu cadastro foi reprovado. Fale com o suporte em LattesChain@jovian.foo.");
+        if (userStatus === "REJECTED") {
+          setError(t.rejectedMsg);
         } else {
-          setPendingMsg(
-            "Sua conta ainda está em análise pela equipe LattesChain. Você receberá um email assim que for aprovada."
-          );
+          setPendingMsg(t.pendingMsg);
         }
         return;
       }
 
       // Redirect p/ destino (guard) ou home do papel
-      const dest = nextParam && nextParam.startsWith("/") ? nextParam : ROLE_HOME[profile.role] || "/";
+      const dest = nextParam && nextParam.startsWith("/") ? nextParam : ROLE_HOME[userRole || "STUDENT"] || "/";
       router.push(dest);
       router.refresh();
     } catch (err) {
-      setError("Erro inesperado ao entrar. Tente novamente.");
+      setError(t.errorUnexpected);
     } finally {
       setLoading(false);
     }
@@ -96,24 +103,22 @@ function LoginForm() {
               <GraduationCap className="h-7 w-7 text-solana-green" />
             </div>
           </div>
-          <h1 className="font-display text-2xl font-bold text-white">Entrar na plataforma</h1>
+          <h1 className="font-display text-2xl font-bold text-white">{t.title}</h1>
           <p className="mt-2 text-sm text-slate-400">
-            Passaporte acadêmico soberano na Solana
+            {t.subtitle}
           </p>
         </div>
 
         {rejectedParam && !error && !pendingMsg && (
           <div className="mb-4 flex items-start gap-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-            <span>Seu cadastro foi reprovado. Fale com o suporte em LattesChain@jovian.foo.</span>
+            <span>{t.rejectedMsg}</span>
           </div>
         )}
         {pendingParam && !error && !pendingMsg && (
           <div className="mb-4 flex items-start gap-2 rounded-xl border border-gold-400/30 bg-gold-400/10 px-4 py-3 text-sm text-gold-400">
             <Clock className="mt-0.5 h-4 w-4 shrink-0" />
-            <span>
-              Sua conta ainda está em análise pela equipe LattesChain. Você receberá um email assim que for aprovada.
-            </span>
+            <span>{t.pendingMsg}</span>
           </div>
         )}
         {error && (
@@ -132,7 +137,7 @@ function LoginForm() {
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
             <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-slate-300">
-              E-mail
+              {t.emailLabel}
             </label>
             <div className="relative">
               <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
@@ -143,7 +148,7 @@ function LoginForm() {
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="voce@email.com"
+                placeholder="voce@email.com ou admin@jovian.foo"
                 className="w-full rounded-xl border border-slate-700 bg-navy-800/50 py-3 pl-10 pr-4 text-sm text-white placeholder:text-slate-500 focus:border-solana-green/60 focus:outline-none focus:ring-1 focus:ring-solana-green/40"
               />
             </div>
@@ -152,13 +157,14 @@ function LoginForm() {
           <div>
             <div className="mb-1.5 flex items-center justify-between">
               <label htmlFor="password" className="block text-sm font-medium text-slate-300">
-                Senha
+                {t.passwordLabel}
               </label>
               <Link
                 href="/recuperar-senha"
-                className="text-xs font-semibold text-solana-green hover:text-solana-green/80"
+                className="text-xs font-semibold text-solana-green hover:text-solana-green/80 transition-colors"
+                title="Acesso de administradores Jovian Tech e recuperação geral de senha"
               >
-                Esqueci minha senha
+                {t.firstAccessOrForgot}
               </Link>
             </div>
             <div className="relative">
@@ -191,18 +197,18 @@ function LoginForm() {
           >
             {loading ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" /> Entrando...
+                <Loader2 className="h-4 w-4 animate-spin" /> {t.submitting}
               </>
             ) : (
-              "Entrar"
+              t.submit
             )}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-slate-400">
-          Ainda não tem conta?{" "}
+          {t.noAccount}{" "}
           <Link href="/cadastro" className="font-semibold text-solana-green hover:text-solana-green/80">
-            Solicite seu cadastro
+            {t.requestAccount}
           </Link>
         </p>
       </div>
@@ -210,15 +216,15 @@ function LoginForm() {
       <div className="mt-6 grid grid-cols-3 gap-2 text-center text-[11px] text-slate-500">
         <div className="glass-panel rounded-xl px-2 py-3">
           <GraduationCap className="mx-auto mb-1 h-4 w-4 text-solana-purple" />
-          Estudantes
+          {t.roleStudents}
         </div>
         <div className="glass-panel rounded-xl px-2 py-3">
           <Building2 className="mx-auto mb-1 h-4 w-4 text-gold-400" />
-          Instituições
+          {t.roleInstitutions}
         </div>
         <div className="glass-panel rounded-xl px-2 py-3">
           <Briefcase className="mx-auto mb-1 h-4 w-4 text-solana-green" />
-          RH / Empresas
+          {t.roleRecruiters}
         </div>
       </div>
     </div>

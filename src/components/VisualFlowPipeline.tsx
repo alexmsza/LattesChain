@@ -6,20 +6,17 @@ import {
   Building2,
   ShieldCheck,
   CheckCircle2,
-  XCircle,
   ArrowRight,
   Sparkles,
   GraduationCap,
   BrainCircuit,
-  FileText,
   Lock,
-  RefreshCw,
   Play,
-  ExternalLink,
   AlertTriangle,
   Zap,
   Check,
 } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export interface PipelineStep {
   id: number;
@@ -33,90 +30,68 @@ export interface PipelineStep {
   details: string[];
 }
 
-const PIPELINE_STEPS: PipelineStep[] = [
-  {
-    id: 1,
-    title: "Emissão Institucional",
-    actor: "Universidade (IES)",
-    badge: "Origem Confiável",
-    badgeColor: "bg-blue-500/10 text-blue-400 border-blue-500/30",
-    description:
-      "A universidade emite a credencial (diploma, horas ou disciplina). O sistema extrai os dados oficiais e calcula o hash criptográfico SHA-256 único do arquivo.",
-    actionText: "Acessar Portal da IES",
-    actionHref: "/university",
-    details: [
-      "Assinatura digital e-CNPJ da instituição",
-      "Geração de hash SHA-256 imutável do documento",
-      "Validação prévia de ementa e carga horária",
-    ],
-  },
-  {
-    id: 2,
-    title: "Ancoragem na Solana",
-    actor: "Protocolo Descentralizado",
-    badge: "Custo < R$ 0,01 • < 1s",
-    badgeColor: "bg-solana-purple/10 text-solana-purple border-solana-purple/30",
-    description:
-      "A atestação é registrada na blockchain Solana via SAS (Solana Attestation Service) e SPL Memo, ou emitida como Token-2022 Soulbound intransferível para diplomas.",
-    actionText: "Ver Regras do Protocolo",
-    actionHref: "/sobre",
-    details: [
-      "Carimbo temporal criptográfico irrefutável",
-      "Token-2022 Soulbound (intransferível, anti-venda)",
-      "Zero dados pessoais sensíveis on-chain (LGPD)",
-    ],
-  },
-  {
-    id: 3,
-    title: "Validação Pública Instantânea",
-    actor: "RH / Empresas / Recrutadores",
-    badge: "Zero Burocracia",
-    badgeColor: "bg-solana-green/10 text-solana-green border-solana-green/30",
-    description:
-      "Qualquer recrutador ou empresa arrasta o PDF no validador ou cola o código de autenticidade. O selo verde ou vermelho sai em milissegundos sem necessidade de login.",
-    actionText: "Testar o Validador",
-    actionHref: "/validator",
-    details: [
-      "Detecção automática de PDF adulterado ou falso",
-      "Conferência direta contra os nós da Solana",
-      "Relatório de confiança gerado por IA com auditoria",
-    ],
-  },
-  {
-    id: 4,
-    title: "Passaporte Soberano do Estudante",
-    actor: "Estudante",
-    badge: "100% Walletless",
-    badgeColor: "bg-amber-500/10 text-amber-400 border-amber-500/30",
-    description:
-      "O estudante acumula certificados de diversas faculdades, cursos de extensão e projetos em um painel único. Ele é o dono soberano do seu histórico para sempre.",
-    actionText: "Acessar Meu Passaporte",
-    actionHref: "/student",
-    details: [
-      "Histórico unificado não dependente de secretaria",
-      "Soma automática de horas complementares",
-      "Compartilhamento público via link seguro e QR Code",
-    ],
-  },
-  {
-    id: 5,
-    title: "Equivalência Curricular com IA",
-    actor: "Comitê Acadêmico / Transferência",
-    badge: "Análise Semântica",
-    badgeColor: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
-    description:
-      "Na transferência de faculdade, a IA do LattesChain compara as ementas de disciplinas de faculdades distintas e gera um parecer de compatibilidade imediato.",
-    actionText: "Simular Equivalência",
-    actionHref: "/validator?tab=EQUIVALENCE",
-    details: [
-      "Comparação semântica profunda de ementas curriculares",
-      "Cálculo de sobreposição de tópicos e carga horária",
-      "Sugestão fundamentada de dispensa de disciplina",
-    ],
-  },
-];
-
 export default function VisualFlowPipeline() {
+  const { dict, language } = useLanguage();
+  const p = dict.pipeline;
+
+  const PIPELINE_STEPS: PipelineStep[] = [
+    {
+      id: 1,
+      title: p.step1Title,
+      actor: p.step1Actor,
+      badge: p.step1Badge,
+      badgeColor: "bg-blue-500/10 text-blue-400 border-blue-500/30",
+      description: p.step1Desc,
+      actionText: p.step1Action,
+      actionHref: "/university",
+      details: [p.step1D1, p.step1D2, p.step1D3],
+    },
+    {
+      id: 2,
+      title: p.step2Title,
+      actor: p.step2Actor,
+      badge: p.step2Badge,
+      badgeColor: "bg-solana-purple/10 text-solana-purple border-solana-purple/30",
+      description: p.step2Desc,
+      actionText: p.step2Action,
+      actionHref: "/sobre",
+      details: [p.step2D1, p.step2D2, p.step2D3],
+    },
+    {
+      id: 3,
+      title: p.step5Title,
+      actor: p.step5Actor,
+      badge: p.step5Badge,
+      badgeColor: "bg-solana-green/10 text-solana-green border-solana-green/30",
+      description: p.step5Desc,
+      actionText: p.step5Action,
+      actionHref: "/validator",
+      details: [p.step5D1, p.step5D2, p.step5D3],
+    },
+    {
+      id: 4,
+      title: p.step3Title,
+      actor: p.step3Actor,
+      badge: p.step3Badge,
+      badgeColor: "bg-amber-500/10 text-amber-400 border-amber-500/30",
+      description: p.step3Desc,
+      actionText: p.step3Action,
+      actionHref: "/student",
+      details: [p.step3D1, p.step3D2, p.step3D3],
+    },
+    {
+      id: 5,
+      title: p.step4Title,
+      actor: p.step4Actor,
+      badge: p.step4Badge,
+      badgeColor: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
+      description: p.step4Desc,
+      actionText: p.step4Action,
+      actionHref: "/validator",
+      details: [p.step4D1, p.step4D2, p.step4D3],
+    },
+  ];
+
   const [selectedStep, setSelectedStep] = useState<number>(1);
   const [isSimulating, setIsSimulating] = useState(false);
   const [simScenario, setSimScenario] = useState<"VALID" | "TAMPERED">("VALID");
@@ -127,45 +102,79 @@ export default function VisualFlowPipeline() {
     setSimScenario(scenario);
     setIsSimulating(true);
     setSimProgress(1);
-    setSimLog([
-      `[Passo 1/4] IES submete documento "${
-        scenario === "VALID"
-          ? "Diploma_Ciencia_Computacao_UFMG.pdf"
-          : "Certificado_Horas_Adulterado_PDF.pdf"
-      }"...`,
-    ]);
+
+    const docName =
+      scenario === "VALID"
+        ? "Diploma_Ciencia_Computacao.pdf"
+        : "Certificado_Adulterado_Fake.pdf";
+
+    const log1 =
+      language === "en"
+        ? `[Step 1/4] University submits document "${docName}"...`
+        : language === "es"
+        ? `[Paso 1/4] IES envía documento "${docName}"...`
+        : `[Passo 1/4] IES submete documento "${docName}"...`;
+
+    setSimLog([log1]);
 
     setTimeout(() => {
       setSimProgress(2);
-      setSimLog((prev) => [
-        ...prev,
-        `[Passo 2/4] Calculando SHA-256: ${
-          scenario === "VALID"
-            ? "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-            : "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-        }`,
-        `[Passo 2/4] Transmitindo atestação para o Solana Attestation Service (Devnet)...`,
-      ]);
+      const hash =
+        scenario === "VALID"
+          ? "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          : "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
+
+      const log2a =
+        language === "en"
+          ? `[Step 2/4] Computing SHA-256: ${hash}`
+          : language === "es"
+          ? `[Paso 2/4] Calculando SHA-256: ${hash}`
+          : `[Passo 2/4] Calculando SHA-256: ${hash}`;
+
+      const log2b =
+        language === "en"
+          ? `[Step 2/4] Broadcasting attestation to Solana Attestation Service (Devnet)...`
+          : language === "es"
+          ? `[Paso 2/4] Transmitiendo atestación a Solana Attestation Service (Devnet)...`
+          : `[Passo 2/4] Transmitindo atestação para o Solana Attestation Service (Devnet)...`;
+
+      setSimLog((prev) => [...prev, log2a, log2b]);
     }, 1000);
 
     setTimeout(() => {
       setSimProgress(3);
-      setSimLog((prev) => [
-        ...prev,
+      const log3 =
         scenario === "VALID"
-          ? `[Passo 3/4] Transação confirmada na Solana! Tx: 5K2UeXmJ6aP7vN4tL8qR1wZ9yD3bC2fE...`
-          : `[Passo 3/4] Atestação detectada com status: REVOGADA / FRAUDE NO HISTÓRICO.`,
-      ]);
+          ? language === "en"
+            ? `[Step 3/4] Transaction confirmed on Solana! Tx: 5K2UeXmJ6aP7vN4tL8qR1wZ9yD3bC2fE...`
+            : language === "es"
+            ? `[Paso 3/4] ¡Transacción confirmada en Solana! Tx: 5K2UeXmJ6aP7vN4tL8qR1wZ9yD3bC2fE...`
+            : `[Passo 3/4] Transação confirmada na Solana! Tx: 5K2UeXmJ6aP7vN4tL8qR1wZ9yD3bC2fE...`
+          : language === "en"
+          ? `[Step 3/4] Attestation status: REVOKED / DETECTED FRAUD IN HISTORY.`
+          : language === "es"
+          ? `[Paso 3/4] Estado de atestación: REVOCADA / FRAUDE DETECTADO EN HISTORIAL.`
+          : `[Passo 3/4] Atestação detectada com status: REVOGADA / FRAUDE NO HISTÓRICO.`;
+
+      setSimLog((prev) => [...prev, log3]);
     }, 2200);
 
     setTimeout(() => {
       setSimProgress(4);
-      setSimLog((prev) => [
-        ...prev,
+      const log4 =
         scenario === "VALID"
-          ? `[Passo 4/4] Validador RH: SELO VERDE emitido! "Documento autêntico e íntegro".`
-          : `[Passo 4/4] Validador RH: SELO VERMELHO! "Rejeitado: Hash adulterado ou revogado".`,
-      ]);
+          ? language === "en"
+            ? `[Step 4/4] HR Validator: GREEN BADGE! "Authentic and untampered document".`
+            : language === "es"
+            ? `[Paso 4/4] Validador RRHH: ¡SELLO VERDE! "Documento auténtico e íntegro".`
+            : `[Passo 4/4] Validador RH: SELO VERDE emitido! "Documento autêntico e íntegro".`
+          : language === "en"
+          ? `[Step 4/4] HR Validator: RED BADGE! "Rejected: Tampered or revoked hash".`
+          : language === "es"
+          ? `[Paso 4/4] Validador RRHH: ¡SELLO ROJO! "Rechazado: Hash adulterado o revocado".`
+          : `[Passo 4/4] Validador RH: SELO VERMELHO! "Rejeitado: Hash adulterado ou revogado".`;
+
+      setSimLog((prev) => [...prev, log4]);
       setIsSimulating(false);
     }, 3400);
   };
@@ -178,13 +187,13 @@ export default function VisualFlowPipeline() {
       <div className="text-center max-w-3xl mx-auto mb-12">
         <div className="inline-flex items-center gap-2 rounded-full border border-solana-green/30 bg-solana-green/10 px-4 py-1 text-xs font-bold text-solana-green mb-4">
           <Zap className="h-3.5 w-3.5" />
-          Pipeline de Confiança Ponta a Ponta
+          {p.badge}
         </div>
         <h2 className="font-display text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
-          Como o LattesChain Funciona
+          {p.title}
         </h2>
         <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-          Da assinatura na faculdade até a contratação no RH: entenda a jornada completa de uma credencial acadêmica imutável na Solana.
+          {p.subtitle}
         </p>
       </div>
 
@@ -231,7 +240,7 @@ export default function VisualFlowPipeline() {
           <div className="lg:col-span-7 space-y-5">
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-xs font-mono font-bold text-slate-400 bg-slate-800 px-3 py-1 rounded-md">
-                ETAPA {currentStep.id} DE 5
+                {language === "en" ? `STAGE ${currentStep.id} OF 5` : language === "es" ? `ETAPA ${currentStep.id} DE 5` : `ETAPA ${currentStep.id} DE 5`}
               </span>
               <span className={`text-xs font-semibold px-3 py-1 rounded-md border ${currentStep.badgeColor}`}>
                 {currentStep.badge}
@@ -275,10 +284,8 @@ export default function VisualFlowPipeline() {
                 <div className="w-16 h-16 rounded-2xl bg-blue-500/20 text-blue-400 flex items-center justify-center mx-auto shadow-inner">
                   <Building2 className="h-8 w-8" />
                 </div>
-                <div className="font-display font-bold text-lg text-white">Emissão IES Oficial</div>
-                <div className="text-xs text-slate-400 max-w-xs">
-                  A faculdade atesta os dados sem depender de papel ou carimbos manuais.
-                </div>
+                <div className="font-display font-bold text-lg text-white">{p.step1Title}</div>
+                <div className="text-xs text-slate-400 max-w-xs">{p.step1Desc}</div>
               </div>
             )}
 
@@ -287,10 +294,8 @@ export default function VisualFlowPipeline() {
                 <div className="w-16 h-16 rounded-2xl bg-solana-purple/20 text-solana-purple flex items-center justify-center mx-auto shadow-inner">
                   <Lock className="h-8 w-8" />
                 </div>
-                <div className="font-display font-bold text-lg text-white">Consenso Solana</div>
-                <div className="text-xs text-slate-400 max-w-xs">
-                  Hash registrado em bloco finalizado em menos de 1 segundo por fração de centavo.
-                </div>
+                <div className="font-display font-bold text-lg text-white">{p.step2Title}</div>
+                <div className="text-xs text-slate-400 max-w-xs">{p.step2Desc}</div>
               </div>
             )}
 
@@ -299,10 +304,8 @@ export default function VisualFlowPipeline() {
                 <div className="w-16 h-16 rounded-2xl bg-solana-green/20 text-solana-green flex items-center justify-center mx-auto shadow-inner">
                   <ShieldCheck className="h-8 w-8" />
                 </div>
-                <div className="font-display font-bold text-lg text-white">Auditoria Instantânea</div>
-                <div className="text-xs text-slate-400 max-w-xs">
-                  RH confere autenticidade sem ligar para ninguém e sem risco de falsificação.
-                </div>
+                <div className="font-display font-bold text-lg text-white">{p.step5Title}</div>
+                <div className="text-xs text-slate-400 max-w-xs">{p.step5Desc}</div>
               </div>
             )}
 
@@ -311,10 +314,8 @@ export default function VisualFlowPipeline() {
                 <div className="w-16 h-16 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center mx-auto shadow-inner">
                   <GraduationCap className="h-8 w-8" />
                 </div>
-                <div className="font-display font-bold text-lg text-white">Soberania Estudantil</div>
-                <div className="text-xs text-slate-400 max-w-xs">
-                  O diploma é posse vitalícia do estudante, protegido contra perda física ou falência institucional.
-                </div>
+                <div className="font-display font-bold text-lg text-white">{p.step3Title}</div>
+                <div className="text-xs text-slate-400 max-w-xs">{p.step3Desc}</div>
               </div>
             )}
 
@@ -323,10 +324,8 @@ export default function VisualFlowPipeline() {
                 <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto shadow-inner">
                   <BrainCircuit className="h-8 w-8" />
                 </div>
-                <div className="font-display font-bold text-lg text-white">Inteligência Acadêmica</div>
-                <div className="text-xs text-slate-400 max-w-xs">
-                  Transferências universitárias resolvidas por IA em segundos, eliminando meses de espera.
-                </div>
+                <div className="font-display font-bold text-lg text-white">{p.step4Title}</div>
+                <div className="text-xs text-slate-400 max-w-xs">{p.step4Desc}</div>
               </div>
             )}
           </div>
@@ -339,13 +338,13 @@ export default function VisualFlowPipeline() {
           <div>
             <div className="flex items-center gap-2 text-xs font-bold text-solana-green uppercase tracking-wider mb-1">
               <Sparkles className="h-4 w-4" />
-              Simulador em Tempo Real
+              {p.simulatorTitle}
             </div>
             <h4 className="font-display text-xl sm:text-2xl font-bold text-white">
-              Veja a Timeline Criptográfica em Ação
+              {p.title}
             </h4>
             <p className="text-xs sm:text-sm text-slate-300 mt-1">
-              Experimente a diferença entre um certificado legítimo e uma tentativa de fraude detectada instantaneamente.
+              {p.simulatorDesc}
             </p>
           </div>
 
@@ -356,7 +355,7 @@ export default function VisualFlowPipeline() {
               className="inline-flex items-center gap-2 rounded-xl bg-solana-green/20 border border-solana-green/40 px-4 py-2 text-xs font-bold text-solana-green hover:bg-solana-green/30 transition-all disabled:opacity-50"
             >
               <CheckCircle2 className="h-4 w-4" />
-              Simular Caso Legítimo
+              {language === "en" ? "Simulate Valid Case" : language === "es" ? "Simular Caso Válido" : "Simular Caso Legítimo"}
             </button>
             <button
               onClick={() => runSimulation("TAMPERED")}
@@ -364,7 +363,7 @@ export default function VisualFlowPipeline() {
               className="inline-flex items-center gap-2 rounded-xl bg-red-500/20 border border-red-500/40 px-4 py-2 text-xs font-bold text-red-400 hover:bg-red-500/30 transition-all disabled:opacity-50"
             >
               <AlertTriangle className="h-4 w-4" />
-              Simular Caso com Fraude
+              {language === "en" ? "Simulate Fraud Case" : language === "es" ? "Simular Caso con Fraude" : "Simular Caso com Fraude"}
             </button>
           </div>
         </div>
@@ -406,16 +405,20 @@ export default function VisualFlowPipeline() {
           {simLog.length === 0 ? (
             <div className="text-slate-500 flex items-center gap-2">
               <Play className="h-3.5 w-3.5 text-solana-green" />
-              Clique em um dos botões acima para iniciar a simulação ao vivo do fluxo...
+              {language === "en"
+                ? "Click one of the buttons above to test the verification pipeline live..."
+                : language === "es"
+                ? "Haz clic en uno de los botones para iniciar la simulación en vivo..."
+                : "Clique em um dos botões acima para iniciar a simulação ao vivo do fluxo..."}
             </div>
           ) : (
             simLog.map((log, i) => (
               <div
                 key={i}
                 className={
-                  log.includes("SELO VERMELHO") || log.includes("REVOGADA")
+                  log.includes("VERMELHO") || log.includes("REVOGADA") || log.includes("RED") || log.includes("REVOCADA") || log.includes("ROJO")
                     ? "text-red-400 font-bold"
-                    : log.includes("SELO VERDE")
+                    : log.includes("VERDE") || log.includes("GREEN")
                     ? "text-solana-green font-bold"
                     : "text-slate-300"
                 }

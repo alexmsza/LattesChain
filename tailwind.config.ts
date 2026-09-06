@@ -12,10 +12,10 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
         navy: {
-          900: "#0b1320",
-          800: "#101d32",
-          700: "#162744",
-          600: "#1e365d",
+          900: "rgb(var(--navy-900) / <alpha-value>)",
+          800: "rgb(var(--navy-800) / <alpha-value>)",
+          700: "rgb(var(--navy-700) / <alpha-value>)",
+          600: "rgb(var(--navy-600) / <alpha-value>)",
         },
         gold: {
           400: "#f6d860",
@@ -23,8 +23,10 @@ const config: Config = {
           600: "#c78f1e",
         },
         solana: {
-          purple: "#9945FF",
-          green: "#14F195",
+          purple: "rgb(var(--solana-purple) / <alpha-value>)",
+          purpleSoft: "rgb(var(--solana-purple-soft) / <alpha-value>)",
+          purpleDeep: "rgb(var(--solana-purple-deep) / <alpha-value>)",
+          green: "rgb(var(--solana-green) / <alpha-value>)",
         },
       },
       fontFamily: {
