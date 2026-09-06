@@ -47,8 +47,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/admin-protocol" className="hover:text-solana-green transition-colors">
-                  Governança do Protocolo
+                <Link href="/sobre" className="hover:text-solana-green transition-colors">
+                  Governança & Arquitetura
                 </Link>
               </li>
             </ul>

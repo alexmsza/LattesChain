@@ -260,7 +260,7 @@ export default function GuiaCarteiraPage() {
               </div>
               <h3 className="font-display text-base font-bold text-white">Homologação no Master Registry</h3>
               <p className="text-xs text-slate-300 leading-relaxed">
-                O CNPJ e a Portaria MEC da IES são associados à chave pública no contrato SAS através do portal <Link href="/admin-protocol" className="text-solana-purple hover:underline font-semibold">Governança</Link>.
+                O CNPJ e a Portaria MEC da IES são associados à chave pública no contrato SAS através da governança administrativa do protocolo.
               </p>
             </div>
 

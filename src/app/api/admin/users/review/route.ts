@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/server/supabaseAdmin";
+import { createServerSupabaseClient } from "@/lib/server/session";
 import { sendMail, templateAccountApproved, templateAccountRejected, APP_URL } from "@/lib/server/mailer";
 
 export const dynamic = "force-dynamic";
@@ -13,9 +14,34 @@ const ROLE_LABELS: Record<string, string> = {
 /**
  * POST /api/admin/users/review
  * Aprova ou rejeita o cadastro de um usuário diretamente pelo painel administrativo.
+ * Protegido: Apenas ADMINs autenticados podem executar.
  */
 export async function POST(req: NextRequest) {
   try {
+    const supabase = await createServerSupabaseClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "Acesso não autorizado." }, { status: 401 });
+    }
+
+    const admin = createAdminClient();
+
+    const { data: adminProfile } = await admin
+      .from("user_profiles")
+      .select("role, status")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (!adminProfile || adminProfile.role !== "ADMIN" || adminProfile.status !== "APPROVED") {
+      return NextResponse.json(
+        { error: "Acesso restrito à governança administrativa." },
+        { status: 403 }
+      );
+    }
+
     const body = await req.json();
     const { userId, action, reason } = body;
 
@@ -25,8 +51,6 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-
-    const admin = createAdminClient();
 
     // Busca dados do usuário para confirmação
     const { data: profile, error: fetchError } = await admin

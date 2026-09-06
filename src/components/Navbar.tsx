@@ -33,15 +33,23 @@ export function Navbar() {
   const { session, profile, loading, signOut } = useSession();
   const { language, setLanguage, dict } = useLanguage();
 
-  const navItems = [
+  const baseNavItems = [
     { href: "/", label: dict.nav.home, icon: GraduationCap },
     { href: "/validator", label: dict.nav.validator, icon: ShieldCheck },
     { href: "/student", label: dict.nav.student, icon: UserCheck },
     { href: "/university", label: dict.nav.university, icon: Building2 },
-    { href: "/admin-protocol", label: dict.nav.protocol, icon: Activity },
     { href: "/sobre", label: dict.nav.about, icon: Info },
     { href: "/precos", label: dict.nav.pricing, icon: Tag },
   ];
+
+  const navItems =
+    profile?.role === "ADMIN"
+      ? [
+          ...baseNavItems.slice(0, 4),
+          { href: "/admin-protocol", label: dict.nav.protocol, icon: Activity },
+          ...baseNavItems.slice(4),
+        ]
+      : baseNavItems;
 
   const handleSignOut = async () => {
     await signOut();

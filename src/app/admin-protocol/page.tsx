@@ -19,7 +19,10 @@ import {
   Clock,
   Search,
   Filter,
+  Lock,
+  ArrowRight,
 } from "lucide-react";
+import Link from "next/link";
 
 interface RegisteredInstitution {
   id: string;
@@ -67,6 +70,7 @@ export default function AdminProtocolPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [reviewingId, setReviewingId] = useState<string | null>(null);
   const [userMsg, setUserMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [isForbidden, setIsForbidden] = useState(false);
 
   const fetchInstitutions = async () => {
     try {
@@ -88,6 +92,10 @@ export default function AdminProtocolPage() {
     setFetchingUsers(true);
     try {
       const res = await fetch(`/api/admin/users?status=${userFilter}`);
+      if (res.status === 401 || res.status === 403) {
+        setIsForbidden(true);
+        return;
+      }
       if (res.ok) {
         const data = await res.json();
         if (data.users) {
@@ -192,6 +200,32 @@ export default function AdminProtocolPage() {
       u.company_name?.toLowerCase().includes(term)
     );
   });
+
+  if (isForbidden) {
+    return (
+      <div className="min-h-screen px-4 py-24 flex items-center justify-center">
+        <div className="glass-panel rounded-3xl p-8 max-w-md w-full border-red-500/40 text-center space-y-5 animate-in zoom-in-95">
+          <div className="h-14 w-14 rounded-2xl bg-red-950/40 border border-red-500/30 flex items-center justify-center mx-auto text-red-400">
+            <Lock className="h-7 w-7" />
+          </div>
+          <div className="space-y-1.5">
+            <h2 className="font-display text-xl font-bold text-white">Acesso Restrito à Governança</h2>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Esta área de administração do protocolo e homologação de cadastros é restrita a usuários autenticados com papel de <strong>ADMIN</strong>.
+            </p>
+          </div>
+          <div className="pt-2">
+            <Link
+              href="/login?next=%2Fadmin-protocol"
+              className="inline-flex items-center justify-center gap-2 w-full rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 py-3 text-xs font-bold text-navy-900 shadow-md shadow-solana-green/20 hover:scale-[1.01] transition-all"
+            >
+              Fazer Login como Administrador <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen px-4 py-12 sm:px-6 lg:px-8 max-w-6xl mx-auto">

@@ -1,18 +1,43 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/server/supabaseAdmin";
+import { createServerSupabaseClient } from "@/lib/server/session";
 
 export const dynamic = "force-dynamic";
 
 /**
  * GET /api/admin/users
- * Lista usuários cadastrados com suporte a filtro por status (PENDING, APPROVED, REJECTED, ALL)
+ * Lista usuários cadastrados com suporte a filtro por status (PENDING, APPROVED, REJECTED, ALL).
+ * Protegido: Apenas ADMINs autenticados podem consultar.
  */
 export async function GET(req: NextRequest) {
   try {
+    const supabase = await createServerSupabaseClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "Acesso não autorizado." }, { status: 401 });
+    }
+
+    const admin = createAdminClient();
+
+    const { data: profile } = await admin
+      .from("user_profiles")
+      .select("role, status")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (!profile || profile.role !== "ADMIN" || profile.status !== "APPROVED") {
+      return NextResponse.json(
+        { error: "Acesso restrito à governança administrativa." },
+        { status: 403 }
+      );
+    }
+
     const { searchParams } = new URL(req.url);
     const status = searchParams.get("status");
 
-    const admin = createAdminClient();
     let query = admin
       .from("user_profiles")
       .select("*")

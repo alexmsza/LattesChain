@@ -12,6 +12,7 @@ import { createServerClient } from "@supabase/ssr";
 const ROLE_GUARDS: Array<{ prefix: string; roles: string[] }> = [
   { prefix: "/student", roles: ["STUDENT", "ADMIN"] },
   { prefix: "/university", roles: ["INSTITUTION", "ADMIN"] },
+  { prefix: "/admin-protocol", roles: ["ADMIN"] },
 ];
 
 const AUTH_PAGES = ["/login", "/cadastro"];

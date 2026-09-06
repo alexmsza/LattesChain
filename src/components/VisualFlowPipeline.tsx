@@ -59,7 +59,7 @@ const PIPELINE_STEPS: PipelineStep[] = [
     description:
       "A atestação é registrada na blockchain Solana via SAS (Solana Attestation Service) e SPL Memo, ou emitida como Token-2022 Soulbound intransferível para diplomas.",
     actionText: "Ver Regras do Protocolo",
-    actionHref: "/admin-protocol",
+    actionHref: "/sobre",
     details: [
       "Carimbo temporal criptográfico irrefutável",
       "Token-2022 Soulbound (intransferível, anti-venda)",
