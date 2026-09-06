@@ -98,8 +98,8 @@ export default function AdminProtocolPage() {
     <div className="min-h-screen px-4 py-12 sm:px-6 lg:px-8 max-w-6xl mx-auto">
       {/* HEADER */}
       <div className="text-center max-w-3xl mx-auto mb-10">
-        <div className="inline-flex items-center gap-2 rounded-full border border-solana-purple/40 bg-purple-950/20 px-3.5 py-1 text-xs font-semibold text-purple-300 mb-4">
-          <Activity className="h-4 w-4 text-solana-green" />
+        <div className="inline-flex items-center gap-2 rounded-full border border-solana-purple/40 bg-solana-purple/10 px-3.5 py-1 text-xs font-semibold text-solana-purple mb-4">
+          <Activity className="h-4 w-4 text-solana-purple" />
           Master Registry & Protocol Governance
         </div>
         <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-white mb-3">
@@ -114,13 +114,13 @@ export default function AdminProtocolPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
         <div className="glass-panel rounded-2xl p-5">
           <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 mb-1">
-            <Building2 className="h-4 w-4 text-solana-green" />
+            <Building2 className="h-4 w-4 text-solana-purple" />
             IES Credenciadas
           </div>
           <div className="font-display text-3xl font-extrabold text-white">
             {institutions.length}
           </div>
-          <div className="text-[11px] text-solana-green mt-1">100% Homologadas MEC / On-Chain</div>
+          <div className="text-[11px] text-solana-purple mt-1">100% Homologadas MEC / On-Chain</div>
         </div>
 
         <div className="glass-panel rounded-2xl p-5">
@@ -128,7 +128,7 @@ export default function AdminProtocolPage() {
             <Layers className="h-4 w-4 text-solana-purple" />
             Total de Atestações
           </div>
-          <div className="font-display text-3xl font-extrabold text-solana-green">
+          <div className="font-display text-3xl font-extrabold text-solana-purple">
             {totalEmitted.toLocaleString("pt-BR")}
           </div>
           <div className="text-[11px] text-slate-400 mt-1">Registradas na Devnet / SAS</div>
@@ -158,18 +158,18 @@ export default function AdminProtocolPage() {
         <div className="lg:col-span-2 glass-panel rounded-3xl p-6 sm:p-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="font-display text-lg font-bold text-white flex items-center gap-2">
-              <Building2 className="h-5 w-5 text-solana-green" />
+              <Building2 className="h-5 w-5 text-solana-purple" />
               Instituições Emissoras Homologadas (Master Registry)
             </h2>
             <span className="text-xs text-slate-400">
-              Programa SAS: <code className="font-mono text-solana-green">22zoJM...</code>
+              Programa SAS: <code className="font-mono text-solana-purple">22zoJM...</code>
             </span>
           </div>
 
           <div className="space-y-3">
             {fetching ? (
               <div className="flex items-center justify-center gap-2 py-12 text-sm text-slate-400">
-                <RefreshCw className="h-4 w-4 animate-spin text-solana-green" />
+                <RefreshCw className="h-4 w-4 animate-spin text-solana-purple" />
                 Carregando autoridades emissoras do banco de dados...
               </div>
             ) : institutions.length === 0 ? (
@@ -188,7 +188,7 @@ export default function AdminProtocolPage() {
                     <div>
                       <div className="flex items-center gap-2 mb-1">
                         <span className="font-semibold text-white text-sm">{inst.name}</span>
-                        <span className="rounded-full bg-solana-green/10 border border-solana-green/30 px-2 py-0.5 text-[10px] font-semibold text-solana-green">
+                        <span className="rounded-full bg-solana-purple/10 border border-solana-purple/30 px-2 py-0.5 text-[10px] font-semibold text-solana-purple">
                           Ativa
                         </span>
                       </div>
@@ -202,7 +202,7 @@ export default function AdminProtocolPage() {
 
                     <div className="flex items-center gap-3 self-end sm:self-center">
                       <div className="text-right">
-                        <span className="text-xs font-bold text-solana-green block">
+                        <span className="text-xs font-bold text-solana-purple block">
                           {inst.total_issued?.toLocaleString("pt-BR")}
                         </span>
                         <span className="text-[10px] text-slate-500">atestações</span>
@@ -250,7 +250,7 @@ export default function AdminProtocolPage() {
                 placeholder="Ex: Universidade de Brasília (UnB)"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
-                className="w-full rounded-xl border border-slate-800 bg-navy-900/90 px-3 py-2 text-xs text-white focus:border-solana-green focus:outline-none"
+                className="w-full rounded-xl border border-slate-800 bg-navy-900/90 px-3 py-2 text-xs text-white focus:border-solana-purple focus:outline-none"
               />
             </div>
 
@@ -262,7 +262,7 @@ export default function AdminProtocolPage() {
                 placeholder="00.000.000/0001-00"
                 value={newCnpj}
                 onChange={(e) => setNewCnpj(e.target.value)}
-                className="w-full rounded-xl border border-slate-800 bg-navy-900/90 px-3 py-2 text-xs text-white focus:border-solana-green focus:outline-none"
+                className="w-full rounded-xl border border-slate-800 bg-navy-900/90 px-3 py-2 text-xs text-white focus:border-solana-purple focus:outline-none"
               />
             </div>
 
@@ -274,14 +274,14 @@ export default function AdminProtocolPage() {
                 placeholder="Chave Base58 da carteira da IES..."
                 value={newPubkey}
                 onChange={(e) => setNewPubkey(e.target.value)}
-                className="w-full rounded-xl border border-slate-800 bg-navy-900/90 px-3 py-2 text-xs font-mono text-white focus:border-solana-green focus:outline-none"
+                className="w-full rounded-xl border border-slate-800 bg-navy-900/90 px-3 py-2 text-xs font-mono text-white focus:border-solana-purple focus:outline-none"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-solana-purple to-solana-green py-2.5 text-xs font-bold text-white shadow-md shadow-solana-purple/20 hover:scale-[1.01] active:scale-[0.98] transition-all disabled:opacity-50"
+              className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-solana-purple py-2.5 text-xs font-bold text-white shadow-md shadow-solana-purple/20 hover:bg-solana-purpleDeep hover:scale-[1.01] active:scale-[0.98] transition-all disabled:opacity-50"
             >
               {loading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <PlusCircle className="h-4 w-4" />}
               {loading ? "Registrando no Master Registry..." : "Homologar IES no Protocolo"}
