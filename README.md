@@ -17,6 +17,9 @@
 - 🎙️ **[Roteiro de Pitch (5 Minutos)](docs/PITCH_DECK.md)**: Minutagem, slides e script de fala guiada para gravação do vídeo de submissão.
 - 🏛️ **[Arquitetura Tripartite & Modelo de Negócios](docs/12_tripartite_and_business_architecture.md)**: Ciclo Estudante ⇄ IES ⇄ RH, compliance de estágios, validade universal e produto Jovian Tech.
 - 📊 **[Plano de Negócios & GTM](docs/BUSINESS_PLAN.md)**: Modelagem B2B2C freemium, unit economics, personas e estratégia beachhead.
+- 💰 **[Modelo Financeiro & Custos de Infra](docs/17_financial_model_infrastructure_costs_and_pricing.md)**: Custos de Mainnet, cálculo de gás, margem de 94% e precificação de planos IES/RH.
+- 🔌 **[Manual de APIs & ERPs Legados](docs/18_external_api_and_erp_integration_guide.md)**: Chaves de API, emissão/verificação REST, integração com TOTVS RM e ATS de RH.
+- 🚀 **[Especificação de Migração Mainnet](docs/16_mainnet_migration_and_gasless_relayer_spec.md)**: State Compression (Bubblegum), nós RPC Helius e arquitetura gasless.
 - 🛡️ **[Relatório de Auditoria & Due Diligence](DUE_DILIGENCE_AUDIT.md)**: Auditoria técnica independente de 52KB cobrindo contratos Anchor, segurança e LGPD.
 - 🎬 **[Demo Runbook](demo/RUNBOOK.md)**: Passo a passo para execução da demonstração ao vivo on-chain e IA.
 - 🏗️ **[Visão Geral de Arquitetura](docs/01_architecture_overview.md)**: Topologia, privacidade LGPD e stack open-source.
@@ -100,6 +103,22 @@ graph LR
 ### 3.6 Arquitetura Tripartite & Internacionalização
 - **Ciclo Tripartite**: Aluno solicita ➔ Universidade atesta e homologa ➔ Empresa valida e contrata com compliance LGPD.
 - **Multilíngue (i18n)**: Suporte completo em tempo real para **Português**, **Inglês** e **Espanhol**.
+
+### 3.7 Governança Master e Painel do Proprietário (`/admin-protocol`)
+- **Supervisão 360º de IES**: Auditoria de instituições credenciadas e detalhamento nominal de todos os secretários e operadores vinculados.
+- **Transações On-Chain em Tempo Real**: Feed contínuo de ancoragens Solana com identificação de aluno, hash canônico, status Finalized e links diretos ao Solana Explorer.
+- **Provisionador de Chaves de API (ERP Gateway)**: Criação de API Tokens (`x-api-key`) com escopos granulares (`credentials:issue`, `credentials:verify`), rate limiting e revogação instantânea.
+- **Sandbox & Suporte Técnico**: Simulador integrado de verificação externa para auxílio operacional a secretarias e equipes de TI parceiras.
+
+### 3.8 API Gateway REST v1 para ERPs Legados (`/api/v1/*`)
+- **Zero Cripto Onboarding**: ERPs acadêmicos (TOTVS RM Educacional, Sophia, Lyceum) emitem e consultam diplomas via chamadas HTTP REST convencionais.
+- **Absorção Gasless**: O backend corporativo da Jovian Tech atua como *Fee Payer* na Solana, eliminando a necessidade de faculdades ou alunos adquirirem tokens em exchanges.
+- **SDKs & Exemplos Prontos**: Guias em cURL, C# (.NET Core), Python e Node.js documentados no [Manual de APIs & ERPs Legados](docs/18_external_api_and_erp_integration_guide.md).
+
+### 3.9 Conformidade MEC (Portarias nº 330/2018 e nº 554/2019)
+- **Parser de XML do MEC**: Leitor automático de XMLs de diplomas digitais e documentação acadêmica com extração estruturada de dados.
+- **Entrada Manual de Contingência**: Permite preenchimento assistido caso o XML da instituição possua inconsistências ou campos fora do padrão.
+- **RVDD com QR Code**: Geração de Representação Visual do Diploma Digital com código de validação pública instantânea.
 
 ---
 
