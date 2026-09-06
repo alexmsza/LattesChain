@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   ShieldCheck,
   FileSearch,
@@ -18,7 +19,9 @@ import {
   BadgeCheck,
 } from "lucide-react";
 
-export default function ValidatorPage() {
+function ValidatorContent() {
+  const searchParams = useSearchParams();
+  const queryParam = searchParams.get("query") || searchParams.get("hash");
   const [activeTab, setActiveTab] = useState<"VERIFY" | "EQUIVALENCE">("VERIFY");
 
   // Estados da Validação de Documentos
@@ -97,6 +100,13 @@ export default function ValidatorPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (queryParam) {
+      setSearchQuery(queryParam);
+      handleVerify(queryParam);
+    }
+  }, [queryParam]);
 
   const generateTrustReport = async (facts: any) => {
     setLoadingAI(true);
@@ -618,5 +628,19 @@ export default function ValidatorPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function ValidatorPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">
+          Carregando validador RH...
+        </div>
+      }
+    >
+      <ValidatorContent />
+    </Suspense>
   );
 }
