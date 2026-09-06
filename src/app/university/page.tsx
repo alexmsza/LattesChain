@@ -215,7 +215,7 @@ export default function UniversityPortal() {
     <div className="min-h-screen px-4 py-12 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-8">
       {/* HEADER SECTION */}
       <div className="text-center max-w-3xl mx-auto mb-8">
-        <div className="inline-flex items-center gap-2 rounded-full border border-solana-green/30 bg-solana-green/10 px-3.5 py-1 text-xs font-semibold text-solana-green mb-4">
+        <div className="inline-flex items-center gap-2 rounded-full border border-solana-purple/30 bg-solana-purple/10 px-3.5 py-1 text-xs font-semibold text-solana-purple mb-4">
           <Building2 className="h-4 w-4" />
           {dict.university.title}
         </div>
@@ -233,14 +233,14 @@ export default function UniversityPortal() {
           onClick={() => setActiveTab("REQUESTS")}
           className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all border ${
             activeTab === "REQUESTS"
-              ? "bg-solana-green text-navy-900 border-solana-green shadow-md shadow-solana-green/20"
+              ? "bg-solana-purple text-white border-solana-purple shadow-md shadow-solana-purple/20"
               : "bg-navy-900/60 text-slate-300 border-slate-800 hover:text-white"
           }`}
         >
           <Inbox className="h-4 w-4" />
           {dict.university.tabRequests}
           {pendingRequests.length > 0 && (
-            <span className="rounded-full bg-navy-900 text-solana-green px-2 py-0.5 text-[10px] font-black">
+            <span className="rounded-full bg-navy-900 text-solana-purple px-2 py-0.5 text-[10px] font-black">
               {pendingRequests.length}
             </span>
           )}
@@ -250,7 +250,7 @@ export default function UniversityPortal() {
           onClick={() => setActiveTab("DIRECT_ISSUE")}
           className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all border ${
             activeTab === "DIRECT_ISSUE"
-              ? "bg-solana-green text-navy-900 border-solana-green shadow-md shadow-solana-green/20"
+              ? "bg-solana-purple text-white border-solana-purple shadow-md shadow-solana-purple/20"
               : "bg-navy-900/60 text-slate-300 border-slate-800 hover:text-white"
           }`}
         >
@@ -262,7 +262,7 @@ export default function UniversityPortal() {
           onClick={() => setActiveTab("DIRECTORY")}
           className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all border ${
             activeTab === "DIRECTORY"
-              ? "bg-solana-green text-navy-900 border-solana-green shadow-md shadow-solana-green/20"
+              ? "bg-solana-purple text-white border-solana-purple shadow-md shadow-solana-purple/20"
               : "bg-navy-900/60 text-slate-300 border-slate-800 hover:text-white"
           }`}
         >
@@ -276,7 +276,7 @@ export default function UniversityPortal() {
         <div className="space-y-4 animate-in fade-in">
           {loadingRequests ? (
             <div className="flex items-center justify-center gap-2 py-16 text-sm text-slate-400">
-              <RefreshCw className="h-5 w-5 animate-spin text-solana-green" />
+              <RefreshCw className="h-5 w-5 animate-spin text-solana-purple" />
               Carregando fila de solicitações de alunos...
             </div>
           ) : requests.length === 0 ? (
@@ -363,7 +363,7 @@ export default function UniversityPortal() {
                         href={`https://explorer.solana.com/tx/${req.solana_tx_signature}?cluster=devnet`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-solana-green hover:underline text-xs font-mono"
+                        className="inline-flex items-center gap-1 text-solana-purple hover:underline text-xs font-mono"
                       >
                         Solana Explorer <ExternalLink className="h-3 w-3" />
                       </a>
@@ -381,7 +381,7 @@ export default function UniversityPortal() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in fade-in">
           <div className="lg:col-span-2 glass-panel rounded-3xl p-6 sm:p-8 glow-green">
             <h2 className="font-display text-lg font-bold text-white mb-6 flex items-center gap-2">
-              <PlusCircle className="h-5 w-5 text-solana-green" />
+              <PlusCircle className="h-5 w-5 text-solana-purple" />
               Nova Atestação Acadêmica Direta
             </h2>
 
@@ -402,7 +402,7 @@ export default function UniversityPortal() {
                       onClick={() => setDocType(type.id as any)}
                       className={`rounded-xl px-3 py-2.5 text-xs font-semibold transition-all text-center border ${
                         docType === type.id
-                          ? "bg-solana-green/15 text-solana-green border-solana-green/40 shadow-sm"
+                          ? "bg-solana-purple/15 text-solana-purple border-solana-purple/40 shadow-sm"
                           : "bg-navy-900/60 text-slate-400 border-slate-800 hover:text-white"
                       }`}
                     >
@@ -421,7 +421,7 @@ export default function UniversityPortal() {
                     placeholder="Ex: Alexandre Silva"
                     value={studentName}
                     onChange={(e) => setStudentName(e.target.value)}
-                    className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-green focus:outline-none"
+                    className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-purple focus:outline-none"
                   />
                 </div>
                 <div>
@@ -431,7 +431,7 @@ export default function UniversityPortal() {
                     placeholder="000.000.000-00"
                     value={studentCpf}
                     onChange={(e) => setStudentCpf(e.target.value)}
-                    className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-green focus:outline-none"
+                    className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-purple focus:outline-none"
                   />
                 </div>
               </div>
@@ -444,7 +444,7 @@ export default function UniversityPortal() {
                   placeholder="Ex: Algoritmos e Estruturas de Dados Avançados"
                   value={courseName}
                   onChange={(e) => setCourseName(e.target.value)}
-                  className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-green focus:outline-none"
+                  className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-purple focus:outline-none"
                 />
               </div>
 
@@ -455,7 +455,7 @@ export default function UniversityPortal() {
                     type="number"
                     value={workloadHours}
                     onChange={(e) => setWorkloadHours(e.target.value)}
-                    className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-green focus:outline-none"
+                    className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-purple focus:outline-none"
                   />
                 </div>
                 <div>
@@ -464,7 +464,7 @@ export default function UniversityPortal() {
                     type="text"
                     value={grade}
                     onChange={(e) => setGrade(e.target.value)}
-                    className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-green focus:outline-none"
+                    className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-purple focus:outline-none"
                   />
                 </div>
                 <div>
@@ -473,7 +473,7 @@ export default function UniversityPortal() {
                     type="text"
                     value={semester}
                     onChange={(e) => setSemester(e.target.value)}
-                    className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-green focus:outline-none"
+                    className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-purple focus:outline-none"
                   />
                 </div>
               </div>
@@ -481,7 +481,7 @@ export default function UniversityPortal() {
               <button
                 type="submit"
                 disabled={issuing}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 py-3.5 text-xs font-bold text-navy-900 shadow-md shadow-solana-green/20 hover:scale-[1.01] transition-all disabled:opacity-50"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-solana-purple py-3.5 text-xs font-bold text-white shadow-md shadow-solana-purple/20 hover:bg-solana-purpleDeep hover:scale-[1.01] transition-all disabled:opacity-50"
               >
                 {issuing ? <RefreshCw className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
                 {issuing ? "Ancorando na Solana Devnet..." : "Emitir Atestação Criptográfica"}
@@ -494,7 +494,7 @@ export default function UniversityPortal() {
               <h3 className="font-display font-bold text-white text-sm mb-3">Última Emissão Realizada</h3>
               {lastIssued ? (
                 <div className="space-y-2 text-xs">
-                  <span className="rounded-full bg-solana-green/10 text-solana-green px-2 py-0.5 text-[10px] font-bold">
+                  <span className="rounded-full bg-solana-purple/10 text-solana-purple px-2 py-0.5 text-[10px] font-bold">
                     {lastIssued.status}
                   </span>
                   <p className="font-semibold text-white">{lastIssued.course_name}</p>
@@ -503,7 +503,7 @@ export default function UniversityPortal() {
                     href={lastIssued.explorer_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-solana-green hover:underline font-mono text-[11px] pt-1"
+                    className="inline-flex items-center gap-1 text-solana-purple hover:underline font-mono text-[11px] pt-1"
                   >
                     Ver no Solana Explorer <ExternalLink className="h-3 w-3" />
                   </a>
@@ -527,7 +527,7 @@ export default function UniversityPortal() {
                 placeholder={dict.university.studentSearchPlaceholder}
                 value={searchStudent}
                 onChange={(e) => setSearchStudent(e.target.value)}
-                className="w-full rounded-xl border border-slate-800 bg-navy-900/90 pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:border-solana-green focus:outline-none"
+                className="w-full rounded-xl border border-slate-800 bg-navy-900/90 pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:border-solana-purple focus:outline-none"
               />
             </div>
             <span className="text-xs text-slate-400 self-end sm:self-center">
@@ -537,7 +537,7 @@ export default function UniversityPortal() {
 
           {loadingStudents ? (
             <div className="flex items-center justify-center gap-2 py-16 text-sm text-slate-400">
-              <RefreshCw className="h-5 w-5 animate-spin text-solana-green" />
+              <RefreshCw className="h-5 w-5 animate-spin text-solana-purple" />
               Carregando diretório de alunos e históricos...
             </div>
           ) : filteredStudents.length === 0 ? (
@@ -562,7 +562,7 @@ export default function UniversityPortal() {
                       Wallet: {stud.solana_wallet_custodial}
                     </div>
                     <div className="flex items-center gap-3 pt-2 text-xs">
-                      <span className="text-solana-green font-bold">
+                      <span className="text-solana-purple font-bold">
                         {stud.total_hours}h atestadas
                       </span>
                       <span className="text-slate-400">•</span>
@@ -577,7 +577,7 @@ export default function UniversityPortal() {
                       onClick={() => setSelectedStudentForHistory(stud)}
                       className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-navy-800/80 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700"
                     >
-                      <Eye className="h-3.5 w-3.5 text-solana-green" />
+                      <Eye className="h-3.5 w-3.5 text-solana-purple" />
                       {dict.university.viewHistory}
                     </button>
                   </div>
@@ -621,7 +621,7 @@ export default function UniversityPortal() {
                       <span className="font-bold text-white text-xs">
                         {rec.metadata?.course_name || rec.document_type}
                       </span>
-                      <span className="text-[10px] text-solana-green font-mono">
+                      <span className="text-[10px] text-solana-purple font-mono">
                         {rec.metadata?.workload_hours ? `${rec.metadata.workload_hours}h` : "Certificado"}
                       </span>
                     </div>
@@ -632,7 +632,7 @@ export default function UniversityPortal() {
                       href={`https://explorer.solana.com/tx/${rec.solana_tx_signature}?cluster=devnet`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-solana-green hover:underline text-[10px] font-mono pt-1"
+                      className="inline-flex items-center gap-1 text-solana-purple hover:underline text-[10px] font-mono pt-1"
                     >
                       Transação Solana <ExternalLink className="h-3 w-3" />
                     </a>
