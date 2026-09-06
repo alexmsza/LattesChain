@@ -105,8 +105,10 @@ graph LR
 ### Fluxo de cadastro e aprovação (comum aos 3 papéis)
 1. Usuário preenche `/cadastro` escolhendo o perfil (Estudante/IES/RH) — CPF (estudante) e CNPJ (IES) são validados por dígito verificador.
 2. `POST /api/auth/signup` cria a conta no Supabase Auth com perfil `PENDING` (tabela `user_profiles`, criada por trigger `on_auth_user_created`).
-3. O **email oficial** (LattesChain@jovian.foo) recebe um email com links assinados (HMAC-SHA256, validade 72h) para **Aprovar** ou **Reprovar** o cadastro.
-4. Aprovação → status `APPROVED`, usuário desbanido e notificado por email. Reprovação → status `REJECTED`, usuário banido no GoTrue e notificado com o motivo.
+3. **Mecanismo Duplo de Homologação**:
+   - **Painel Administrativo (`/admin-protocol`)**: A equipe gestora acessa a aba "Gestão de Cadastros", visualiza a lista filtrável de usuários (`GET /api/admin/users`) e aprova ou recusa cadastros com 1 clique (`POST /api/admin/users/review`).
+   - **E-mail Oficial Transacional**: O administrador recebe um e-mail com links assinados via HMAC-SHA256 (validade 72h) para Aprovar (`/api/auth/approve`) ou Reprovar (`/api/auth/reject`).
+4. Aprovação → status `APPROVED`, usuário notificado e acesso liberado. Reprovação → status `REJECTED`, perfil bloqueado e usuário informado com a justificativa.
 5. O login (`/login`) só libera sessão para perfis `APPROVED`; `PENDING` recebe aviso de análise e `REJECTED` recebe aviso de reprovação.
 
 ### Recuperação de acesso

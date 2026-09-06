@@ -22,6 +22,8 @@
 | `09_threat_model.md` | Threat Model | STRIDE + DFD, riscos rankeados, DPIA esqueleto |
 | `10_runbooks.md` | Runbooks | RB-01 a RB-10 resposta a incidentes |
 | `11_fullstack_and_demo_guide.md` | Guia Full-Stack & Demo | APIs Next.js, persistência Supabase, equivalência de IA e branch mock |
+| `12_tripartite_and_business_architecture.md` | Arquitetura Tripartite & Negócios | Modelo de valor compartilhado IES ⇄ Estudante ⇄ RH e compliance |
+| `13_mcp_integrations_and_vercel_setup.md` | Guia MCP & CI/CD Vercel | Setup Vercel MCP, Supabase Preview CI e boas práticas de deploy |
 | `adr/001-007` | ADRs | 7 decisões de arquitetura formalizadas |
 | `LattesChain.md` | Documento mestre (histórico) | Visão original — **subsumido** pelos docs numerados; manter como referência |
 

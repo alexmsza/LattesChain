@@ -165,15 +165,15 @@ Implementado interativamente na landing page ([`VisualFlowPipeline.tsx`](src/com
 
 | Rota | Descrição | Acesso |
 | :--- | :--- | :---: |
-| `/` | Landing page institucional com timeline visual do fluxo e simulador interativo | Público |
-| `/validator` | Validador público de documentos, test drive e motor de equivalência curricular por IA | Público |
+| `/` | Landing page com posicionamento tripartite, métricas e pipeline interativo | Público |
+| `/validator` | Validador público de documentos, exportação de certidão PDF e motor de IA | Público |
 | `/student` | Passaporte acadêmico do aluno com barra de horas MEC, QR code e solicitações | Estudante |
 | `/university` | Portal do emissor IES com emissão on-chain, triagem de pedidos e diretório | IES |
-| `/admin-protocol` | Governança do Master Registry, credenciamento de IES e circuit breakers | Administrador |
+| `/admin-protocol` | Governança de autoridades IES e homologação de novos usuários com 1 clique | Administrador |
 | `/precos` | Planos comerciais para Universidades, RHs e gratuidade para estudantes | Público |
 | `/sobre` | Detalhamento institucional do protocolo LattesChain e Jovian Tech | Público |
-| `/login` | Autenticação unificada por perfil com Supabase Auth | Público |
-| `/cadastro` | Cadastro de novos alunos ou instituições parceiras | Público |
+| `/login` | Autenticação com verificação de perfil aprovado (Supabase Auth) | Público |
+| `/cadastro` | Solicitação de cadastro com validação de CPF/CNPJ e ticket de protocolo | Público |
 
 ### 6.2 Endpoints REST da API
 
@@ -189,6 +189,11 @@ Implementado interativamente na landing page ([`VisualFlowPipeline.tsx`](src/com
 | `POST` | `/api/requests/institution/review` | Aprova ou rejeita solicitações de alunos pela universidade |
 | `POST` | `/api/compliance/request` | Cria solicitação de compliance educacional para processos seletivos |
 | `GET` | `/api/compliance/student` | Consulta termos e autorizações de compliance de um candidato |
+| `GET` | `/api/admin/users` | Lista contas de usuários cadastradas com filtro por status (`PENDING`, `APPROVED`, etc.) |
+| `POST` | `/api/admin/users/review` | Aprova ou rejeita solicitação de cadastro com envio de notificação |
+| `POST` | `/api/auth/signup` | Criação de usuário no Supabase Auth com ticket e perfil pendente |
+| `GET` | `/api/auth/approve` | Link assinado HMAC-SHA256 para homologação de cadastro via email |
+| `GET` | `/api/auth/reject` | Link assinado HMAC-SHA256 para recusa de cadastro via email |
 
 ---
 

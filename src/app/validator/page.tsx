@@ -20,6 +20,7 @@ import {
   Briefcase,
   Send,
   Check,
+  Printer,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
@@ -384,42 +385,54 @@ function ValidatorContent() {
                 </div>
 
                 {verificationResult.isValid && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-800/80 pt-6 text-sm">
-                    <div>
-                      <span className="text-xs text-slate-500 uppercase tracking-wider block">Instituição Emissora</span>
-                      <span className="font-semibold text-slate-200">{verificationResult.institution_name}</span>
-                      <div className="text-xs text-slate-400">CNPJ: {verificationResult.institution_cnpj}</div>
+                  <>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-800/80 pt-6 text-sm">
+                      <div>
+                        <span className="text-xs text-slate-500 uppercase tracking-wider block">Instituição Emissora</span>
+                        <span className="font-semibold text-slate-200">{verificationResult.institution_name}</span>
+                        <div className="text-xs text-slate-400">CNPJ: {verificationResult.institution_cnpj}</div>
+                      </div>
+                      <div>
+                        <span className="text-xs text-slate-500 uppercase tracking-wider block">Título / Curso</span>
+                        <span className="font-semibold text-slate-200">
+                          {verificationResult.metadata?.course_name || verificationResult.document_type}
+                        </span>
+                        {verificationResult.metadata?.workload_hours && (
+                          <div className="text-xs text-slate-400">
+                            Carga Horária: {verificationResult.metadata.workload_hours}h
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <span className="text-xs text-slate-500 uppercase tracking-wider block">Hash SHA-256</span>
+                        <span className="font-mono text-xs text-slate-300 truncate block">
+                          {verificationResult.document_hash}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-xs text-slate-500 uppercase tracking-wider block">Transação Solana</span>
+                        <a
+                          href={`https://explorer.solana.com/tx/${verificationResult.solana_tx_signature}?cluster=devnet`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 font-mono text-xs text-solana-green hover:underline"
+                        >
+                          {verificationResult.solana_tx_signature?.substring(0, 22)}...
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      </div>
                     </div>
-                    <div>
-                      <span className="text-xs text-slate-500 uppercase tracking-wider block">Título / Curso</span>
-                      <span className="font-semibold text-slate-200">
-                        {verificationResult.metadata?.course_name || verificationResult.document_type}
-                      </span>
-                      {verificationResult.metadata?.workload_hours && (
-                        <div className="text-xs text-slate-400">
-                          Carga Horária: {verificationResult.metadata.workload_hours}h
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <span className="text-xs text-slate-500 uppercase tracking-wider block">Hash SHA-256</span>
-                      <span className="font-mono text-xs text-slate-300 truncate block">
-                        {verificationResult.document_hash}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-xs text-slate-500 uppercase tracking-wider block">Transação Solana</span>
-                      <a
-                        href={`https://explorer.solana.com/tx/${verificationResult.solana_tx_signature}?cluster=devnet`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1 font-mono text-xs text-solana-green hover:underline"
+
+                    <div className="mt-6 pt-4 border-t border-slate-800 flex justify-end no-print">
+                      <button
+                        onClick={() => window.print()}
+                        className="inline-flex items-center gap-2 rounded-xl bg-slate-800/90 hover:bg-slate-700 border border-slate-700 px-4 py-2 text-xs font-bold text-slate-200 hover:text-white transition-all shadow-sm"
                       >
-                        {verificationResult.solana_tx_signature?.substring(0, 22)}...
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
+                        <Printer className="h-4 w-4 text-solana-green" />
+                        Imprimir / Salvar Certidão de Veracidade (PDF)
+                      </button>
                     </div>
-                  </div>
+                  </>
                 )}
               </div>
 
