@@ -3,13 +3,13 @@ import { GraduationCap, ExternalLink, Linkedin, Instagram, Globe } from "lucide-
 
 export function Footer() {
   return (
-    <footer className="border-t border-slate-850 bg-[#060910] py-12 text-slate-400 no-print">
+    <footer className="border-t border-slate-850 bg-[#0a0714] py-12 text-slate-400 no-print">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
           {/* COLUNA 1: PROJETO */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <GraduationCap className="h-6 w-6 text-solana-green" />
+              <GraduationCap className="h-6 w-6 text-solana-purple" />
               <span className="font-display text-lg font-bold text-white">
                 Lattes<span className="text-solana-green">Chain</span>
               </span>
@@ -27,27 +27,27 @@ export function Footer() {
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200 mb-4">Protocolo & Guias</h4>
             <ul className="space-y-2 text-xs">
               <li>
-                <Link href="/validator" className="hover:text-solana-green transition-colors">
+                <Link href="/validator" className="hover:text-solana-purple transition-colors">
                   Validador Público RH
                 </Link>
               </li>
               <li>
-                <Link href="/student" className="hover:text-solana-green transition-colors">
+                <Link href="/student" className="hover:text-solana-purple transition-colors">
                   Passaporte do Aluno
                 </Link>
               </li>
               <li>
-                <Link href="/university" className="hover:text-solana-green transition-colors">
+                <Link href="/university" className="hover:text-solana-purple transition-colors">
                   Portal da Universidade (IES)
                 </Link>
               </li>
               <li>
-                <Link href="/guia-carteira" className="text-solana-green hover:underline flex items-center gap-1 font-semibold">
+                <Link href="/guia-carteira" className="text-solana-purple hover:underline flex items-center gap-1 font-semibold">
                   Guia: Como Conectar a Carteira Solana
                 </Link>
               </li>
               <li>
-                <Link href="/sobre" className="hover:text-solana-green transition-colors">
+                <Link href="/sobre" className="hover:text-solana-purple transition-colors">
                   Governança & Arquitetura
                 </Link>
               </li>
@@ -63,7 +63,7 @@ export function Footer() {
                   href="https://attest.solana.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 hover:text-solana-green transition-colors"
+                  className="flex items-center gap-1.5 hover:text-solana-purple transition-colors"
                 >
                   Solana Attestation Service <ExternalLink className="h-3 w-3" />
                 </a>
@@ -73,7 +73,7 @@ export function Footer() {
                   href="https://solana.com/docs/core/token-extensions"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 hover:text-solana-green transition-colors"
+                  className="flex items-center gap-1.5 hover:text-solana-purple transition-colors"
                 >
                   Token-2022 Extensions <ExternalLink className="h-3 w-3" />
                 </a>
@@ -83,18 +83,18 @@ export function Footer() {
                   href="https://supabase.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 hover:text-solana-green transition-colors"
+                  className="flex items-center gap-1.5 hover:text-solana-purple transition-colors"
                 >
                   Supabase Backend <ExternalLink className="h-3 w-3" />
                 </a>
               </li>
               <li>
-                <Link href="/sobre" className="hover:text-solana-green transition-colors">
+                <Link href="/sobre" className="hover:text-solana-purple transition-colors">
                   Sobre a Jovian Tech
                 </Link>
               </li>
               <li>
-                <Link href="/privacidade" className="text-solana-green hover:underline transition-colors flex items-center gap-1">
+                <Link href="/privacidade" className="text-solana-purple hover:underline transition-colors flex items-center gap-1">
                   Política de Privacidade (LGPD)
                 </Link>
               </li>
@@ -141,7 +141,7 @@ export function Footer() {
                     href="https://jovian.foo/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-[11px] text-solana-green hover:underline transition-colors"
+                    className="inline-flex items-center gap-1 text-[11px] text-solana-purple hover:underline transition-colors"
                     title="Website Jovian Tech"
                   >
                     <Globe className="h-3.5 w-3.5" />
@@ -167,7 +167,7 @@ export function Footer() {
         <div className="border-t border-slate-800/60 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
           <p>© {new Date().getFullYear()} LattesChain / EduCore Protocol • Desenvolvido por Alex Miqueias • Jovian Tech.</p>
           <div className="flex items-center gap-4">
-            <Link href="/privacidade" className="text-slate-400 hover:text-solana-green transition-colors underline">
+            <Link href="/privacidade" className="text-slate-400 hover:text-solana-purple transition-colors underline">
               Privacidade & LGPD por Design (Zero PII on-chain)
             </Link>
           </div>

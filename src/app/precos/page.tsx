@@ -37,7 +37,7 @@ export default function PrecosPage() {
     <div className="min-h-screen px-4 py-16 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-16">
       {/* HEADER */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
-        <div className="inline-flex items-center gap-2 rounded-full border border-solana-green/40 bg-emerald-950/20 px-4 py-1.5 text-xs font-semibold text-solana-green">
+        <div className="inline-flex items-center gap-2 rounded-full border border-solana-purple/40 bg-solana-purple/10 px-4 py-1.5 text-xs font-semibold text-solana-purple">
           <Sparkles className="h-4 w-4" />
           {dict.pricing.badge}
         </div>
@@ -52,7 +52,7 @@ export default function PrecosPage() {
       {/* PLANOS PARA UNIVERSIDADES (IES) */}
       <div className="space-y-6">
         <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
-          <Building2 className="h-6 w-6 text-solana-green" />
+          <Building2 className="h-6 w-6 text-solana-purple" />
           <h2 className="font-display text-2xl font-bold text-white">
             {dict.pricing.universitiesTitle}
           </h2>
@@ -88,12 +88,12 @@ export default function PrecosPage() {
           </div>
 
           {/* IES CAMPUS PRO */}
-          <div className="glass-panel rounded-3xl p-6 border-solana-green/40 glow-green flex flex-col justify-between space-y-6 relative">
-            <div className="absolute -top-3 right-6 rounded-full bg-solana-green px-3 py-0.5 text-[10px] font-bold text-navy-900 uppercase tracking-wider">
+          <div className="glass-panel rounded-3xl p-6 border-solana-purple/40 glow-purple flex flex-col justify-between space-y-6 relative">
+            <div className="absolute -top-3 right-6 rounded-full bg-solana-purple px-3 py-0.5 text-[10px] font-bold text-white uppercase tracking-wider">
               Mais Popular
             </div>
             <div className="space-y-3">
-              <span className="text-xs font-semibold uppercase tracking-wider text-solana-green">
+              <span className="text-xs font-semibold uppercase tracking-wider text-solana-purple">
                 Campus Completo
               </span>
               <h3 className="font-display text-xl font-bold text-white">Plano Campus Pro</h3>
@@ -116,7 +116,7 @@ export default function PrecosPage() {
                 document.getElementById("lead-form")?.scrollIntoView({ behavior: "smooth" });
                 setOrgType("IES Pro");
               }}
-              className="w-full text-center rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 py-2.5 text-xs font-bold text-navy-900 shadow-md shadow-solana-green/20 hover:scale-[1.01] transition-all"
+              className="w-full text-center rounded-full bg-solana-purple py-2.5 text-xs font-bold text-white shadow-md shadow-solana-purple/20 hover:bg-solana-purpleDeep hover:scale-[1.01] transition-all"
             >
               Contratar Campus Pro
             </button>
@@ -179,7 +179,7 @@ export default function PrecosPage() {
           </ul>
           <Link
             href="/validator"
-            className="inline-flex items-center justify-center gap-2 w-full rounded-xl bg-gradient-to-r from-solana-purple to-purple-600 py-3 text-xs font-bold text-white shadow-md shadow-purple-500/20 hover:scale-[1.01] transition-all"
+            className="inline-flex items-center justify-center gap-2 w-full rounded-full bg-solana-purple py-3 text-xs font-bold text-white shadow-md shadow-solana-purple/20 hover:bg-solana-purpleDeep hover:scale-[1.01] transition-all"
           >
             Acessar Validador RH
           </Link>
@@ -220,56 +220,57 @@ export default function PrecosPage() {
       </div>
 
       {/* LEAD CONTACT FORM */}
-      <div id="lead-form" className="glass-panel rounded-3xl p-8 sm:p-10 border-slate-800">
-        <div className="max-w-2xl mx-auto space-y-6 text-center">
-          <span className="text-xs font-bold uppercase tracking-widest text-solana-green">
+      <div id="lead-form" className="relative overflow-hidden rounded-3xl bg-solana-purple p-8 sm:p-12">
+        <div className="dot-cluster pointer-events-none absolute -right-16 -top-16 h-72 w-72 opacity-40" style={{ filter: "brightness(3)" }} />
+        <div className="relative max-w-2xl mx-auto space-y-6 text-center">
+          <span className="text-xs font-bold uppercase tracking-widest text-white/70">
             Jovian Tech Enterprise Solutions
           </span>
           <h2 className="font-display text-2xl sm:text-3xl font-bold text-white">
             Solicitar Contratação ou Proposta Customizada
           </h2>
-          <p className="text-xs sm:text-sm text-slate-300">
+          <p className="text-xs sm:text-sm text-white/80">
             Nossa equipe de engenharia Web3 e conformidade acadêmica entrará em contato em até 24 horas úteis.
           </p>
 
           {sentLead ? (
-            <div className="rounded-2xl border border-emerald-500/40 bg-emerald-950/20 p-6 text-center space-y-2 animate-in fade-in">
-              <CheckCircle2 className="h-8 w-8 text-emerald-400 mx-auto" />
+            <div className="rounded-2xl border border-white/30 bg-white/10 p-6 text-center space-y-2 animate-in fade-in">
+              <CheckCircle2 className="h-8 w-8 text-white mx-auto" />
               <h3 className="font-semibold text-white text-base">Solicitação Enviada com Sucesso!</h3>
-              <p className="text-xs text-slate-300">
+              <p className="text-xs text-white/80">
                 O time da Jovian Tech entrará em contato pelo e-mail informado com a minuta contratual e credenciais de homologação.
               </p>
             </div>
           ) : (
             <form onSubmit={handleLeadSubmit} className="space-y-4 text-left max-w-md mx-auto pt-2">
               <div>
-                <label className="text-xs text-slate-400 block mb-1">Nome da Instituição ou Empresa</label>
+                <label className="text-xs text-white/80 block mb-1">Nome da Instituição ou Empresa</label>
                 <input
                   type="text"
                   required
                   placeholder="Ex: Universidade Federal / Nubank"
                   value={orgName}
                   onChange={(e) => setOrgName(e.target.value)}
-                  className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:border-solana-green focus:outline-none"
+                  className="w-full rounded-xl border-none bg-white px-3.5 py-2.5 text-xs text-navy-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-white/60"
                 />
               </div>
               <div>
-                <label className="text-xs text-slate-400 block mb-1">E-mail Corporativo</label>
+                <label className="text-xs text-white/80 block mb-1">E-mail Corporativo</label>
                 <input
                   type="email"
                   required
                   placeholder="reitoria@universidade.edu.br"
                   value={orgEmail}
                   onChange={(e) => setOrgEmail(e.target.value)}
-                  className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:border-solana-green focus:outline-none"
+                  className="w-full rounded-xl border-none bg-white px-3.5 py-2.5 text-xs text-navy-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-white/60"
                 />
               </div>
               <div>
-                <label className="text-xs text-slate-400 block mb-1">Plano de Interesse</label>
+                <label className="text-xs text-white/80 block mb-1">Plano de Interesse</label>
                 <select
                   value={orgType}
                   onChange={(e) => setOrgType(e.target.value)}
-                  className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-green focus:outline-none"
+                  className="w-full rounded-xl border-none bg-white px-3.5 py-2.5 text-xs text-navy-900 focus:outline-none focus:ring-2 focus:ring-white/60"
                 >
                   <option value="IES Campus Pro">Universidade (Plano Campus Pro)</option>
                   <option value="IES Enterprise">Universidade (Enterprise / Multi-Campi)</option>
@@ -278,7 +279,7 @@ export default function PrecosPage() {
               </div>
               <button
                 type="submit"
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 py-3 text-xs font-bold text-navy-900 shadow-md shadow-solana-green/20 hover:scale-[1.01] transition-all"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-navy-900 py-3 text-xs font-bold text-white shadow-md hover:bg-navy-800 hover:scale-[1.01] transition-all"
               >
                 <Send className="h-4 w-4" />
                 {dict.pricing.ctaTalk}

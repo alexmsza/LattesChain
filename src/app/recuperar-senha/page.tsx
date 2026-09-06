@@ -44,10 +44,10 @@ export default function ForgotPasswordPage() {
         }}
       />
       <div className="relative w-full max-w-md">
-        <div className="glass-panel rounded-2xl p-8 glow-green">
+        <div className="glass-panel rounded-2xl p-8 glow-purple">
           <div className="mb-8 text-center">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-solana-green/10 border border-solana-green/30">
-              <KeyRound className="h-7 w-7 text-solana-green" />
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-solana-purple/10 border border-solana-purple/30">
+              <KeyRound className="h-7 w-7 text-solana-purple" />
             </div>
             <h1 className="font-display text-2xl font-bold text-white">Recuperar acesso</h1>
             <p className="mt-2 text-sm text-slate-400">
@@ -71,13 +71,13 @@ export default function ForgotPasswordPage() {
                     setSent(false);
                     setEmail("");
                   }}
-                  className="w-full rounded-xl border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-300 hover:border-solana-green/40 hover:text-white"
+                  className="w-full rounded-xl border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-300 hover:border-solana-purple/40 hover:text-white"
                 >
                   Usar outro e-mail
                 </button>
                 <Link
                   href="/login"
-                  className="block rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 px-4 py-2.5 text-sm font-bold text-navy-900"
+                  className="block rounded-full bg-gradient-to-r from-solana-green to-emerald-400 px-4 py-2.5 text-sm font-bold text-navy-900"
                 >
                   Voltar ao login
                 </Link>
@@ -106,14 +106,14 @@ export default function ForgotPasswordPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="voce@email.com"
-                      className="w-full rounded-xl border border-slate-700 bg-navy-800/50 py-3 pl-10 pr-4 text-sm text-white placeholder:text-slate-500 focus:border-solana-green/60 focus:outline-none focus:ring-1 focus:ring-solana-green/40"
+                      className="w-full rounded-xl border border-slate-700 bg-navy-800/50 py-3 pl-10 pr-4 text-sm text-white placeholder:text-slate-500 focus:border-solana-purple/60 focus:outline-none focus:ring-1 focus:ring-solana-purple/40"
                     />
                   </div>
                 </div>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 px-4 py-3 text-sm font-bold text-navy-900 shadow-md shadow-solana-green/20 transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="flex w-full items-center justify-center gap-2 rounded-full bg-solana-purple px-4 py-3 text-sm font-bold text-white shadow-md shadow-solana-purple/20 transition-all hover:bg-solana-purpleDeep disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {loading ? (
                     <>
@@ -128,7 +128,7 @@ export default function ForgotPasswordPage() {
               </form>
               <p className="mt-6 text-center text-sm text-slate-400">
                 Lembrou a senha?{" "}
-                <Link href="/login" className="font-semibold text-solana-green hover:text-solana-green/80">
+                <Link href="/login" className="font-semibold text-solana-purple hover:text-solana-purple/80">
                   Voltar ao login
                 </Link>
               </p>

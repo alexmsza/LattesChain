@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 :root {
-  --background: #080c14;
+  --background: #0e0a18;
   --foreground: #f8fafc;
-  --card-bg: rgba(16, 29, 50, 0.6);
+  --card-bg: rgba(27, 21, 44, 0.6);
   --card-border: rgba(226, 232, 240, 0.1);
-  --card-border-hover: rgba(20, 241, 149, 0.3);
-  --primary: #14F195;
-  --secondary: #9945FF;
+  --card-border-hover: rgba(138, 51, 245, 0.35);
+  --primary: #8a33f5;
+  --secondary: #14F195;
   --gold: #e0a82e;
 }
 
@@ -40,7 +40,7 @@ body {
 }
 
 .glow-purple {
-  box-shadow: 0 0 35px -5px rgba(153, 69, 255, 0.25);
+  box-shadow: 0 0 35px -5px rgba(138, 51, 245, 0.3);
 }
 
 .glow-gold {
@@ -50,9 +50,35 @@ body {
 /* Radial background grids */
 .bg-grid-pattern {
   background-size: 40px 40px;
-  background-image: 
+  background-image:
     linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+/* Signature keyword highlight: rounded pill outline hugging an inline word */
+.pill-highlight {
+  display: inline-flex;
+  align-items: center;
+  border: 1.5px solid rgba(138, 51, 245, 0.45);
+  border-radius: 9999px;
+  padding: 0 0.5em;
+  color: var(--primary);
+}
+
+/* Numbered row pattern (index + title + divider) */
+.numbered-row {
+  border-top: 1px solid rgba(226, 232, 240, 0.1);
+}
+.numbered-row:last-child {
+  border-bottom: 1px solid rgba(226, 232, 240, 0.1);
+}
+
+/* Decorative dot cluster: scattered dots fading out from one corner */
+.dot-cluster {
+  background-image: radial-gradient(rgba(138, 51, 245, 0.45) 1.5px, transparent 1.5px);
+  background-size: 18px 18px;
+  -webkit-mask-image: radial-gradient(circle at 25% 30%, black, transparent 72%);
+  mask-image: radial-gradient(circle at 25% 30%, black, transparent 72%);
 }
 
 /* Print Stylesheet for Official Attestation Certificates */
@@ -71,4 +97,3 @@ body {
     color: #0f172a !important;
   }
 }
-

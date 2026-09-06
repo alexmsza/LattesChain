@@ -40,7 +40,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${inter.variable} ${archivo.variable} dark`}>
-      <body className="flex min-h-screen flex-col bg-[#080c14] text-slate-100 antialiased selection:bg-solana-green/30 selection:text-solana-green">
+      <body className="flex min-h-screen flex-col bg-[#0e0a18] text-slate-100 antialiased selection:bg-solana-purple/30 selection:text-solana-purple">
         <LanguageProvider>
           <SecurityGuard />
           <Navbar />

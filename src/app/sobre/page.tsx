@@ -23,8 +23,8 @@ export default function SobrePage() {
     <div className="min-h-screen px-4 py-16 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-16">
       {/* HERO SECTION */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
-        <div className="inline-flex items-center gap-2 rounded-full border border-solana-purple/40 bg-purple-950/20 px-4 py-1.5 text-xs font-semibold text-purple-300">
-          <Sparkles className="h-4 w-4 text-solana-green" />
+        <div className="inline-flex items-center gap-2 rounded-full border border-solana-purple/40 bg-solana-purple/10 px-4 py-1.5 text-xs font-semibold text-solana-purple">
+          <Sparkles className="h-4 w-4" />
           {dict.about.badge}
         </div>
         <h1 className="font-display text-4xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
@@ -36,10 +36,10 @@ export default function SobrePage() {
       </div>
 
       {/* JOVIAN TECH VENTURE BUILDER CARD */}
-      <div className="glass-panel rounded-3xl p-8 sm:p-12 border-solana-green/30 glow-green relative overflow-hidden">
+      <div className="glass-panel rounded-3xl p-8 sm:p-12 border-solana-purple/30 glow-purple relative overflow-hidden">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
           <div className="space-y-4 max-w-2xl">
-            <span className="text-xs font-bold uppercase tracking-widest text-solana-green">
+            <span className="text-xs font-bold uppercase tracking-widest text-solana-purple">
               GovTech • DataSecAIOps • Web3
             </span>
             <h2 className="font-display text-2xl sm:text-3xl font-bold text-white">
@@ -52,7 +52,7 @@ export default function SobrePage() {
           <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0 w-full sm:w-auto">
             <Link
               href="/precos"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 px-6 py-3.5 text-sm font-bold text-navy-900 shadow-md shadow-solana-green/20 hover:scale-[1.02] transition-all"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-solana-purple px-6 py-3.5 text-sm font-bold text-white shadow-md shadow-solana-purple/20 hover:bg-solana-purpleDeep hover:scale-[1.02] transition-all"
             >
               Ver Planos e Contratação
               <ArrowRight className="h-4 w-4" />
@@ -124,7 +124,7 @@ export default function SobrePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="glass-panel rounded-2xl p-6 border-slate-800 space-y-3">
-            <div className="h-10 w-10 rounded-xl bg-solana-green/10 text-solana-green flex items-center justify-center">
+            <div className="h-10 w-10 rounded-xl bg-solana-purple/10 text-solana-purple flex items-center justify-center">
               <Layers className="h-5 w-5" />
             </div>
             <h3 className="font-display text-lg font-bold text-white">
@@ -136,7 +136,7 @@ export default function SobrePage() {
           </div>
 
           <div className="glass-panel rounded-2xl p-6 border-slate-800 space-y-3">
-            <div className="h-10 w-10 rounded-xl bg-solana-purple/20 text-purple-300 flex items-center justify-center">
+            <div className="h-10 w-10 rounded-xl bg-solana-purple/20 text-solana-purple flex items-center justify-center">
               <Award className="h-5 w-5" />
             </div>
             <h3 className="font-display text-lg font-bold text-white">
@@ -176,7 +176,7 @@ export default function SobrePage() {
       {/* VALIDADE UNIVERSAL & INTEROPERABILIDADE */}
       <div className="rounded-3xl border border-solana-purple/30 bg-purple-950/10 p-8 sm:p-10 space-y-6">
         <div className="flex items-center gap-3">
-          <Globe2 className="h-8 w-8 text-solana-green" />
+          <Globe2 className="h-8 w-8 text-solana-purple" />
           <h2 className="font-display text-2xl font-bold text-white">
             Validade Universal e Convenção de Haia
           </h2>
