@@ -103,6 +103,19 @@ export async function POST(req: Request) {
       });
     }
 
+    if (target === "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff") {
+      return NextResponse.json({
+        isValid: false,
+        isRevoked: true,
+        status: "DOCUMENTO REVOGADO (PERMANENT DELEGATE TOKEN-2022)",
+        document_hash: target,
+        reason: "Fraude documental detectada na auditoria do histórico acadêmico prévio.",
+        revoked_at: "2026-08-30T14:30:00Z",
+        solana_tx_signature: "9999999999999999999999999999999999999999999999999999999999999999",
+        error: "Esta credencial foi expressamente revogada pela IES emissora via autoridade permanente do Token-2022 na Solana.",
+      });
+    }
+
     // 3. Documento não encontrado
     return NextResponse.json({
       isValid: false,

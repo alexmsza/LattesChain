@@ -232,18 +232,7 @@ export default function ValidatorPage() {
 
             {/* Quick Demo Fill Buttons */}
             <div className="flex flex-wrap items-center gap-2 mb-4 text-xs text-slate-400">
-              <span>Exemplos para teste:</span>
-              <button
-                type="button"
-                onClick={() => {
-                  setFile(null);
-                  setSearchQuery("7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069");
-                  handleVerify("7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069");
-                }}
-                className="rounded-lg border border-slate-800 bg-slate-900 px-2 py-1 text-solana-green hover:border-solana-green/40"
-              >
-                Disciplina (SAS)
-              </button>
+              <span className="font-semibold text-slate-300">Testar com 1 clique:</span>
               <button
                 type="button"
                 onClick={() => {
@@ -251,9 +240,42 @@ export default function ValidatorPage() {
                   setSearchQuery("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
                   handleVerify("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
                 }}
-                className="rounded-lg border border-slate-800 bg-slate-900 px-2 py-1 text-amber-400 hover:border-amber-400/40"
+                className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-amber-400 hover:bg-amber-500/20 transition-colors"
               >
-                Diploma Soulbound (Token-2022)
+                🎓 Diploma Soulbound (UFMG)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setFile(null);
+                  setSearchQuery("7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069");
+                  handleVerify("7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069");
+                }}
+                className="rounded-lg border border-solana-green/30 bg-solana-green/10 px-2.5 py-1 text-solana-green hover:bg-solana-green/20 transition-colors"
+              >
+                📜 Disciplina Atestada (SAS)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setFile(null);
+                  setSearchQuery("9b71d224bd62f3785d96d46ad3ea3d73319bfbc2890caadae2dff72519673ca72");
+                  handleVerify("9b71d224bd62f3785d96d46ad3ea3d73319bfbc2890caadae2dff72519673ca72");
+                }}
+                className="rounded-lg border border-solana-purple/30 bg-solana-purple/10 px-2.5 py-1 text-solana-purple hover:bg-solana-purple/20 transition-colors"
+              >
+                ⏱️ Horas Extensão (Superteam)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setFile(null);
+                  setSearchQuery("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+                  handleVerify("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+                }}
+                className="rounded-lg border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-red-400 hover:bg-red-500/20 transition-colors"
+              >
+                ⚠️ Simular Fraude / Revogado
               </button>
             </div>
 
