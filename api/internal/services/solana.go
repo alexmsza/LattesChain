@@ -11,8 +11,8 @@ import (
 	"github.com/gagliardetto/solana-go/rpc"
 	"github.com/rs/zerolog/log"
 
-	"educore-api/internal/config"
-	"educore-api/internal/models"
+	"github.com/educore-latteschain/api/internal/config"
+	"github.com/educore-latteschain/api/internal/models"
 )
 
 // SolanaService handles all Solana blockchain interactions
@@ -132,12 +132,37 @@ func (s *SolanaService) GetUniversityRecord(ctx context.Context, institutionPubk
 	}
 
 	data := account.Value.Data.GetBinary()
+	if len(data) < 44 {
+		return nil, fmt.Errorf("account data too short: %d bytes", len(data))
+	}
+	instPubkey := solana.PublicKeyFromBytes(data[8:40])
+
+	// Read CNPJ length (4 bytes little endian) and data
+	cnpjLen := int(data[40]) | int(data[41])<<8 | int(data[42])<<16 | int(data[43])<<24
+	offset := 44
+	if len(data) < offset+cnpjLen+4 {
+		return nil, fmt.Errorf("corrupted account data for CNPJ (len: %d)", cnpjLen)
+	}
+	cnpjStr := string(data[offset : offset+cnpjLen])
+	offset += cnpjLen
+
+	// Read Name length and skip name bytes
+	nameLen := int(data[offset]) | int(data[offset+1])<<8 | int(data[offset+2])<<16 | int(data[offset+3])<<24
+	offset += 4
+	if len(data) < offset+nameLen+2 {
+		return nil, fmt.Errorf("corrupted account data for Name (len: %d)", nameLen)
+	}
+	offset += nameLen
+
+	isActive := data[offset] == 1
+	bump := data[offset+1]
+
 	return &models.UniversityRecordAccount{
-		Pubkey:             pda,
-		InstitutionPubkey:  solana.PublicKeyFromBytes(data[8:40]),
-		CNPJ:               string(data[40:54]),
-		IsActive:           data[54] == 1,
-		Bump:               data[55],
+		Pubkey:            pda,
+		InstitutionPubkey: instPubkey,
+		CNPJ:              cnpjStr,
+		IsActive:          isActive,
+		Bump:              bump,
 	}, nil
 }
 

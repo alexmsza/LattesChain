@@ -3,8 +3,10 @@ package utils
 import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
+	"crypto/hmac"
 	"crypto/rand"
 	"crypto/sha256"
+	"crypto/sha512"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -127,11 +129,9 @@ func deriveChild(parent *btcec.PrivateKey, index uint32) (*btcec.PrivateKey, err
 
 // hmacSHA512 computes HMAC-SHA512
 func hmacSHA512(key, data []byte) []byte {
-	// Simplified - use crypto/hmac in production
-	h := sha256.New()
-	h.Write(key)
-	h.Write(data)
-	return h.Sum(nil)
+	mac := hmac.New(sha512.New, key)
+	mac.Write(data)
+	return mac.Sum(nil)
 }
 
 // GenerateMasterSeed generates a new BIP39 master seed
@@ -222,10 +222,14 @@ func encodeDER(r, s *big.Int) ([]byte, error) {
 	}
 	
 	// Build DER: 0x30 [total-len] 0x02 [r-len] r 0x02 [s-len] s
-	return []byte{
+	der := []byte{
 		0x30, byte(2 + len(rBytes) + 2 + len(sBytes)),
 		0x02, byte(len(rBytes)),
-	}, nil // Incomplete - use crypto/ecdsa marshaling in production
+	}
+	der = append(der, rBytes...)
+	der = append(der, 0x02, byte(len(sBytes)))
+	der = append(der, sBytes...)
+	return der, nil
 }
 
 func trimLeadingZeros(b []byte) []byte {

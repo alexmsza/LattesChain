@@ -7,9 +7,9 @@ import (
 	"github.com/supabase-community/supabase-go"
 	"github.com/rs/zerolog/log"
 
-	"educore-api/internal/config"
-	"educore-api/internal/models"
-	"educore-api/internal/utils"
+	"github.com/educore-latteschain/api/internal/config"
+	"github.com/educore-latteschain/api/internal/models"
+	"github.com/educore-latteschain/api/internal/utils"
 )
 
 // SupabaseService handles all Supabase database interactions
