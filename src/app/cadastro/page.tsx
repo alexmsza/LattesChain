@@ -73,14 +73,23 @@ export default function SignupPage() {
           agree,
         }),
       });
-      const data = await res.json();
+      let data: any = null;
+      try {
+        data = await res.json();
+      } catch {
+        if (!res.ok) {
+          setError(`Erro no servidor (${res.status} ${res.statusText || ""}). Aguarde alguns instantes e tente novamente.`);
+          return;
+        }
+      }
+
       if (!res.ok) {
-        setError(data.error || "Falha ao enviar solicitação.");
+        setError(data?.error || "Falha ao enviar solicitação.");
         return;
       }
-      setSuccess({ ticketId: data.ticketId, message: data.message });
-    } catch {
-      setError("Erro de conexão. Verifique sua internet e tente novamente.");
+      setSuccess({ ticketId: data?.ticketId || "PENDING", message: data?.message || "Solicitação enviada com sucesso." });
+    } catch (err: any) {
+      setError(err?.message || "Erro de conexão. Verifique sua internet e tente novamente.");
     } finally {
       setLoading(false);
     }
