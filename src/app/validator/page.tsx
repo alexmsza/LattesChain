@@ -16,15 +16,15 @@ import {
   BookOpen,
   FileText,
   BadgeCheck,
+  Briefcase,
+  Send,
+  Check,
 } from "lucide-react";
-import {
-  evaluateMockEquivalence,
-  MOCK_SHOWCASE_STUDENT,
-  MOCK_REVOKED_DIPLOMA,
-} from "@/lib/mockData";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function ValidatorPage() {
-  const [activeTab, setActiveTab] = useState<"VERIFY" | "EQUIVALENCE">("VERIFY");
+  const { dict } = useLanguage();
+  const [activeTab, setActiveTab] = useState<"VERIFY" | "EQUIVALENCE" | "COMPLIANCE">("VERIFY");
 
   // Estados da Validação de Documentos
   const [file, setFile] = useState<File | null>(null);
@@ -53,6 +53,14 @@ export default function ValidatorPage() {
   const [loadingEquiv, setLoadingEquiv] = useState(false);
   const [equivResult, setEquivResult] = useState<any>(null);
 
+  // Estados da Solicitação de Comprovação de RH (Compliance)
+  const [candidateId, setCandidateId] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [recruiterEmail, setRecruiterEmail] = useState("");
+  const [purpose, setPurpose] = useState("ESTAGIO");
+  const [sendingCompliance, setSendingCompliance] = useState(false);
+  const [complianceSuccess, setComplianceSuccess] = useState<any | null>(null);
+
   // Computa SHA-256 do arquivo no browser
   const computeFileHash = async (selectedFile: File): Promise<string> => {
     const buffer = await selectedFile.arrayBuffer();
@@ -74,12 +82,11 @@ export default function ValidatorPage() {
       }
 
       if (!target) {
-        alert("Faça upload de um arquivo PDF ou selecione um dos exemplos de teste.");
+        alert("Faça upload de um arquivo PDF ou insira o hash SHA-256 / assinatura da transação.");
         setLoading(false);
         return;
       }
 
-      // 1. Tenta API do servidor
       try {
         const res = await fetch("/api/credentials/verify", {
           method: "POST",
@@ -87,62 +94,30 @@ export default function ValidatorPage() {
           body: JSON.stringify({ query: target }),
         });
 
-        if (res.ok) {
+        const contentType = res.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
           const data = await res.json();
           if (data && (data.isValid !== undefined || data.status)) {
             setVerificationResult(data);
-            if (data.isValid) generateTrustReport(data);
+            if (data.isValid) {
+              generateTrustReport(data);
+            }
             setLoading(false);
             return;
           }
         }
-      } catch {
-        // Fallback local caso servidor/Vercel falhe
-      }
 
-      // 2. Resolução Mock Local Imediata (Blindada contra falhas de rede)
-      if (target.startsWith("ffff") || target.toLowerCase().includes("revog")) {
         setVerificationResult({
           isValid: false,
-          status: "DOCUMENTO REVOGADO PELA IES (TOKEN-2022)",
-          error: "Atestação revogada pela universidade emissora via extensão PermanentDelegate por irregularidade cadastral.",
+          status: "DOCUMENTO NÃO LOCALIZADO",
+          error: "Nenhum registro on-chain correspondente a este hash foi encontrado na Solana Devnet ou Supabase.",
         });
-        setTrustReport(
-          "⚠️ ALERTA DE SEGURANÇA (Validação Criptográfica):\nEste diploma/certificado foi REVOGADO formalmente pela instituição emissora na rede Solana. Não possui validade jurídica para contratação."
-        );
-      } else {
-        const matchingRecord = MOCK_SHOWCASE_STUDENT.records.find(
-          (r) =>
-            r.hash.toLowerCase() === target.toLowerCase() ||
-            r.tx.toLowerCase() === target.toLowerCase()
-        );
-
-        const resultData = {
-          isValid: true,
-          status: "VÁLIDO NA SOLANA DEVNET",
-          document_type: matchingRecord?.title || "Certificado Acadêmico Atestado",
-          document_hash: matchingRecord?.hash || target,
-          solana_tx_signature:
-            matchingRecord?.tx ||
-            "5K2UeXmJ6aP7vN4tL8qR1wZ9yD3bC2fE4gH7jK9mP1rT3vX57890abcdef1234567890",
-          issued_at: new Date().toISOString(),
-          institution_name:
-            matchingRecord?.institution || "Universidade Federal de Minas Gerais (UFMG)",
-          institution_cnpj: "17.217.985/0001-04",
-          metadata: {
-            course_name: matchingRecord?.title || "Certificação Acadêmica",
-            workload_hours: matchingRecord?.hours || 72,
-            grade: matchingRecord?.grade || "Aprovado (9.5)",
-            status_onchain: matchingRecord?.status || "ATESTADO NO SAS",
-          },
-          explorer_url: `https://explorer.solana.com/tx/${
-            matchingRecord?.tx ||
-            "5K2UeXmJ6aP7vN4tL8qR1wZ9yD3bC2fE4gH7jK9mP1rT3vX57890abcdef1234567890"
-          }?cluster=devnet`,
-        };
-
-        setVerificationResult(resultData);
-        generateTrustReport(resultData);
+      } catch (networkErr: any) {
+        setVerificationResult({
+          isValid: false,
+          status: "ERRO DE CONEXÃO",
+          error: `Falha ao consultar protocolo: ${networkErr.message}`,
+        });
       }
     } catch (err: any) {
       console.error(err);
@@ -159,7 +134,9 @@ export default function ValidatorPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ facts }),
       });
-      if (res.ok) {
+
+      const contentType = res.headers.get("content-type");
+      if (res.ok && contentType && contentType.includes("application/json")) {
         const data = await res.json();
         if (data.report) {
           setTrustReport(data.report);
@@ -167,32 +144,11 @@ export default function ValidatorPage() {
           return;
         }
       }
-    } catch {
-      // Fallback local caso servidor falhe
+    } catch (err) {
+      console.error("Erro ao gerar parecer de IA:", err);
     }
 
-    // Fallback Mock Local Determinístico
-    const isRevoked = facts.isValid === false || facts.status?.includes("REVOGADO");
-    if (isRevoked) {
-      setTrustReport(
-        `⚠️ ALERTA DE SEGURANÇA — AUDITORIA CRIPTOGRÁFICA REPROVADA\n\n` +
-          `• Emissor: ${facts.institution_name || "Universidade Federal de Minas Gerais"}\n` +
-          `• Documento Auditado: ${facts.document_type || "Diploma"}\n` +
-          `• Status On-Chain: REVOGADO PELA IES.\n` +
-          `• Diagnóstico: Atestação revogada via Token-2022 PermanentDelegate por fraude prévia.\n\n` +
-          `Veredito para o RH: DOCUMENTO INVÁLIDO. REJEITAR IMEDIATAMENTE.`
-      );
-    } else {
-      setTrustReport(
-        `✅ RELATÓRIO DE CONFIANÇA (Verificação Criptográfica On-Chain)\n\n` +
-          `• Emissor Autorizado: ${facts.institution_name || "Universidade Federal de Minas Gerais (UFMG)"} (CNPJ: ${facts.institution_cnpj || "17.217.985/0001-04"})\n` +
-          `• Credencial Atestada: ${facts.document_type || "Certificado"} (${facts.metadata?.workload_hours || 72}h)\n` +
-          `• Padrão Tecnológico: Solana Attestation Service (SAS) + Token-2022 Soulbound\n` +
-          `• Integridade: O hash SHA-256 coincide 100% com os dados ancorados na Solana Devnet.\n` +
-          `• Conformidade LGPD: Zero PII on-chain; prova pública e auditável em sub-segundo.\n\n` +
-          `Veredito Executivo para o RH: DOCUMENTO 100% AUTÊNTICO E APTO PARA VALIDAÇÃO.`
-      );
-    }
+    setTrustReport("Parecer gerado com base nas atestações on-chain validadas.");
     setLoadingAI(false);
   };
 
@@ -223,7 +179,8 @@ export default function ValidatorPage() {
         body: JSON.stringify(payload),
       });
 
-      if (res.ok) {
+      const contentType = res.headers.get("content-type");
+      if (res.ok && contentType && contentType.includes("application/json")) {
         const data = await res.json();
         if (data && data.veredito) {
           setEquivResult(data);
@@ -231,62 +188,111 @@ export default function ValidatorPage() {
           return;
         }
       }
-    } catch {
-      // Ignora erro de rede/Vercel e aciona imediatamente o motor mock determinístico
+
+      alert("Não foi possível processar a equivalência curricular via IA no momento. Verifique os dados fornecidos.");
+    } catch (err: any) {
+      alert(`Falha de conexão com motor de equivalência IA: ${err.message}`);
+    } finally {
+      setLoadingEquiv(false);
+    }
+  };
+
+  const handleSendCompliance = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!candidateId || !companyName || !recruiterEmail) {
+      alert("Preencha todos os campos da solicitação.");
+      return;
     }
 
-    // Fallback Mock Canônico Determinístico (Nunca quebra em apresentações)
-    const mockData = evaluateMockEquivalence(payload.disciplina_a, payload.disciplina_b);
-    setEquivResult(mockData);
-    setLoadingEquiv(false);
+    setSendingCompliance(true);
+    setComplianceSuccess(null);
+
+    try {
+      const res = await fetch("/api/compliance/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          employer_name: companyName,
+          employer_email: recruiterEmail,
+          student_identifier: candidateId,
+          purpose,
+          requested_items: ["matricula_ativa", "historico", "horas_complementares"],
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setComplianceSuccess(data.request);
+        setCandidateId("");
+      } else {
+        const errData = await res.json();
+        alert(`Erro ao solicitar comprovação: ${errData.error || "Tente novamente."}`);
+      }
+    } catch (err: any) {
+      alert(`Falha de conexão: ${err.message}`);
+    } finally {
+      setSendingCompliance(false);
+    }
   };
 
   return (
-    <div className="min-h-screen px-4 py-12 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+    <div className="min-h-screen px-4 py-12 sm:px-6 lg:px-8 max-w-5xl mx-auto space-y-8">
       {/* HEADER SECTION */}
-      <div className="text-center max-w-2xl mx-auto mb-8">
+      <div className="text-center max-w-2xl mx-auto mb-6">
         <div className="inline-flex items-center gap-2 rounded-full border border-solana-green/30 bg-solana-green/10 px-3.5 py-1 text-xs font-semibold text-solana-green mb-4">
           <ShieldCheck className="h-4 w-4" />
-          Validador Público RH & Auditoria Curricular
+          {dict.validator.title}
         </div>
         <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-white mb-3">
           Verificação Instantânea & Camada de IA
         </h1>
         <p className="text-slate-400 text-sm sm:text-base">
-          Valide credenciais acadêmicas imutáveis direto da rede Solana ou utilize a IA para avaliar equivalência curricular entre universidades.
+          {dict.validator.subtitle}
         </p>
-
-        {/* TABS SELECTOR */}
-        <div className="flex items-center justify-center gap-2 mt-6">
-          <button
-            onClick={() => setActiveTab("VERIFY")}
-            className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all border ${
-              activeTab === "VERIFY"
-                ? "bg-solana-green text-navy-900 border-solana-green shadow-md shadow-solana-green/20"
-                : "bg-navy-900/60 text-slate-300 border-slate-800 hover:text-white"
-            }`}
-          >
-            <ShieldCheck className="h-4 w-4" />
-            1. Validador de Documentos (RH)
-          </button>
-          <button
-            onClick={() => setActiveTab("EQUIVALENCE")}
-            className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all border ${
-              activeTab === "EQUIVALENCE"
-                ? "bg-gradient-to-r from-solana-purple to-purple-500 text-white border-purple-400/40 shadow-md shadow-purple-500/20"
-                : "bg-navy-900/60 text-slate-300 border-slate-800 hover:text-white"
-            }`}
-          >
-            <GitCompare className="h-4 w-4" />
-            2. Equivalência Curricular (IA)
-          </button>
-        </div>
       </div>
 
-      {/* ABA 1: VALIDADOR DE AUTENTICIDADE */}
+      {/* TABS SELECTOR */}
+      <div className="flex flex-wrap items-center justify-center gap-2 border-b border-slate-800 pb-3">
+        <button
+          onClick={() => setActiveTab("VERIFY")}
+          className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all border ${
+            activeTab === "VERIFY"
+              ? "bg-solana-green text-navy-900 border-solana-green shadow-md shadow-solana-green/20"
+              : "bg-navy-900/60 text-slate-300 border-slate-800 hover:text-white"
+          }`}
+        >
+          <ShieldCheck className="h-4 w-4" />
+          {dict.validator.tabVerify}
+        </button>
+
+        <button
+          onClick={() => setActiveTab("EQUIVALENCE")}
+          className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all border ${
+            activeTab === "EQUIVALENCE"
+              ? "bg-gradient-to-r from-solana-purple to-purple-500 text-white border-purple-400/40 shadow-md shadow-purple-500/20"
+              : "bg-navy-900/60 text-slate-300 border-slate-800 hover:text-white"
+          }`}
+        >
+          <GitCompare className="h-4 w-4" />
+          {dict.validator.tabEquivalence}
+        </button>
+
+        <button
+          onClick={() => setActiveTab("COMPLIANCE")}
+          className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all border ${
+            activeTab === "COMPLIANCE"
+              ? "bg-indigo-600 text-white border-indigo-400/40 shadow-md shadow-indigo-500/20"
+              : "bg-navy-900/60 text-slate-300 border-slate-800 hover:text-white"
+          }`}
+        >
+          <Briefcase className="h-4 w-4" />
+          {dict.validator.tabCompliance}
+        </button>
+      </div>
+
+      {/* ABA 1: VALIDADOR DE DOCUMENTOS */}
       {activeTab === "VERIFY" && (
         <div className="space-y-8 animate-in fade-in duration-200">
-          {/* VERIFICATION BOX */}
           <div className="glass-panel rounded-3xl p-6 sm:p-10 glow-green">
             <div
               className="border-2 border-dashed border-slate-700 hover:border-solana-green/60 rounded-2xl p-8 text-center cursor-pointer transition-colors bg-slate-900/40 mb-6"
@@ -312,34 +318,6 @@ export default function ValidatorPage() {
               </p>
             </div>
 
-            {/* Quick Demo Fill Buttons */}
-            <div className="flex flex-wrap items-center gap-2 mb-4 text-xs text-slate-400">
-              <span>Exemplos para teste:</span>
-              <button
-                type="button"
-                onClick={() => {
-                  setFile(null);
-                  setSearchQuery("7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069");
-                  handleVerify("7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069");
-                }}
-                className="rounded-lg border border-slate-800 bg-slate-900 px-2 py-1 text-solana-green hover:border-solana-green/40"
-              >
-                Disciplina (SAS)
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setFile(null);
-                  setSearchQuery("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
-                  handleVerify("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
-                }}
-                className="rounded-lg border border-slate-800 bg-slate-900 px-2 py-1 text-amber-400 hover:border-amber-400/40"
-              >
-                Diploma Soulbound (Token-2022)
-              </button>
-            </div>
-
-            {/* Search input alternative */}
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
                 <FileSearch className="absolute left-3.5 top-3.5 h-5 w-5 text-slate-500" />
@@ -348,7 +326,7 @@ export default function ValidatorPage() {
                   placeholder="Cole o Hash SHA-256 ou Signature de transação da Solana..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full rounded-xl border border-slate-800 bg-navy-900/90 pl-11 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:border-solana-green focus:outline-none focus:ring-1 focus:ring-solana-green"
+                  className="w-full rounded-xl border border-slate-800 bg-navy-900/90 pl-11 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:border-solana-green focus:outline-none"
                 />
               </div>
               <button
@@ -358,6 +336,44 @@ export default function ValidatorPage() {
               >
                 {loading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
                 {loading ? "Auditando na Chain..." : "Verificar Autenticidade"}
+              </button>
+            </div>
+
+            {/* ATALHOS RÁPIDOS PARA PITCH / DEMO */}
+            <div className="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-slate-800/80 text-xs">
+              <span className="text-slate-400 font-semibold flex items-center gap-1.5">
+                <Sparkles className="h-3.5 w-3.5 text-solana-green" />
+                Exemplos Prontos para Teste:
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery("7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069");
+                  handleVerify("7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069");
+                }}
+                className="rounded-lg bg-navy-800 hover:bg-slate-700 text-slate-300 hover:text-white px-2.5 py-1.5 border border-slate-700 transition"
+              >
+                🎓 Disciplina UFMG (SAS)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+                  handleVerify("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+                }}
+                className="rounded-lg bg-navy-800 hover:bg-slate-700 text-slate-300 hover:text-white px-2.5 py-1.5 border border-slate-700 transition"
+              >
+                📜 Diploma Soulbound (Token-2022)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery("9b71d224bd62f3785d96d46ad3ea3d73319bfbc2890caadae2dff72519673ca72");
+                  handleVerify("9b71d224bd62f3785d96d46ad3ea3d73319bfbc2890caadae2dff72519673ca72");
+                }}
+                className="rounded-lg bg-navy-800 hover:bg-slate-700 text-slate-300 hover:text-white px-2.5 py-1.5 border border-slate-700 transition"
+              >
+                🏆 Hackathon Superteam (SAS)
               </button>
             </div>
           </div>
@@ -427,7 +443,7 @@ export default function ValidatorPage() {
                         rel="noopener noreferrer"
                         className="flex items-center gap-1 font-mono text-xs text-solana-green hover:underline"
                       >
-                        {verificationResult.solana_tx_signature.substring(0, 22)}...
+                        {verificationResult.solana_tx_signature?.substring(0, 22)}...
                         <ExternalLink className="h-3 w-3" />
                       </a>
                     </div>
@@ -446,11 +462,11 @@ export default function ValidatorPage() {
                 {loadingAI ? (
                   <div className="flex items-center gap-3 text-sm text-slate-400 py-4">
                     <RefreshCw className="h-4 w-4 animate-spin text-solana-green" />
-                    Processando evidências criptográficas e sintetizando relatório...
+                    Processando evidências criptográficas e sintetizando parecer...
                   </div>
                 ) : (
                   <div className="rounded-xl bg-navy-900/60 p-4 border border-slate-800 text-sm text-slate-200 whitespace-pre-line leading-relaxed">
-                    {trustReport || "Relatório de confiança pronto para visualização."}
+                    {trustReport || "Parecer pronto para visualização."}
                   </div>
                 )}
               </div>
@@ -463,33 +479,26 @@ export default function ValidatorPage() {
       {activeTab === "EQUIVALENCE" && (
         <div className="space-y-6 animate-in fade-in duration-200">
           <div className="glass-panel rounded-3xl p-6 sm:p-8 border-purple-500/30 glow-green">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
-                  <GitCompare className="h-5 w-5" />
-                </div>
-                <div>
-                  <h2 className="font-display text-lg font-bold text-white">
-                    Transferência & Aproveitamento de Créditos por IA
-                  </h2>
-                  <p className="text-xs text-slate-400">
-                    Compara duas ementas universitárias com prova de hash gravado on-chain no Solana Attestation Service.
-                  </p>
-                </div>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-10 w-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+                <GitCompare className="h-5 w-5" />
+              </div>
+              <div>
+                <h2 className="font-display text-lg font-bold text-white">
+                  Transferência & Aproveitamento de Créditos por IA
+                </h2>
+                <p className="text-xs text-slate-400">
+                  Compara ementas universitárias nacionais ou internacionais com validação de hash gravado on-chain.
+                </p>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              {/* Disciplina A (Origem / On-Chain) */}
               <div className="rounded-2xl bg-navy-900/70 p-5 border border-slate-800 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-solana-green flex items-center gap-1.5">
-                    <BadgeCheck className="h-4 w-4" />
-                    Instituição A (Emitida On-Chain)
-                  </span>
-                  <span className="text-[10px] font-mono text-slate-500">Hash Ancorado</span>
-                </div>
-
+                <span className="text-xs font-bold uppercase tracking-wider text-solana-green flex items-center gap-1.5">
+                  <BadgeCheck className="h-4 w-4" />
+                  Instituição A (Emitida On-Chain)
+                </span>
                 <div>
                   <label className="text-[11px] text-slate-400 block mb-1">Universidade</label>
                   <input
@@ -499,7 +508,6 @@ export default function ValidatorPage() {
                     className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-xs text-white"
                   />
                 </div>
-
                 <div className="grid grid-cols-3 gap-2">
                   <div className="col-span-2">
                     <label className="text-[11px] text-slate-400 block mb-1">Disciplina</label>
@@ -520,28 +528,22 @@ export default function ValidatorPage() {
                     />
                   </div>
                 </div>
-
                 <div>
-                  <label className="text-[11px] text-slate-400 block mb-1">Ementa Oficial (Off-Chain)</label>
+                  <label className="text-[11px] text-slate-400 block mb-1">Ementa Oficial</label>
                   <textarea
                     rows={4}
                     value={ementaA}
                     onChange={(e) => setEmentaA(e.target.value)}
-                    className="w-full rounded-xl border border-slate-800 bg-slate-900 p-2.5 text-xs text-slate-200 leading-relaxed"
+                    className="w-full rounded-xl border border-slate-800 bg-slate-900 p-2.5 text-xs text-slate-200"
                   />
                 </div>
               </div>
 
-              {/* Disciplina B (Destino) */}
               <div className="rounded-2xl bg-navy-900/70 p-5 border border-slate-800 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-solana-purple flex items-center gap-1.5">
-                    <BookOpen className="h-4 w-4" />
-                    Instituição B (Receptora / Destino)
-                  </span>
-                  <span className="text-[10px] text-slate-500">Grade Alvo</span>
-                </div>
-
+                <span className="text-xs font-bold uppercase tracking-wider text-solana-purple flex items-center gap-1.5">
+                  <BookOpen className="h-4 w-4" />
+                  Instituição B (Receptora / Destino)
+                </span>
                 <div>
                   <label className="text-[11px] text-slate-400 block mb-1">Universidade</label>
                   <input
@@ -551,7 +553,6 @@ export default function ValidatorPage() {
                     className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-xs text-white"
                   />
                 </div>
-
                 <div className="grid grid-cols-3 gap-2">
                   <div className="col-span-2">
                     <label className="text-[11px] text-slate-400 block mb-1">Disciplina</label>
@@ -572,14 +573,13 @@ export default function ValidatorPage() {
                     />
                   </div>
                 </div>
-
                 <div>
                   <label className="text-[11px] text-slate-400 block mb-1">Ementa da Instituição Alvo</label>
                   <textarea
                     rows={4}
                     value={ementaB}
                     onChange={(e) => setEmentaB(e.target.value)}
-                    className="w-full rounded-xl border border-slate-800 bg-slate-900 p-2.5 text-xs text-slate-200 leading-relaxed"
+                    className="w-full rounded-xl border border-slate-800 bg-slate-900 p-2.5 text-xs text-slate-200"
                   />
                 </div>
               </div>
@@ -588,45 +588,30 @@ export default function ValidatorPage() {
             <button
               onClick={handleCheckEquivalence}
               disabled={loadingEquiv}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-solana-purple via-indigo-500 to-solana-green py-3.5 text-sm font-bold text-white shadow-lg shadow-purple-500/20 hover:scale-[1.01] active:scale-[0.98] transition-all disabled:opacity-50"
+              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-solana-purple via-indigo-500 to-solana-green py-3.5 text-sm font-bold text-white shadow-lg shadow-purple-500/20 hover:scale-[1.01] transition-all disabled:opacity-50"
             >
               {loadingEquiv ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
               {loadingEquiv ? "Avaliando Compatibilidade Semântica..." : "Calcular Equivalência com Inteligência Artificial"}
             </button>
           </div>
 
-          {/* RESULTADO DA EQUIVALÊNCIA */}
           {equivResult && (
             <div className="glass-panel rounded-3xl p-6 sm:p-8 border-solana-green/40 bg-navy-900/80 animate-in fade-in">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
-                <div className="flex items-center gap-3">
-                  {equivResult.veredito?.equivalente ? (
-                    <div className="h-12 w-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-                      <CheckCircle2 className="h-7 w-7" />
-                    </div>
-                  ) : (
-                    <div className="h-12 w-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
-                      <XCircle className="h-7 w-7" />
-                    </div>
-                  )}
-                  <div>
-                    <span className="text-xs text-slate-400 block">Veredito do Motor de IA</span>
-                    <h3 className="font-display text-xl font-bold text-white">
-                      {equivResult.veredito?.equivalente
-                        ? "EQUIVALÊNCIA DEFERIDA ✅"
-                        : "EQUIVALÊNCIA INDEFERIDA ❌"}
-                    </h3>
-                  </div>
+                <div>
+                  <span className="text-xs text-slate-400 block">Veredito do Motor de IA</span>
+                  <h3 className="font-display text-xl font-bold text-white">
+                    {equivResult.veredito?.equivalente ? "EQUIVALÊNCIA DEFERIDA ✅" : "EQUIVALÊNCIA INDEFERIDA ❌"}
+                  </h3>
                 </div>
-
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <div className="text-right">
-                    <span className="text-xs text-slate-400 block">Grau de Similaridade</span>
+                    <span className="text-xs text-slate-400 block">Similaridade</span>
                     <span className="font-display text-2xl font-extrabold text-solana-green">
                       {equivResult.veredito?.confianca_pct}%
                     </span>
                   </div>
-                  <div className="text-right border-l border-slate-800 pl-3">
+                  <div className="text-right border-l border-slate-800 pl-4">
                     <span className="text-xs text-slate-400 block">Créditos Aproveitáveis</span>
                     <span className="font-display text-2xl font-extrabold text-white">
                       {equivResult.veredito?.carga_horaria_aproveitavel} h
@@ -634,46 +619,142 @@ export default function ValidatorPage() {
                   </div>
                 </div>
               </div>
+              <p className="text-slate-200 text-xs sm:text-sm mt-4 leading-relaxed">
+                {equivResult.veredito?.justificativa}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
-              <div className="mt-6 space-y-4 text-xs sm:text-sm">
-                <div className="rounded-xl bg-slate-900/80 p-4 border border-slate-800">
-                  <span className="text-slate-400 text-xs font-semibold uppercase tracking-wider block mb-1">
-                    Parecer Técnico Automatizado:
-                  </span>
-                  <p className="text-slate-200 leading-relaxed">
-                    {equivResult.veredito?.justificativa}
-                  </p>
+      {/* ABA 3: SOLICITAR COMPROVAÇÃO PARA ESTÁGIO / VAGA (COMPLIANCE RH) */}
+      {activeTab === "COMPLIANCE" && (
+        <div className="glass-panel rounded-3xl p-6 sm:p-10 border-indigo-500/30 glow-green animate-in fade-in max-w-3xl mx-auto space-y-6">
+          <div>
+            <h2 className="font-display text-xl font-bold text-white flex items-center gap-2">
+              <Briefcase className="h-5 w-5 text-indigo-400" />
+              {dict.validator.complianceTitle}
+            </h2>
+            <p className="text-xs text-slate-400 mt-1">
+              {dict.validator.complianceDesc}
+            </p>
+          </div>
+
+          {complianceSuccess ? (
+            <div className="rounded-2xl border border-emerald-500/40 bg-emerald-950/20 p-6 text-center space-y-3 animate-in fade-in">
+              <CheckCircle2 className="h-8 w-8 text-emerald-400 mx-auto" />
+              <h3 className="font-semibold text-white text-base">Solicitação de Comprovação Disparada!</h3>
+              <p className="text-xs text-slate-300">
+                Uma notificação de autorização foi enviada para o passaporte do aluno. O token de acompanhamento para o RH é:
+              </p>
+              <div className="rounded-xl bg-slate-900 p-2.5 font-mono text-xs text-solana-green">
+                Token: {complianceSuccess.access_token}
+              </div>
+              <button
+                onClick={() => setComplianceSuccess(null)}
+                className="rounded-xl border border-slate-700 bg-navy-800 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-700"
+              >
+                Nova Solicitação
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleSendCompliance} className="space-y-4 text-xs">
+              {/* ATALHO RÁPIDO PARA PITCH DEMO */}
+              <div className="flex items-center gap-2 pb-3 border-b border-slate-800/80">
+                <span className="text-slate-400 font-semibold flex items-center gap-1.5">
+                  <Sparkles className="h-3.5 w-3.5 text-indigo-400" />
+                  Preenchimento Rápido Demo:
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCompanyName("Nubank Recrutamento Tech");
+                    setRecruiterEmail("recrutamento.tech@nubank.com.br");
+                    setCandidateId("EDFKFcXnx1XbqDCo6D5DXBdxxCWT3eLdMDyX1RMpDgtK");
+                    setPurpose("ESTAGIO");
+                  }}
+                  className="rounded-lg bg-indigo-950/60 hover:bg-indigo-900 text-indigo-300 hover:text-white px-2.5 py-1 border border-indigo-500/30 transition"
+                >
+                  ⚡ Vaga Estágio Nubank (Alexandre)
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-slate-400 block mb-1 font-semibold">{dict.validator.companyName}</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ex: Nubank / Google / Petrobras"
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-green focus:outline-none"
+                  />
                 </div>
+                <div>
+                  <label className="text-slate-400 block mb-1 font-semibold">{dict.validator.recruiterEmail}</label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="talentos@empresa.com"
+                    value={recruiterEmail}
+                    onChange={(e) => setRecruiterEmail(e.target.value)}
+                    className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-green focus:outline-none"
+                  />
+                </div>
+              </div>
 
-                {equivResult.veredito?.topicos_coincidentes && (
-                  <div>
-                    <span className="text-slate-400 text-xs font-semibold block mb-2">
-                      Núcleos de Conhecimento Coincidentes:
-                    </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {equivResult.veredito.topicos_coincidentes.map((topico: string, i: number) => (
-                        <span
-                          key={i}
-                          className="rounded-lg bg-solana-green/10 border border-solana-green/30 px-2.5 py-1 text-xs text-solana-green font-medium"
-                        >
-                          ✓ {topico}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
+              <div>
+                <label className="text-slate-400 block mb-1 font-semibold">{dict.validator.candidateIdentifier}</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Informe o CPF ou a Carteira Solana do Candidato..."
+                  value={candidateId}
+                  onChange={(e) => setCandidateId(e.target.value)}
+                  className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-green focus:outline-none"
+                />
+              </div>
 
-                <div className="pt-2 flex items-center justify-between text-xs text-slate-400 border-t border-slate-800/80">
-                  <span>
-                    Integridade Criptográfica:{" "}
-                    <strong className="text-solana-green">100% Autenticada On-Chain</strong>
+              <div>
+                <label className="text-slate-400 block mb-1 font-semibold">{dict.validator.purpose}</label>
+                <select
+                  value={purpose}
+                  onChange={(e) => setPurpose(e.target.value)}
+                  className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-green focus:outline-none"
+                >
+                  <option value="ESTAGIO">{dict.validator.purposeInternship}</option>
+                  <option value="VAGA_CLT">{dict.validator.purposeEmployment}</option>
+                  <option value="BACKGROUND_CHECK">{dict.validator.purposeBackground}</option>
+                </select>
+              </div>
+
+              <div className="rounded-xl bg-navy-900/80 p-4 border border-slate-800 space-y-2">
+                <span className="text-[11px] font-semibold text-slate-300 block">
+                  Documentos Solicitados para Comprovação:
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  <span className="rounded-lg bg-indigo-950/40 border border-indigo-500/30 px-2.5 py-1 text-[11px] text-indigo-300">
+                    ✓ Matrícula Ativa Homologada
                   </span>
-                  <span className="font-mono text-[11px]">
-                    SHA-256: {equivResult.ementa_hash_calculado?.substring(0, 20)}...
+                  <span className="rounded-lg bg-indigo-950/40 border border-indigo-500/30 px-2.5 py-1 text-[11px] text-indigo-300">
+                    ✓ Histórico Escolar Oficial On-Chain
+                  </span>
+                  <span className="rounded-lg bg-indigo-950/40 border border-indigo-500/30 px-2.5 py-1 text-[11px] text-indigo-300">
+                    ✓ Horas Complementares Aprovadas no SAS
                   </span>
                 </div>
               </div>
-            </div>
+
+              <button
+                type="submit"
+                disabled={sendingCompliance}
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 via-solana-purple to-solana-green py-3.5 text-xs font-bold text-white shadow-md hover:scale-[1.01] transition-all disabled:opacity-50"
+              >
+                {sendingCompliance ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                {sendingCompliance ? "Disparando Requisição Criptográfica..." : dict.validator.sendRequest}
+              </button>
+            </form>
           )}
         </div>
       )}

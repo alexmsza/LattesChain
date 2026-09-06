@@ -49,7 +49,7 @@ export async function POST(req: Request) {
       });
     }
 
-    // 2. Checagem de integridade para credenciais canônicas da demonstração
+    // 2. Verificação imediata para os hashes canônicos da demonstração (Demo Showcase)
     const knownDemoHashes: Record<string, any> = {
       e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855: {
         document_type: "DIPLOMA",
@@ -61,7 +61,7 @@ export async function POST(req: Request) {
         status_onchain: "TOKEN-2022 SOULBOUND",
       },
       "7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069": {
-        document_type: "DISCIPLINA_CONCLUIDA",
+        document_type: "DISCIPLINA",
         course_name: "Estruturas de Dados e Algoritmos Avançados",
         institution_name: "Universidade Federal de Minas Gerais (UFMG)",
         workload_hours: 72,
@@ -80,14 +80,27 @@ export async function POST(req: Request) {
       },
     };
 
-    if (knownDemoHashes[target]) {
-      const demoItem = knownDemoHashes[target];
+    let demoItem = knownDemoHashes[target];
+    let matchedHash = target;
+
+    if (!demoItem) {
+      // Procura por tx
+      const foundEntry = Object.entries(knownDemoHashes).find(
+        ([, val]) => val.tx === target
+      );
+      if (foundEntry) {
+        matchedHash = foundEntry[0];
+        demoItem = foundEntry[1];
+      }
+    }
+
+    if (demoItem) {
       return NextResponse.json({
         isValid: true,
         isDemoOnChain: true,
         status: "VÁLIDO NA SOLANA DEVNET",
         document_type: demoItem.document_type,
-        document_hash: target,
+        document_hash: matchedHash,
         solana_tx_signature: demoItem.tx,
         issued_at: new Date().toISOString(),
         institution_name: demoItem.institution_name,
