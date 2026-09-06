@@ -8,15 +8,13 @@
 > **Projeto submetido ao [Hackathon Universitário Superteam Brasil](https://uni.superteam.com.br/)**  
 > Listagem oficial no Superteam Earn: [Hackathon Universitária Superteam Brasil](https://superteam.fun/earn/listing/hackathon-universitaria-superteam-brasil-1)  
 > **Missão**: Transformar credenciais, diplomas e históricos acadêmicos em atestações soberanas, imutáveis e verificáveis globalmente na **Solana**.
-..
----
-
 ## 📑 Documentação e Recursos Principais
 
 - 🎙️ **[Roteiro de Pitch (5 Minutos)](docs/PITCH_DECK.md)**: Minutagem, slides e script de fala guiada para gravação do vídeo de submissão.
 - 📊 **[Plano de Negócios & GTM](docs/BUSINESS_PLAN.md)**: Modelagem B2B2C freemium, unit economics, personas e estratégia beachhead.
 - 🎬 **[Demo Runbook](demo/RUNBOOK.md)**: Passo a passo de execução da demo ao vivo on-chain e IA.
 - 🏗️ **[Visão Geral de Arquitetura](docs/01_architecture_overview.md)**: Topologia, privacidade LGPD e stack open-source.
+- 🧪 **[Guia do Validador & Testes](docs/VALIDATOR_TESTING_GUIDE.md)**: Configuração do validador local, programas clonados e gerador de templates.
 
 ---
 
@@ -88,6 +86,12 @@ LattesChain/
 │   ├── 00_index.md           # Índice de documentação técnica
 │   ├── 01_architecture_overview.md # Arquitetura geral do sistema
 │   └── adr/                  # Architecture Decision Records (ADR 001-007)
+├── educore_contracts/        # Smart Contracts Anchor (MasterRegistry, IES e Emissões)
+│   ├── Anchor.toml           # Configuração de cluster e clonagem de Memo e SAS
+│   ├── programs/             # Código Rust do programa EduCore (lib.rs)
+│   └── tests/                # Suíte de testes de integração Anchor (.spec.ts)
+├── scripts/                  # Automação do Validador e Gerador de Templates
+│   └── validator-template-generator.mjs # CLI de diagnóstico e gerador de testes
 ├── sas/                      # Pipeline executável do Solana Attestation Service
 │   ├── sas_core.py           # Core: constantes, codecs, PDAs e decoders
 │   ├── sas_client.py         # Builders de instruções e envio de transações
@@ -98,6 +102,7 @@ LattesChain/
 │   ├── 04_issue_soulbound.py # Emissão com Token-2022 Soulbound
 │   ├── 05_verify.py          # Verificação de atestações direto da rede
 │   ├── 06_revoke.py          # Demonstração de revogação nativa
+│   ├── tests/                # Testes Python SAS locais
 │   └── README.md             # Instruções de setup do módulo SAS
 ├── ai/                       # Camada de IA (Equivalência e Relatórios)
 │   ├── equivalence_check.py  # Análise semântica de equivalência de ementas
@@ -179,4 +184,83 @@ git checkout demo/mock-showcase
 npm run dev
 ```
 Esta branch contém cenários pré-configurados com instituições (UFMG, USP, PUC Minas), histórico curricular completo do aluno e botões de preenchimento automático para o pitch de 5 minutos.
+
+---
+
+## 7. Ambiente de Testes Locais com Validador & Gerador de Templates 🧪
+
+Seguindo as convenções oficiais do **[create-solana-dapp](https://github.com/solana-foundation/create-solana-dapp)** e **[solana-foundation/templates](https://github.com/solana-foundation/templates)**, o LattesChain conta com um ambiente completo de testes locais para **Anchor (Rust)** e **SAS (Python)** contra o `solana-test-validator`.
+
+### 7.1 Por que Validador com Clonagem?
+O LattesChain depende de programas externos:
+1. **SPL Memo (`Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo`)**: consumido no CPI de auditoria da instrução `log_academic_event`.
+2. **Solana Attestation Service (`22zoJMtdu4tQc2PzL74ZUT7FrwgB1Udec8DdW4yw4BdG`)**: consumido pelo pipeline de atestações do SAS.
+
+Em um validador local limpo, esses programas não existem. Por isso, nosso comando de inicialização clona esses programas da **Devnet** no boot, permitindo testes 100% locais, determinísticos e sem depender de faucets ou rate-limits de RPC.
+
+### 7.2 Comandos Rápidos
+
+| Comando | Descrição |
+| :--- | :--- |
+| `npm run validator:start` | Sobe o `solana-test-validator` com clonagem do **Memo** e **SAS** da Devnet |
+| `npm run validator:check` | Diagnóstico de saúde: testa RPC `8899` e confirma que os programas clonados estão ativos |
+| `npm run validator:template -- <tipo> <nome>` | **Gerador de templates**: scaffolda novos testes (`anchor`, `python` ou `bankrun`) |
+| `npm run validator:cmd` | Exibe o comando CLI bruto do validador com todos os parâmetros |
+| `npm run anchor:build` | Compila os smart contracts Anchor em `educore_contracts/` |
+| `npm run anchor:test` | Executa a suíte de testes Anchor contra o validador ativo |
+
+### 7.3 Passo a Passo: Subindo o Validador e Testando
+
+```bash
+# 1. Em um terminal dedicado, inicie o validador com as dependências clonadas:
+npm run validator:start
+
+# 2. Em outro terminal, faça o diagnóstico de saúde:
+npm run validator:check
+
+# 3. Compile e execute os testes Anchor:
+npm run anchor:build
+npm run anchor:test
+```
+
+### 7.4 Gerador de Cenários de Teste (`validator:template`)
+Para acelerar o desenvolvimento de novos cenários (evitando o setup manual de PDAs e contas), use o CLI gerador integrado:
+
+```bash
+# Gera teste Anchor (TypeScript) em educore_contracts/tests/
+npm run validator:template -- anchor test_batch_emissions
+
+# Gera teste SAS em Python em sas/tests/ apontado para o validador local
+npm run validator:template -- python test_revocation_flow
+
+# Gera teste in-memory ultrarrápido com solana-bankrun
+npm run validator:template -- bankrun test_isolated_runtime
+```
+
+### 7.5 Executando o Pipeline SAS Localmente em Python
+Com o validador ativo (`npm run validator:start`), você pode rodar o pipeline Python SAS sem tocar na Devnet:
+
+```bash
+# Aponta para o validador local (porta 8899)
+export EDUCORE_RPC_URL="http://127.0.0.1:8899"
+
+# Executa o teste automatizado local do SAS
+python sas/tests/test_validator_sas_local.py
+
+# Ou o pipeline completo:
+python sas/00_setup_wallets.py
+python sas/01_create_credential.py
+python sas/02_create_schema.py
+python sas/03_issue_attestation.py
+python sas/05_verify.py disciplina
+```
+
+### 7.6 Como Usar Este Repositório como Template via `create-solana-dapp`
+O projeto já inclui a configuração `"create-solana-dapp"` no [`package.json`](package.json). Qualquer desenvolvedor pode instanciar o LattesChain como template diretamente via CLI oficial:
+
+```bash
+npx create-solana-dapp@latest -t <seu-usuario-github>/LattesChain
+```
+Ao final da instalação, as instruções de inicialização do validador e execução dos testes são apresentadas automaticamente no terminal.
+
 

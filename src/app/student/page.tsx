@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
   GraduationCap,
@@ -221,11 +222,18 @@ function StudentContent() {
                     <QrCode className="h-3.5 w-3.5 text-solana-green" />
                     QR
                   </button>
+                  <Link
+                    href={`/validator?hash=${record.hash}`}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-solana-green/40 bg-solana-green/15 px-3 py-2 text-xs font-bold text-solana-green hover:bg-solana-green/25"
+                  >
+                    <ShieldCheck className="h-3.5 w-3.5" />
+                    Validar no RH
+                  </Link>
                   <a
                     href={`https://explorer.solana.com/tx/${record.tx}?cluster=devnet`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-800/80 px-3.5 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-700"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-800/80 px-3 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-700"
                   >
                     Ver na Solana
                     <ExternalLink className="h-3.5 w-3.5" />
