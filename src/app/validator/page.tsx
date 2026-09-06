@@ -106,6 +106,7 @@ function ValidatorContent() {
       setSearchQuery(queryParam);
       handleVerify(queryParam);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queryParam]);
 
   const generateTrustReport = async (facts: any) => {
@@ -173,7 +174,7 @@ function ValidatorContent() {
     <div className="min-h-screen px-4 py-12 sm:px-6 lg:px-8 max-w-5xl mx-auto">
       {/* HEADER SECTION */}
       <div className="text-center max-w-2xl mx-auto mb-8">
-        <div className="inline-flex items-center gap-2 rounded-full border border-solana-green/30 bg-solana-green/10 px-3.5 py-1 text-xs font-semibold text-solana-green mb-4">
+        <div className="inline-flex items-center gap-2 rounded-full border border-solana-purple/30 bg-solana-purple/10 px-3.5 py-1 text-xs font-semibold text-solana-purple mb-4">
           <ShieldCheck className="h-4 w-4" />
           Validador Público RH & Auditoria Curricular
         </div>
@@ -190,7 +191,7 @@ function ValidatorContent() {
             onClick={() => setActiveTab("VERIFY")}
             className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all border ${
               activeTab === "VERIFY"
-                ? "bg-solana-green text-navy-900 border-solana-green shadow-md shadow-solana-green/20"
+                ? "bg-solana-purple text-white border-solana-purple shadow-md shadow-solana-purple/20"
                 : "bg-navy-900/60 text-slate-300 border-slate-800 hover:text-white"
             }`}
           >
@@ -215,9 +216,9 @@ function ValidatorContent() {
       {activeTab === "VERIFY" && (
         <div className="space-y-8 animate-in fade-in duration-200">
           {/* VERIFICATION BOX */}
-          <div className="glass-panel rounded-3xl p-6 sm:p-10 glow-green">
+          <div className="glass-panel rounded-3xl p-6 sm:p-10 glow-purple">
             <div
-              className="border-2 border-dashed border-slate-700 hover:border-solana-green/60 rounded-2xl p-8 text-center cursor-pointer transition-colors bg-slate-900/40 mb-6"
+              className="border-2 border-dashed border-slate-700 hover:border-solana-purple/60 rounded-2xl p-8 text-center cursor-pointer transition-colors bg-slate-900/40 mb-6"
               onClick={() => document.getElementById("file-upload")?.click()}
             >
               <input
@@ -231,7 +232,7 @@ function ValidatorContent() {
                   }
                 }}
               />
-              <UploadCloud className="h-10 w-10 text-solana-green mx-auto mb-3 animate-bounce" />
+              <UploadCloud className="h-10 w-10 text-solana-purple mx-auto mb-3 animate-bounce" />
               <h3 className="font-semibold text-white text-base mb-1">
                 {file ? file.name : "Clique para selecionar ou arraste o certificado PDF"}
               </h3>
@@ -298,13 +299,13 @@ function ValidatorContent() {
                   placeholder="Cole o Hash SHA-256 ou Signature de transação da Solana..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full rounded-xl border border-slate-800 bg-navy-900/90 pl-11 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:border-solana-green focus:outline-none focus:ring-1 focus:ring-solana-green"
+                  className="w-full rounded-xl border border-slate-800 bg-navy-900/90 pl-11 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:border-solana-purple focus:outline-none focus:ring-1 focus:ring-solana-purple"
                 />
               </div>
               <button
                 onClick={() => handleVerify()}
                 disabled={loading}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 px-6 py-3 text-sm font-bold text-navy-900 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-solana-purple px-6 py-3 text-sm font-bold text-white hover:bg-solana-purpleDeep hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
               >
                 {loading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
                 {loading ? "Auditando na Chain..." : "Verificar Autenticidade"}
@@ -333,7 +334,7 @@ function ValidatorContent() {
                       <h2 className="font-display text-xl font-bold text-white">
                         {verificationResult.status}
                       </h2>
-                      <span className="rounded-full bg-solana-green/10 border border-solana-green/30 px-3 py-1 text-xs font-semibold text-solana-green">
+                      <span className="rounded-full bg-solana-purple/10 border border-solana-purple/30 px-3 py-1 text-xs font-semibold text-solana-purple">
                         Solana Attestation Service (SAS)
                       </span>
                     </div>
@@ -388,14 +389,14 @@ function ValidatorContent() {
               {/* AI TRUST REPORT */}
               <div className="glass-panel rounded-3xl p-6 sm:p-8 border-solana-purple/30 bg-purple-950/10">
                 <div className="flex items-center gap-2.5 mb-4 text-solana-purple">
-                  <BrainCircuit className="h-6 w-6 text-solana-green" />
+                  <BrainCircuit className="h-6 w-6 text-solana-purple" />
                   <h3 className="font-display text-lg font-bold text-white">
                     Parecer de Confiança para RH (Inteligência Artificial)
                   </h3>
                 </div>
                 {loadingAI ? (
                   <div className="flex items-center gap-3 text-sm text-slate-400 py-4">
-                    <RefreshCw className="h-4 w-4 animate-spin text-solana-green" />
+                    <RefreshCw className="h-4 w-4 animate-spin text-solana-purple" />
                     Processando evidências criptográficas e sintetizando relatório...
                   </div>
                 ) : (
@@ -412,10 +413,10 @@ function ValidatorContent() {
       {/* ABA 2: MOTOR DE EQUIVALÊNCIA CURRICULAR */}
       {activeTab === "EQUIVALENCE" && (
         <div className="space-y-6 animate-in fade-in duration-200">
-          <div className="glass-panel rounded-3xl p-6 sm:p-8 border-purple-500/30 glow-green">
+          <div className="glass-panel rounded-3xl p-6 sm:p-8 border-purple-500/30 glow-purple">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+                <div className="h-10 w-10 rounded-xl bg-solana-purple/20 text-solana-purple flex items-center justify-center">
                   <GitCompare className="h-5 w-5" />
                 </div>
                 <div>
@@ -538,7 +539,7 @@ function ValidatorContent() {
             <button
               onClick={handleCheckEquivalence}
               disabled={loadingEquiv}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-solana-purple via-indigo-500 to-solana-green py-3.5 text-sm font-bold text-white shadow-lg shadow-purple-500/20 hover:scale-[1.01] active:scale-[0.98] transition-all disabled:opacity-50"
+              className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-solana-purple py-3.5 text-sm font-bold text-white shadow-lg shadow-solana-purple/20 hover:bg-solana-purpleDeep hover:scale-[1.01] active:scale-[0.98] transition-all disabled:opacity-50"
             >
               {loadingEquiv ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
               {loadingEquiv ? "Avaliando Compatibilidade Semântica..." : "Calcular Equivalência com Inteligência Artificial"}
@@ -547,7 +548,7 @@ function ValidatorContent() {
 
           {/* RESULTADO DA EQUIVALÊNCIA */}
           {equivResult && (
-            <div className="glass-panel rounded-3xl p-6 sm:p-8 border-solana-green/40 bg-navy-900/80 animate-in fade-in">
+            <div className="glass-panel rounded-3xl p-6 sm:p-8 border-solana-purple/40 bg-navy-900/80 animate-in fade-in">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
                 <div className="flex items-center gap-3">
                   {equivResult.veredito?.equivalente ? (
@@ -572,7 +573,7 @@ function ValidatorContent() {
                 <div className="flex items-center gap-3">
                   <div className="text-right">
                     <span className="text-xs text-slate-400 block">Grau de Similaridade</span>
-                    <span className="font-display text-2xl font-extrabold text-solana-green">
+                    <span className="font-display text-2xl font-extrabold text-solana-purple">
                       {equivResult.veredito?.confianca_pct}%
                     </span>
                   </div>

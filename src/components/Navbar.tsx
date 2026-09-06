@@ -44,12 +44,12 @@ export function Navbar() {
   const roleHome = profile ? ROLE_HOME[profile.role] || "/" : "/";
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-800 bg-[#080c14]/85 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-slate-800 bg-[#0e0a18]/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-solana-purple to-solana-green p-0.5 shadow-lg shadow-solana-green/20">
-            <div className="flex h-full w-full items-center justify-center rounded-[10px] bg-navy-900 transition-colors group-hover:bg-navy-800">
-              <GraduationCap className="h-5 w-5 text-solana-green" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-tr from-solana-purple to-solana-green p-0.5 shadow-lg shadow-solana-purple/20">
+            <div className="flex h-full w-full items-center justify-center rounded-full bg-navy-900 transition-colors group-hover:bg-navy-800">
+              <GraduationCap className="h-5 w-5 text-solana-purple" />
             </div>
           </div>
           <div className="flex flex-col">
@@ -68,9 +68,9 @@ export function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition-all ${
+                className={`flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-medium transition-all ${
                   isActive
-                    ? "bg-solana-green/10 text-solana-green border border-solana-green/30"
+                    ? "bg-solana-purple/10 text-solana-purple border border-solana-purple/30"
                     : "text-slate-300 hover:bg-slate-800/60 hover:text-white"
                 }`}
               >
@@ -112,7 +112,7 @@ export function Navbar() {
           ) : (
             <Link
               href="/login"
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 px-4 py-2 text-xs font-bold text-navy-900 shadow-md shadow-solana-green/20 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              className="inline-flex items-center gap-2 rounded-full bg-solana-purple px-4 py-2 text-xs font-bold text-white shadow-md shadow-solana-purple/25 transition-all hover:bg-solana-purpleDeep hover:scale-[1.02] active:scale-[0.98]"
             >
               <LogIn className="h-4 w-4" />
               Entrar

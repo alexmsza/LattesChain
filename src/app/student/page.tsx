@@ -83,18 +83,18 @@ function StudentContent() {
   return (
     <div className="min-h-screen px-4 py-12 sm:px-6 lg:px-8 max-w-6xl mx-auto">
       {/* HEADER SECTION */}
-      <div className="glass-panel rounded-3xl p-6 sm:p-10 mb-8 glow-green">
+      <div className="glass-panel rounded-3xl p-6 sm:p-10 mb-8 glow-purple">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
             <div className="h-16 w-16 rounded-2xl bg-gradient-to-tr from-solana-purple to-solana-green p-0.5 shadow-lg">
-              <div className="h-full w-full rounded-[14px] bg-navy-900 flex items-center justify-center text-solana-green">
+              <div className="h-full w-full rounded-[14px] bg-navy-900 flex items-center justify-center text-solana-purple">
                 <GraduationCap className="h-8 w-8" />
               </div>
             </div>
             <div>
               <h1 className="font-display text-2xl sm:text-3xl font-bold text-white">{studentData.name}</h1>
               <p className="text-sm text-slate-300">
-                {studentData.course} • <span className="text-solana-green">{studentData.university}</span>
+                {studentData.course} • <span className="text-solana-purple">{studentData.university}</span>
               </p>
               <div className="flex items-center gap-2 mt-1 font-mono text-xs text-slate-400">
                 <span>Carteira Soberana:</span>
@@ -111,12 +111,12 @@ function StudentContent() {
               }}
               className="inline-flex items-center gap-2 rounded-xl bg-slate-800 border border-slate-700 px-4 py-2.5 text-xs font-semibold text-white hover:bg-slate-700"
             >
-              <QrCode className="h-4 w-4 text-solana-green" />
+              <QrCode className="h-4 w-4 text-solana-purple" />
               QR Code Geral
             </button>
             <button
               onClick={handleCopy}
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 px-4 py-2.5 text-xs font-bold text-navy-900 shadow-md hover:scale-[1.02] transition-transform"
+              className="inline-flex items-center gap-2 rounded-full bg-solana-purple px-4 py-2.5 text-xs font-bold text-white shadow-md hover:bg-solana-purpleDeep hover:scale-[1.02] transition-all"
             >
               {copied ? <CheckCircle2 className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
               {copied ? "Link Copiado!" : "Compartilhar Passaporte"}
@@ -128,7 +128,7 @@ function StudentContent() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 pt-8 border-t border-slate-800">
           <div className="rounded-2xl bg-navy-900/60 p-4 border border-slate-800">
             <span className="text-xs text-slate-400 block mb-1">Horas de Extensão / Complementares</span>
-            <div className="font-display text-2xl font-bold text-solana-green">
+            <div className="font-display text-2xl font-bold text-solana-purple">
               {studentData.totalHours} / {studentData.requiredHours} h
             </div>
             <div className="w-full bg-slate-800 h-2 rounded-full mt-2 overflow-hidden">
@@ -165,12 +165,12 @@ function StudentContent() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-display text-xl font-bold text-white flex items-center gap-2">
-            <Award className="h-5 w-5 text-solana-green" />
+            <Award className="h-5 w-5 text-solana-purple" />
             Credenciais & Atestações Registradas
           </h2>
           {loading && (
             <div className="flex items-center gap-1.5 text-xs text-slate-400">
-              <RefreshCw className="h-3.5 w-3.5 animate-spin text-solana-green" />
+              <RefreshCw className="h-3.5 w-3.5 animate-spin text-solana-purple" />
               Sincronizando...
             </div>
           )}
@@ -219,12 +219,12 @@ function StudentContent() {
                     }}
                     className="inline-flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-800/80 px-3 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-700"
                   >
-                    <QrCode className="h-3.5 w-3.5 text-solana-green" />
+                    <QrCode className="h-3.5 w-3.5 text-solana-purple" />
                     QR
                   </button>
                   <Link
                     href={`/validator?hash=${record.hash}`}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-solana-green/40 bg-solana-green/15 px-3 py-2 text-xs font-bold text-solana-green hover:bg-solana-green/25"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-solana-purple/40 bg-solana-purple/15 px-3 py-2 text-xs font-bold text-solana-purple hover:bg-solana-purple/25"
                   >
                     <ShieldCheck className="h-3.5 w-3.5" />
                     Validar no RH
@@ -248,8 +248,8 @@ function StudentContent() {
       {/* QR CODE MODAL */}
       {showQR && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="glass-panel rounded-3xl p-8 max-w-sm w-full text-center border-solana-green/30 glow-green animate-in fade-in zoom-in-95">
-            <ShieldCheck className="h-10 w-10 text-solana-green mx-auto mb-3" />
+          <div className="glass-panel rounded-3xl p-8 max-w-sm w-full text-center border-solana-purple/30 glow-purple animate-in fade-in zoom-in-95">
+            <ShieldCheck className="h-10 w-10 text-solana-purple mx-auto mb-3" />
             <h3 className="font-display text-xl font-bold text-white mb-1">
               {selectedRecordForQR ? "Validação Específica" : "Passaporte Acadêmico"}
             </h3>
@@ -261,7 +261,7 @@ function StudentContent() {
 
             <div className="bg-white p-4 rounded-2xl inline-block shadow-xl mb-4">
               <div className="h-44 w-44 bg-slate-900 rounded-lg flex flex-col items-center justify-center text-white p-2">
-                <QrCode className="h-28 w-28 text-solana-green" />
+                <QrCode className="h-28 w-28 text-solana-purple" />
                 <span className="text-[9px] font-mono text-slate-400 mt-2 truncate w-full">
                   {selectedRecordForQR ? selectedRecordForQR.hash.substring(0, 18) + "..." : studentData.solanaWallet.substring(0, 18) + "..."}
                 </span>
