@@ -17,12 +17,6 @@ import {
   FileText,
   BadgeCheck,
 } from "lucide-react";
-import {
-  evaluateMockEquivalence,
-  MOCK_SHOWCASE_STUDENT,
-  MOCK_REVOKED_DIPLOMA,
-} from "@/lib/mockData";
-
 export default function ValidatorPage() {
   const [activeTab, setActiveTab] = useState<"VERIFY" | "EQUIVALENCE">("VERIFY");
 
@@ -74,12 +68,11 @@ export default function ValidatorPage() {
       }
 
       if (!target) {
-        alert("Faça upload de um arquivo PDF ou selecione um dos exemplos de teste.");
+        alert("Faça upload de um arquivo PDF ou insira o hash SHA-256 / assinatura da transação.");
         setLoading(false);
         return;
       }
 
-      // 1. Tenta API do servidor
       try {
         const res = await fetch("/api/credentials/verify", {
           method: "POST",
@@ -87,62 +80,30 @@ export default function ValidatorPage() {
           body: JSON.stringify({ query: target }),
         });
 
-        if (res.ok) {
+        const contentType = res.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
           const data = await res.json();
           if (data && (data.isValid !== undefined || data.status)) {
             setVerificationResult(data);
-            if (data.isValid) generateTrustReport(data);
+            if (data.isValid) {
+              generateTrustReport(data);
+            }
             setLoading(false);
             return;
           }
         }
-      } catch {
-        // Fallback local caso servidor/Vercel falhe
-      }
 
-      // 2. Resolução Mock Local Imediata (Blindada contra falhas de rede)
-      if (target.startsWith("ffff") || target.toLowerCase().includes("revog")) {
         setVerificationResult({
           isValid: false,
-          status: "DOCUMENTO REVOGADO PELA IES (TOKEN-2022)",
-          error: "Atestação revogada pela universidade emissora via extensão PermanentDelegate por irregularidade cadastral.",
+          status: "DOCUMENTO NÃO LOCALIZADO",
+          error: "Nenhum registro on-chain correspondente a este hash foi encontrado na Solana Devnet ou Supabase.",
         });
-        setTrustReport(
-          "⚠️ ALERTA DE SEGURANÇA (Validação Criptográfica):\nEste diploma/certificado foi REVOGADO formalmente pela instituição emissora na rede Solana. Não possui validade jurídica para contratação."
-        );
-      } else {
-        const matchingRecord = MOCK_SHOWCASE_STUDENT.records.find(
-          (r) =>
-            r.hash.toLowerCase() === target.toLowerCase() ||
-            r.tx.toLowerCase() === target.toLowerCase()
-        );
-
-        const resultData = {
-          isValid: true,
-          status: "VÁLIDO NA SOLANA DEVNET",
-          document_type: matchingRecord?.title || "Certificado Acadêmico Atestado",
-          document_hash: matchingRecord?.hash || target,
-          solana_tx_signature:
-            matchingRecord?.tx ||
-            "5K2UeXmJ6aP7vN4tL8qR1wZ9yD3bC2fE4gH7jK9mP1rT3vX57890abcdef1234567890",
-          issued_at: new Date().toISOString(),
-          institution_name:
-            matchingRecord?.institution || "Universidade Federal de Minas Gerais (UFMG)",
-          institution_cnpj: "17.217.985/0001-04",
-          metadata: {
-            course_name: matchingRecord?.title || "Certificação Acadêmica",
-            workload_hours: matchingRecord?.hours || 72,
-            grade: matchingRecord?.grade || "Aprovado (9.5)",
-            status_onchain: matchingRecord?.status || "ATESTADO NO SAS",
-          },
-          explorer_url: `https://explorer.solana.com/tx/${
-            matchingRecord?.tx ||
-            "5K2UeXmJ6aP7vN4tL8qR1wZ9yD3bC2fE4gH7jK9mP1rT3vX57890abcdef1234567890"
-          }?cluster=devnet`,
-        };
-
-        setVerificationResult(resultData);
-        generateTrustReport(resultData);
+      } catch (networkErr: any) {
+        setVerificationResult({
+          isValid: false,
+          status: "ERRO DE CONEXÃO",
+          error: `Falha ao consultar protocolo: ${networkErr.message}`,
+        });
       }
     } catch (err: any) {
       console.error(err);
@@ -159,7 +120,9 @@ export default function ValidatorPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ facts }),
       });
-      if (res.ok) {
+
+      const contentType = res.headers.get("content-type");
+      if (res.ok && contentType && contentType.includes("application/json")) {
         const data = await res.json();
         if (data.report) {
           setTrustReport(data.report);
@@ -167,32 +130,11 @@ export default function ValidatorPage() {
           return;
         }
       }
-    } catch {
-      // Fallback local caso servidor falhe
+    } catch (err) {
+      console.error("Erro ao gerar parecer de IA:", err);
     }
 
-    // Fallback Mock Local Determinístico
-    const isRevoked = facts.isValid === false || facts.status?.includes("REVOGADO");
-    if (isRevoked) {
-      setTrustReport(
-        `⚠️ ALERTA DE SEGURANÇA — AUDITORIA CRIPTOGRÁFICA REPROVADA\n\n` +
-          `• Emissor: ${facts.institution_name || "Universidade Federal de Minas Gerais"}\n` +
-          `• Documento Auditado: ${facts.document_type || "Diploma"}\n` +
-          `• Status On-Chain: REVOGADO PELA IES.\n` +
-          `• Diagnóstico: Atestação revogada via Token-2022 PermanentDelegate por fraude prévia.\n\n` +
-          `Veredito para o RH: DOCUMENTO INVÁLIDO. REJEITAR IMEDIATAMENTE.`
-      );
-    } else {
-      setTrustReport(
-        `✅ RELATÓRIO DE CONFIANÇA (Verificação Criptográfica On-Chain)\n\n` +
-          `• Emissor Autorizado: ${facts.institution_name || "Universidade Federal de Minas Gerais (UFMG)"} (CNPJ: ${facts.institution_cnpj || "17.217.985/0001-04"})\n` +
-          `• Credencial Atestada: ${facts.document_type || "Certificado"} (${facts.metadata?.workload_hours || 72}h)\n` +
-          `• Padrão Tecnológico: Solana Attestation Service (SAS) + Token-2022 Soulbound\n` +
-          `• Integridade: O hash SHA-256 coincide 100% com os dados ancorados na Solana Devnet.\n` +
-          `• Conformidade LGPD: Zero PII on-chain; prova pública e auditável em sub-segundo.\n\n` +
-          `Veredito Executivo para o RH: DOCUMENTO 100% AUTÊNTICO E APTO PARA VALIDAÇÃO.`
-      );
-    }
+    setTrustReport("Parecer gerado com base nas atestações on-chain validadas.");
     setLoadingAI(false);
   };
 
@@ -223,7 +165,8 @@ export default function ValidatorPage() {
         body: JSON.stringify(payload),
       });
 
-      if (res.ok) {
+      const contentType = res.headers.get("content-type");
+      if (res.ok && contentType && contentType.includes("application/json")) {
         const data = await res.json();
         if (data && data.veredito) {
           setEquivResult(data);
@@ -231,14 +174,13 @@ export default function ValidatorPage() {
           return;
         }
       }
-    } catch {
-      // Ignora erro de rede/Vercel e aciona imediatamente o motor mock determinístico
-    }
 
-    // Fallback Mock Canônico Determinístico (Nunca quebra em apresentações)
-    const mockData = evaluateMockEquivalence(payload.disciplina_a, payload.disciplina_b);
-    setEquivResult(mockData);
-    setLoadingEquiv(false);
+      alert("Não foi possível processar a equivalência curricular via IA no momento. Verifique os dados fornecidos.");
+    } catch (err: any) {
+      alert(`Falha de conexão com motor de equivalência IA: ${err.message}`);
+    } finally {
+      setLoadingEquiv(false);
+    }
   };
 
   return (
@@ -310,33 +252,6 @@ export default function ValidatorPage() {
               <p className="text-xs text-slate-400">
                 O arquivo nunca sai do seu navegador. Apenas o hash criptográfico SHA-256 é consultado on-chain.
               </p>
-            </div>
-
-            {/* Quick Demo Fill Buttons */}
-            <div className="flex flex-wrap items-center gap-2 mb-4 text-xs text-slate-400">
-              <span>Exemplos para teste:</span>
-              <button
-                type="button"
-                onClick={() => {
-                  setFile(null);
-                  setSearchQuery("7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069");
-                  handleVerify("7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069");
-                }}
-                className="rounded-lg border border-slate-800 bg-slate-900 px-2 py-1 text-solana-green hover:border-solana-green/40"
-              >
-                Disciplina (SAS)
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setFile(null);
-                  setSearchQuery("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
-                  handleVerify("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
-                }}
-                className="rounded-lg border border-slate-800 bg-slate-900 px-2 py-1 text-amber-400 hover:border-amber-400/40"
-              >
-                Diploma Soulbound (Token-2022)
-              </button>
             </div>
 
             {/* Search input alternative */}

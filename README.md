@@ -172,11 +172,16 @@ npm run dev
 - `/university`: Portal de emissão da universidade integrado com Supabase e Solana Devnet.
 - `/admin-protocol`: Master Registry e governança descentralizada do ecossistema.
 
-### 6.5 Branch de Demonstração com Dados Mockados (`demo/mock-showcase`)
-Para apresentações de pitch e demonstrações infalíveis sem risco de latência ou rate-limit de RPCs públicos da Devnet:
+### 6.5 Branches do Repositório: Produção Real vs Demonstração
+
+- **Branch `dev-alex` (Ambiente Real / Zero Mock)**:
+  Contém o código de produção limpo, sem componentes ou dados sintéticos. Todas as operações de emissão, cadastro de IES, validação de passaporte de aluno e auditoria de documentos consultam e persistem diretamente no Supabase e na rede Solana Devnet via Serverless Functions.
+
+- **Branch `demo/mock-showcase` (Ambiente de Demonstração & Pitch)**:
+  Branch isolada contendo dados canônicos pré-configurados (UFMG, USP, PUC Minas, estudante com histórico e diplomas Soulbound) e motor de equivalência curricular determinístico resiliente a falhas de rede, ideal para gravação de vídeos e apresentação no Hackathon Universitário Superteam Brasil.
 ```bash
+# Para rodar o ambiente de demonstração com mock canônico:
 git checkout demo/mock-showcase
 npm run dev
 ```
-Esta branch contém cenários pré-configurados com instituições (UFMG, USP, PUC Minas), histórico curricular completo do aluno e botões de preenchimento automático para o pitch de 5 minutos.
 

@@ -26,35 +26,8 @@ interface RegisteredInstitution {
 }
 
 export default function AdminProtocolPage() {
-  const [institutions, setInstitutions] = useState<RegisteredInstitution[]>([
-    {
-      id: "inst-ufmg",
-      name: "Universidade Federal de Minas Gerais (UFMG)",
-      cnpj: "17.217.985/0001-04",
-      solana_pubkey: "3xmiVKqEs25voqLmWRvrjrnGrkEDMqyXUstW34vwZWcH",
-      is_verified: true,
-      is_active: true,
-      total_issued: 1420,
-    },
-    {
-      id: "inst-usp",
-      name: "Universidade de São Paulo (USP)",
-      cnpj: "63.025.530/0001-04",
-      solana_pubkey: "7yW1J9kLmNoPqRsTuVwXyZ1234567890abcdef12345",
-      is_verified: true,
-      is_active: true,
-      total_issued: 2890,
-    },
-    {
-      id: "inst-puc",
-      name: "Pontifícia Universidade Católica de Minas Gerais (PUC Minas)",
-      cnpj: "17.178.195/0001-67",
-      solana_pubkey: "9zX2K0mNoPqRsTuVwXyZ1234567890abcdef1234567",
-      is_verified: true,
-      is_active: true,
-      total_issued: 850,
-    },
-  ]);
+  const [institutions, setInstitutions] = useState<RegisteredInstitution[]>([]);
+  const [fetching, setFetching] = useState(true);
 
   const [newName, setNewName] = useState("");
   const [newCnpj, setNewCnpj] = useState("");
@@ -62,7 +35,27 @@ export default function AdminProtocolPage() {
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
 
-  const handleRegister = (e: React.FormEvent) => {
+  const fetchInstitutions = async () => {
+    try {
+      const res = await fetch("/api/institutions");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.institutions) {
+          setInstitutions(data.institutions);
+        }
+      }
+    } catch (err) {
+      console.error("Erro ao carregar instituições:", err);
+    } finally {
+      setFetching(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchInstitutions();
+  }, []);
+
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newName || !newCnpj || !newPubkey) {
       alert("Preencha todos os campos da instituição.");
@@ -70,25 +63,33 @@ export default function AdminProtocolPage() {
     }
 
     setLoading(true);
-    setTimeout(() => {
-      const newInst: RegisteredInstitution = {
-        id: `inst-${Date.now()}`,
-        name: newName,
-        cnpj: newCnpj,
-        solana_pubkey: newPubkey,
-        is_verified: true,
-        is_active: true,
-        total_issued: 0,
-      };
+    try {
+      const res = await fetch("/api/institutions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: newName,
+          cnpj: newCnpj,
+          solana_pubkey: newPubkey,
+        }),
+      });
 
-      setInstitutions((prev) => [newInst, ...prev]);
-      setNewName("");
-      setNewCnpj("");
-      setNewPubkey("");
-      setSuccessMsg(`Instituição "${newInst.name}" credenciada no protocolo com sucesso!`);
+      if (res.ok) {
+        setSuccessMsg(`Instituição "${newName}" credenciada no protocolo com sucesso!`);
+        setNewName("");
+        setNewCnpj("");
+        setNewPubkey("");
+        fetchInstitutions();
+        setTimeout(() => setSuccessMsg(""), 4000);
+      } else {
+        const errData = await res.json();
+        alert(`Erro ao cadastrar instituição: ${errData.error || "Erro no servidor"}`);
+      }
+    } catch (err: any) {
+      alert(`Falha ao conectar: ${err.message}`);
+    } finally {
       setLoading(false);
-      setTimeout(() => setSuccessMsg(""), 4000);
-    }, 600);
+    }
   };
 
   const totalEmitted = institutions.reduce((acc, i) => acc + (i.total_issued || 0), 0);
@@ -166,47 +167,60 @@ export default function AdminProtocolPage() {
           </div>
 
           <div className="space-y-3">
-            {institutions.map((inst) => (
-              <div
-                key={inst.id}
-                className="rounded-2xl bg-navy-900/80 p-4 border border-slate-800 transition-all hover:border-slate-700"
-              >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-semibold text-white text-sm">{inst.name}</span>
-                      <span className="rounded-full bg-solana-green/10 border border-solana-green/30 px-2 py-0.5 text-[10px] font-semibold text-solana-green">
-                        Ativa
-                      </span>
+            {fetching ? (
+              <div className="flex items-center justify-center gap-2 py-12 text-sm text-slate-400">
+                <RefreshCw className="h-4 w-4 animate-spin text-solana-green" />
+                Carregando autoridades emissoras do banco de dados...
+              </div>
+            ) : institutions.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-slate-800 p-8 text-center text-slate-400 text-sm">
+                Nenhuma instituição homologada cadastrada no banco de dados ainda.
+                <br />
+                Utilize o formulário ao lado para credenciar a primeira IES no protocolo.
+              </div>
+            ) : (
+              institutions.map((inst) => (
+                <div
+                  key={inst.id}
+                  className="rounded-2xl bg-navy-900/80 p-4 border border-slate-800 transition-all hover:border-slate-700"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-semibold text-white text-sm">{inst.name}</span>
+                        <span className="rounded-full bg-solana-green/10 border border-solana-green/30 px-2 py-0.5 text-[10px] font-semibold text-solana-green">
+                          Ativa
+                        </span>
+                      </div>
+                      <div className="text-xs text-slate-400">
+                        CNPJ: <span className="font-mono text-slate-300">{inst.cnpj}</span>
+                      </div>
+                      <div className="text-[11px] font-mono text-slate-500 mt-1 truncate max-w-md">
+                        Pubkey: {inst.solana_pubkey}
+                      </div>
                     </div>
-                    <div className="text-xs text-slate-400">
-                      CNPJ: <span className="font-mono text-slate-300">{inst.cnpj}</span>
-                    </div>
-                    <div className="text-[11px] font-mono text-slate-500 mt-1 truncate max-w-md">
-                      Pubkey: {inst.solana_pubkey}
-                    </div>
-                  </div>
 
-                  <div className="flex items-center gap-3 self-end sm:self-center">
-                    <div className="text-right">
-                      <span className="text-xs font-bold text-solana-green block">
-                        {inst.total_issued?.toLocaleString("pt-BR")}
-                      </span>
-                      <span className="text-[10px] text-slate-500">atestações</span>
+                    <div className="flex items-center gap-3 self-end sm:self-center">
+                      <div className="text-right">
+                        <span className="text-xs font-bold text-solana-green block">
+                          {inst.total_issued?.toLocaleString("pt-BR")}
+                        </span>
+                        <span className="text-[10px] text-slate-500">atestações</span>
+                      </div>
+                      <a
+                        href={`https://explorer.solana.com/address/${inst.solana_pubkey}?cluster=devnet`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="rounded-lg border border-slate-700 p-2 text-slate-300 hover:text-white hover:bg-slate-800"
+                        title="Ver conta da IES no Solana Explorer"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                      </a>
                     </div>
-                    <a
-                      href={`https://explorer.solana.com/address/${inst.solana_pubkey}?cluster=devnet`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="rounded-lg border border-slate-700 p-2 text-slate-300 hover:text-white hover:bg-slate-800"
-                      title="Ver conta da IES no Solana Explorer"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                    </a>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 

@@ -94,34 +94,23 @@ export default function UniversityPage() {
                 (docType === "DIPLOMA" ? "TOKEN-2022 SOULBOUND" : "ATESTADO NO SAS"),
             };
           }
+        } else {
+          const errData = await res.json().catch(() => ({}));
+          alert(`Erro ao emitir credencial: ${errData.error || "Falha na comunicação com o protocolo."}`);
+          return;
         }
-      } catch {
-        // Fallback local imediato caso servidor offline/Vercel
+      } catch (networkErr: any) {
+        alert(`Falha de conexão ao emitir credencial: ${networkErr.message}`);
+        return;
       }
 
-      if (!issuedData) {
-        const mockSig =
-          "5" +
-          Math.random().toString(36).substring(2, 15) +
-          "K2UeXmJ6aP7vN4tL8qR1wZ9yD3bC2fE4gH7jK9mP1rT3vX57890abcdef1234567890";
-        issuedData = {
-          student_name: studentName,
-          course_name: courseName,
-          document_type: docType,
-          document_hash: docHash,
-          solana_tx: mockSig,
-          explorer_url: `https://explorer.solana.com/tx/${mockSig}?cluster=devnet`,
-          issued_at: new Date().toLocaleTimeString("pt-BR"),
-          status: docType === "DIPLOMA" ? "TOKEN-2022 SOULBOUND" : "ATESTADO NO SAS",
-        };
+      if (issuedData) {
+        setLastIssued(issuedData);
+        setRecentIssuances((prev) => [issuedData, ...prev]);
+        setCourseName("");
+        setStudentName("");
+        setFile(null);
       }
-
-      setLastIssued(issuedData);
-      setRecentIssuances((prev) => [issuedData, ...prev]);
-
-      setCourseName("");
-      setStudentName("");
-      setFile(null);
     } catch (err: any) {
       console.error(err);
     } finally {

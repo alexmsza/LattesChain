@@ -49,61 +49,7 @@ export async function POST(req: Request) {
       });
     }
 
-    // 2. Checagem de integridade para credenciais canônicas da demonstração
-    const knownDemoHashes: Record<string, any> = {
-      e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855: {
-        document_type: "DIPLOMA",
-        course_name: "Bacharelado em Ciência da Computação",
-        institution_name: "Universidade Federal de Minas Gerais (UFMG)",
-        workload_hours: 3200,
-        grade: "10.0",
-        tx: "5K2UeXmJ6aP7vN4tL8qR1wZ9yD3bC2fE4gH7jK9mP1rT3vX57890abcdef1234567890",
-        status_onchain: "TOKEN-2022 SOULBOUND",
-      },
-      "7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069": {
-        document_type: "DISCIPLINA_CONCLUIDA",
-        course_name: "Estruturas de Dados e Algoritmos Avançados",
-        institution_name: "Universidade Federal de Minas Gerais (UFMG)",
-        workload_hours: 72,
-        grade: "9.5",
-        tx: "3M8nFwK2vP4xL9qT7yD5bC1fE3gH6jK8mP0rT2vX41234567890abcdef1234567890",
-        status_onchain: "ATESTADO NO SAS",
-      },
-      "9b71d224bd62f3785d96d46ad3ea3d73319bfbc2890caadae2dff72519673ca72": {
-        document_type: "HORAS_COMPLEMENTARES",
-        course_name: "Hackathon Universitário Superteam Brasil",
-        institution_name: "Superteam Brasil",
-        workload_hours: 60,
-        grade: "1º Lugar",
-        tx: "4N9pGxL3wQ5yM0rU8zE6cD2gF4hI7kL9nQ1sU3wY51234567890abcdef1234567890",
-        status_onchain: "ATESTADO NO SAS",
-      },
-    };
-
-    if (knownDemoHashes[target]) {
-      const demoItem = knownDemoHashes[target];
-      return NextResponse.json({
-        isValid: true,
-        isDemoOnChain: true,
-        status: "VÁLIDO NA SOLANA DEVNET",
-        document_type: demoItem.document_type,
-        document_hash: target,
-        solana_tx_signature: demoItem.tx,
-        issued_at: new Date().toISOString(),
-        institution_name: demoItem.institution_name,
-        institution_cnpj: "17.217.985/0001-04",
-        metadata: {
-          course_name: demoItem.course_name,
-          workload_hours: demoItem.workload_hours,
-          grade: demoItem.grade,
-          status_onchain: demoItem.status_onchain,
-        },
-        explorer_url: `https://explorer.solana.com/tx/${demoItem.tx}?cluster=devnet`,
-        source: "sas_devnet_registry",
-      });
-    }
-
-    // 3. Documento não encontrado
+    // 2. Documento não encontrado
     return NextResponse.json({
       isValid: false,
       status: "DOCUMENTO NÃO ENCONTRADO OU REVOGADO",

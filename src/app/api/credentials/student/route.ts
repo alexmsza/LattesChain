@@ -92,59 +92,7 @@ export async function GET(req: Request) {
       }
     }
 
-    // 3. Fallback inteligente com registros canônicos caso seja o aluno de demonstração sem registros no banco
-    if (records.length === 0) {
-      records = [
-        {
-          id: "rec-1",
-          type: "DIPLOMA",
-          title: "Bacharelado em Ciência da Computação",
-          institution: "Universidade Federal de Minas Gerais (UFMG)",
-          date: "Agosto 2026",
-          hours: null,
-          grade: "Excelente (10.0)",
-          status: "TOKEN-2022 SOULBOUND",
-          hash: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-          tx: "5K2UeXmJ6aP7vN4tL8qR1wZ9yD3bC2fE4gH7jK9mP1rT3vX57890abcdef1234567890",
-        },
-        {
-          id: "rec-2",
-          type: "CERTIFICADO_CURSO",
-          title: "Estruturas de Dados e Algoritmos Avançados",
-          institution: "Universidade Federal de Minas Gerais (UFMG)",
-          date: "Julho 2026",
-          hours: 72,
-          grade: "9.5",
-          status: "ATESTADO NO SAS",
-          hash: "7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069",
-          tx: "3M8nFwK2vP4xL9qT7yD5bC1fE3gH6jK8mP0rT2vX41234567890abcdef1234567890",
-        },
-        {
-          id: "rec-3",
-          type: "HORAS_COMPLEMENTARES",
-          title: "Hackathon Universitário Superteam Brasil",
-          institution: "Superteam Brasil",
-          date: "Agosto 2026",
-          hours: 60,
-          grade: "1º Lugar",
-          status: "ATESTADO NO SAS",
-          hash: "9b71d224bd62f3785d96d46ad3ea3d73319bfbc2890caadae2dff72519673ca72",
-          tx: "4N9pGxL3wQ5yM0rU8zE6cD2gF4hI7kL9nQ1sU3wY51234567890abcdef1234567890",
-        },
-        {
-          id: "rec-4",
-          type: "HORAS_COMPLEMENTARES",
-          title: "Monitoria de Introdução à Programação",
-          institution: "Universidade Federal de Minas Gerais (UFMG)",
-          date: "Dezembro 2025",
-          hours: 48,
-          grade: "10.0",
-          status: "ATESTADO NO SAS",
-          hash: "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e",
-          tx: "2L7mEvJ1uO3wK8pS6xD4aB0eD2fG5iJ7lO9qS1uW31234567890abcdef1234567890",
-        },
-      ];
-    }
+    // 3. Calcula total de horas acumuladas dos registros reais retornados
 
     // 4. Calcula total de horas acumuladas
     const totalHours = records.reduce((acc, r) => {
