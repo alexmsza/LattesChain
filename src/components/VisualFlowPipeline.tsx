@@ -176,7 +176,7 @@ export default function VisualFlowPipeline() {
     <div className="w-full">
       {/* Header do Pipeline */}
       <div className="text-center max-w-3xl mx-auto mb-12">
-        <div className="inline-flex items-center gap-2 rounded-full border border-solana-green/30 bg-solana-green/10 px-4 py-1 text-xs font-bold text-solana-green mb-4">
+        <div className="inline-flex items-center gap-2 rounded-full border border-solana-purple/30 bg-solana-purple/10 px-4 py-1 text-xs font-bold text-solana-purple mb-4">
           <Zap className="h-3.5 w-3.5" />
           Pipeline de Confiança Ponta a Ponta
         </div>
@@ -202,14 +202,14 @@ export default function VisualFlowPipeline() {
                 onClick={() => setSelectedStep(step.id)}
                 className={`flex flex-col items-center text-center p-4 rounded-2xl transition-all duration-300 border ${
                   isActive
-                    ? "bg-slate-850/90 border-solana-green shadow-lg shadow-solana-green/15 scale-[1.03]"
+                    ? "bg-slate-850/90 border-solana-purple shadow-lg shadow-solana-purple/15 scale-[1.03]"
                     : "bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-850/50"
                 }`}
               >
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center font-display font-extrabold text-sm mb-3 transition-colors ${
                     isActive
-                      ? "bg-gradient-to-br from-solana-green to-emerald-400 text-navy-900 shadow-md"
+                      ? "bg-solana-purple text-white shadow-md"
                       : "bg-slate-800 text-slate-400"
                   }`}
                 >
@@ -260,7 +260,7 @@ export default function VisualFlowPipeline() {
             <div className="pt-4">
               <Link
                 href={currentStep.actionHref}
-                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 px-5 py-3 text-sm font-bold text-navy-900 shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="inline-flex items-center gap-2 rounded-full bg-solana-purple px-5 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-solana-purpleDeep hover:scale-[1.02] active:scale-[0.98]"
               >
                 {currentStep.actionText}
                 <ArrowRight className="h-4 w-4" />
@@ -334,10 +334,10 @@ export default function VisualFlowPipeline() {
       </div>
 
       {/* LIVE SIMULATOR BANNER */}
-      <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-solana-green/30 bg-gradient-to-r from-slate-900 via-slate-900/90 to-navy-900">
+      <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-solana-purple/30 bg-gradient-to-r from-slate-900 via-slate-900/90 to-navy-900">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-6">
           <div>
-            <div className="flex items-center gap-2 text-xs font-bold text-solana-green uppercase tracking-wider mb-1">
+            <div className="flex items-center gap-2 text-xs font-bold text-solana-purple uppercase tracking-wider mb-1">
               <Sparkles className="h-4 w-4" />
               Simulador em Tempo Real
             </div>
@@ -405,7 +405,7 @@ export default function VisualFlowPipeline() {
         <div className="rounded-xl bg-slate-950 p-4 font-mono text-xs text-slate-300 border border-slate-800 space-y-1.5 min-h-[90px]">
           {simLog.length === 0 ? (
             <div className="text-slate-500 flex items-center gap-2">
-              <Play className="h-3.5 w-3.5 text-solana-green" />
+              <Play className="h-3.5 w-3.5 text-solana-purple" />
               Clique em um dos botões acima para iniciar a simulação ao vivo do fluxo...
             </div>
           ) : (
