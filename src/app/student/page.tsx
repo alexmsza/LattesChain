@@ -252,15 +252,15 @@ function StudentContent() {
       <div className="glass-panel rounded-3xl p-6 sm:p-8 glow-green">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
-            <div className="h-16 w-16 rounded-2xl bg-gradient-to-tr from-solana-purple to-solana-green p-0.5 shadow-lg">
-              <div className="h-full w-full rounded-[14px] bg-navy-900 flex items-center justify-center text-solana-green">
+            <div className="h-16 w-16 rounded-2xl bg-gradient-to-tr from-solana-purple to-solana-purple p-0.5 shadow-lg">
+              <div className="h-full w-full rounded-[14px] bg-navy-900 flex items-center justify-center text-solana-purple">
                 <GraduationCap className="h-8 w-8" />
               </div>
             </div>
             <div>
               <h1 className="font-display text-2xl sm:text-3xl font-bold text-white">{studentData.name}</h1>
               <p className="text-sm text-slate-300">
-                {studentData.course} • <span className="text-solana-green">{studentData.university}</span>
+                {studentData.course} • <span className="text-solana-purple">{studentData.university}</span>
               </p>
               <div className="flex items-center gap-2 mt-1 font-mono text-xs text-slate-400">
                 <span>Carteira Soberana:</span>
@@ -277,12 +277,12 @@ function StudentContent() {
               }}
               className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 rounded-xl bg-navy-800 border border-slate-700 px-4 py-2.5 text-xs font-semibold text-white hover:bg-slate-700 transition-all"
             >
-              <QrCode className="h-4 w-4 text-solana-green" />
+              <QrCode className="h-4 w-4 text-solana-purple" />
               QR Code do Passaporte
             </button>
             <button
               onClick={handleCopy}
-              className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 rounded-xl bg-solana-green/15 border border-solana-green/30 px-4 py-2.5 text-xs font-semibold text-solana-green hover:bg-solana-green/25 transition-all"
+              className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 rounded-xl bg-solana-purple/15 border border-solana-purple/30 px-4 py-2.5 text-xs font-semibold text-solana-purple hover:bg-solana-purple/25 transition-all"
             >
               {copied ? <CheckCircle2 className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
               {copied ? "Link Copiado!" : "Compartilhar Link"}
@@ -294,16 +294,16 @@ function StudentContent() {
         <div className="mt-8 pt-6 border-t border-slate-800">
           <div className="flex items-center justify-between text-xs mb-2">
             <span className="text-slate-300 font-medium flex items-center gap-1.5">
-              <Clock className="h-4 w-4 text-solana-green" />
+              <Clock className="h-4 w-4 text-solana-purple" />
               {dict.student.hoursProgress}
             </span>
             <span className="font-mono text-slate-200">
-              <strong className="text-solana-green text-sm">{studentData.totalHours}h</strong> / {studentData.requiredHours}h
+              <strong className="text-solana-purple text-sm">{studentData.totalHours}h</strong> / {studentData.requiredHours}h
             </span>
           </div>
           <div className="h-2.5 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800">
             <div
-              className="h-full bg-gradient-to-r from-solana-purple to-solana-green transition-all duration-500 rounded-full"
+              className="h-full bg-gradient-to-r from-solana-purple to-solana-purple transition-all duration-500 rounded-full"
               style={{
                 width: `${Math.min(100, (studentData.totalHours / studentData.requiredHours) * 100)}%`,
               }}
@@ -328,7 +328,7 @@ function StudentContent() {
               onClick={() => setActiveTab(tab.id as any)}
               className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all border ${
                 isActive
-                  ? "bg-solana-green text-navy-900 border-solana-green shadow-md shadow-solana-green/20"
+                  ? "bg-solana-purple text-white border-solana-purple shadow-md shadow-solana-purple/20"
                   : "bg-navy-900/60 text-slate-300 border-slate-800 hover:text-white"
               }`}
             >
@@ -344,7 +344,7 @@ function StudentContent() {
         <div className="space-y-4 animate-in fade-in">
           {loading ? (
             <div className="flex items-center justify-center gap-2 py-16 text-sm text-slate-400">
-              <RefreshCw className="h-5 w-5 animate-spin text-solana-green" />
+              <RefreshCw className="h-5 w-5 animate-spin text-solana-purple" />
               Consultando atestações na Solana Devnet...
             </div>
           ) : studentData.records.length === 0 ? (
@@ -356,7 +356,7 @@ function StudentContent() {
               </p>
               <button
                 onClick={() => setActiveTab("NEW_REQUEST")}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-solana-green/15 border border-solana-green/40 px-4 py-2 text-xs font-bold text-solana-green hover:bg-solana-green/25"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-solana-purple/15 border border-solana-purple/40 px-4 py-2 text-xs font-bold text-solana-purple hover:bg-solana-purple/25"
               >
                 <PlusCircle className="h-4 w-4" />
                 Nova Solicitação
@@ -371,7 +371,7 @@ function StudentContent() {
                 >
                   <div className="space-y-2.5">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="rounded-full bg-solana-green/10 border border-solana-green/30 px-2.5 py-0.5 text-[10px] font-bold text-solana-green">
+                      <span className="rounded-full bg-solana-purple/10 border border-solana-purple/30 px-2.5 py-0.5 text-[10px] font-bold text-solana-purple">
                         {rec.status}
                       </span>
                       <span className="text-[11px] text-slate-400">{rec.date}</span>
@@ -391,7 +391,7 @@ function StudentContent() {
                       href={`https://explorer.solana.com/tx/${rec.tx}?cluster=devnet`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-solana-green hover:underline font-mono text-[11px]"
+                      className="inline-flex items-center gap-1 text-solana-purple hover:underline font-mono text-[11px]"
                     >
                       Explorer <ExternalLink className="h-3 w-3" />
                     </a>
@@ -408,7 +408,7 @@ function StudentContent() {
         <div className="glass-panel rounded-3xl p-6 sm:p-10 border-slate-800 animate-in fade-in max-w-3xl mx-auto space-y-6">
           <div>
             <h2 className="font-display text-xl font-bold text-white flex items-center gap-2">
-              <PlusCircle className="h-5 w-5 text-solana-green" />
+              <PlusCircle className="h-5 w-5 text-solana-purple" />
               {dict.student.requestFormTitle}
             </h2>
             <p className="text-xs text-slate-400 mt-1">
@@ -432,7 +432,7 @@ function StudentContent() {
                 <select
                   value={reqInstId}
                   onChange={(e) => setReqInstId(e.target.value)}
-                  className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-green focus:outline-none"
+                  className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-purple focus:outline-none"
                 >
                   {institutions.map((i) => (
                     <option key={i.id} value={i.id}>
@@ -481,7 +481,7 @@ function StudentContent() {
                     placeholder="Ex: Workshop de Inteligência Artificial e Rust"
                     value={reqTitle}
                     onChange={(e) => setReqTitle(e.target.value)}
-                    className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-green focus:outline-none"
+                    className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-purple focus:outline-none"
                   />
                 </div>
                 <div>
@@ -491,7 +491,7 @@ function StudentContent() {
                     required
                     value={reqHours}
                     onChange={(e) => setReqHours(e.target.value)}
-                    className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-green focus:outline-none"
+                    className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-purple focus:outline-none"
                   />
                 </div>
               </div>
@@ -505,7 +505,7 @@ function StudentContent() {
                     placeholder="Ex: Alura / Coursera / Superteam / USP"
                     value={reqExternalIssuer}
                     onChange={(e) => setReqExternalIssuer(e.target.value)}
-                    className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-green focus:outline-none"
+                    className="w-full rounded-xl border border-slate-700 bg-navy-800/80 px-3.5 py-2.5 text-xs text-white focus:border-solana-purple focus:outline-none"
                   />
                 </div>
               )}
@@ -515,7 +515,7 @@ function StudentContent() {
                 <label className="text-slate-400 block mb-1 font-semibold">Comprovante em PDF</label>
                 <div
                   onClick={() => document.getElementById("req-file")?.click()}
-                  className="border-2 border-dashed border-slate-700 hover:border-solana-green/60 rounded-2xl p-6 text-center cursor-pointer bg-slate-900/40 transition-colors"
+                  className="border-2 border-dashed border-slate-700 hover:border-solana-purple/60 rounded-2xl p-6 text-center cursor-pointer bg-slate-900/40 transition-colors"
                 >
                   <input
                     id="req-file"
@@ -528,7 +528,7 @@ function StudentContent() {
                       }
                     }}
                   />
-                  <UploadCloud className="h-8 w-8 text-solana-green mx-auto mb-2" />
+                  <UploadCloud className="h-8 w-8 text-solana-purple mx-auto mb-2" />
                   <p className="font-semibold text-white text-xs">
                     {reqFile ? reqFile.name : dict.student.uploadPrompt}
                   </p>
@@ -546,14 +546,14 @@ function StudentContent() {
                   value={reqNotes}
                   onChange={(e) => setReqNotes(e.target.value)}
                   placeholder="Informações adicionais para a comissão de validação..."
-                  className="w-full rounded-xl border border-slate-700 bg-navy-800/80 p-2.5 text-xs text-white focus:border-solana-green focus:outline-none"
+                  className="w-full rounded-xl border border-slate-700 bg-navy-800/80 p-2.5 text-xs text-white focus:border-solana-purple focus:outline-none"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 py-3 text-xs font-bold text-navy-900 shadow-md shadow-solana-green/20 hover:scale-[1.01] transition-all disabled:opacity-50"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-solana-purple py-3 text-xs font-bold text-white shadow-md shadow-solana-purple/20 hover:bg-solana-purpleDeep hover:scale-[1.01] transition-all disabled:opacity-50"
               >
                 {submitting ? <RefreshCw className="h-4 w-4 animate-spin" /> : <PlusCircle className="h-4 w-4" />}
                 {submitting ? "Processando e Computando Hash..." : dict.student.submitRequest}
@@ -568,7 +568,7 @@ function StudentContent() {
         <div className="space-y-4 animate-in fade-in">
           {loadingRequests ? (
             <div className="flex items-center justify-center gap-2 py-16 text-sm text-slate-400">
-              <RefreshCw className="h-5 w-5 animate-spin text-solana-green" />
+              <RefreshCw className="h-5 w-5 animate-spin text-solana-purple" />
               Carregando timeline de solicitações...
             </div>
           ) : myRequests.length === 0 ? (
@@ -621,7 +621,7 @@ function StudentContent() {
                         href={`https://explorer.solana.com/tx/${req.solana_tx_signature}?cluster=devnet`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-solana-green hover:underline text-xs font-mono"
+                        className="inline-flex items-center gap-1 text-solana-purple hover:underline text-xs font-mono"
                       >
                         Ver na Solana <ExternalLink className="h-3 w-3" />
                       </a>
@@ -643,7 +643,7 @@ function StudentContent() {
         <div className="space-y-4 animate-in fade-in">
           {loadingCompliance ? (
             <div className="flex items-center justify-center gap-2 py-16 text-sm text-slate-400">
-              <RefreshCw className="h-5 w-5 animate-spin text-solana-green" />
+              <RefreshCw className="h-5 w-5 animate-spin text-solana-purple" />
               Verificando solicitações de compliance...
             </div>
           ) : complianceRequests.length === 0 ? (
@@ -685,7 +685,7 @@ function StudentContent() {
                     ) : (
                       <button
                         onClick={() => handleAuthorizeCompliance(req.id)}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 px-4 py-2 text-xs font-bold text-navy-900 shadow-md hover:scale-[1.02] transition-all"
+                        className="inline-flex items-center gap-1.5 rounded-full bg-solana-purple px-4 py-2 text-xs font-bold text-white shadow-md hover:bg-solana-purpleDeep hover:scale-[1.02] transition-all"
                       >
                         <ShieldCheck className="h-4 w-4" />
                         {dict.student.authorizeShare}
@@ -702,7 +702,7 @@ function StudentContent() {
       {/* MODAL QR CODE */}
       {showQR && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="glass-panel rounded-3xl p-8 max-w-sm w-full border-solana-green/40 text-center space-y-4 animate-in zoom-in-95">
+          <div className="glass-panel rounded-3xl p-8 max-w-sm w-full border-solana-purple/40 text-center space-y-4 animate-in zoom-in-95">
             <h3 className="font-display text-lg font-bold text-white">{dict.student.qrModalTitle}</h3>
             <p className="text-xs text-slate-400">{dict.student.qrModalDesc}</p>
             <div className="bg-white p-4 rounded-2xl mx-auto w-48 h-48 flex items-center justify-center">
