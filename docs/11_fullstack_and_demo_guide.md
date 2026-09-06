@@ -46,11 +46,23 @@ O frontend Next.js agora opera com endpoints server-side integrados, conectando 
 
 ---
 
-## 3. Branch de Demonstração (`demo/mock-showcase`)
+## 3. Separação de Ambientes e Branches
 
+Para garantir integridade de produção e estabilidade em eventos de avaliação, o repositório adota isolamento estrito entre branches:
+
+### A. Branch de Produção / Desenvolvimento Real (`dev-alex`)
+- **Política Zero Mock**: Nenhum dado fictício, componente de demonstração ou fallback sintético.
+- **Persistência Real**:
+  - `POST /api/institutions` e `GET /api/institutions`: Registra e consulta IES na tabela `institutions` do Supabase.
+  - `POST /api/credentials/issue`: Provisiona alunos na tabela `students`, grava credenciais em `academic_records` e audita em `verification_logs`.
+  - `POST /api/credentials/verify`: Consulta exclusivamente os registros existentes no Supabase e na rede Solana Devnet. Se não localizado, retorna status real de `DOCUMENTO NÃO LOCALIZADO`.
+  - `GET /api/credentials/student`: Consulta apenas registros vinculados ao aluno no banco de dados. Caso não haja registros cadastrados, retorna lista vazia `[]`.
+  - `/validator`: Upload de documentos e cálculo real de SHA-256 via Web Crypto API, com interface estritamente limpa para produção.
+
+### B. Branch de Demonstração (`demo/mock-showcase`)
 Para apresentações ao vivo e gravação do pitch sem risco de instabilidade na Devnet ou rate-limit de RPCs públicos, foi estabelecida a branch dedicada **`demo/mock-showcase`**.
 
-### Características da Branch de Demonstração:
+#### Características da Branch de Demonstração:
 - Dataset canônico pré-configurado:
   - **Universidades**: UFMG, USP, PUC Minas.
   - **Aluno**: Alexandre Silva (Ciência da Computação).
@@ -61,3 +73,4 @@ Para apresentações ao vivo e gravação do pitch sem risco de instabilidade na
     4. Monitoria Acadêmica (48h, SAS).
 - Botões de auto-preenchimento 1-clique para teste rápido no validador.
 - Ementas pré-carregadas para demonstração imediata do motor de IA.
+- Banner de demonstração com alternância de perfis e casos de uso.

@@ -11,6 +11,7 @@
 ## 📑 Documentação e Recursos Principais
 
 - 🎙️ **[Roteiro de Pitch (5 Minutos)](docs/PITCH_DECK.md)**: Minutagem, slides e script de fala guiada para gravação do vídeo de submissão.
+- 🏛️ **[Arquitetura Tripartite & Modelo de Negócios](docs/12_tripartite_and_business_architecture.md)**: Ciclo Estudante ⇄ IES ⇄ RH, compliance de estágios, validade universal e Jovian Tech.
 - 📊 **[Plano de Negócios & GTM](docs/BUSINESS_PLAN.md)**: Modelagem B2B2C freemium, unit economics, personas e estratégia beachhead.
 - 🎬 **[Demo Runbook](demo/RUNBOOK.md)**: Passo a passo de execução da demo ao vivo on-chain e IA.
 - 🏗️ **[Visão Geral de Arquitetura](docs/01_architecture_overview.md)**: Topologia, privacidade LGPD e stack open-source.
@@ -171,19 +172,39 @@ npm run dev
 ```
 
 #### Rotas Principais da Aplicação:
-- `/`: Landing page com proposta de valor e métricas.
-- `/validator`: Validador público de documentos (PDF/Hash) e Motor de Equivalência Curricular por IA.
-- `/student`: Passaporte acadêmico soberano do estudante com horas complementares e QR code.
-- `/university`: Portal de emissão da universidade integrado com Supabase e Solana Devnet.
+- `/`: Landing page com proposta de valor, métricas e seletor de idiomas (PT, EN, ES).
+- `/validator`: Validador público de documentos (PDF/Hash), Motor de Equivalência Curricular por IA e Solicitação de Comprovação para Estágios/Vagas (Compliance RH).
+- `/student`: Passaporte acadêmico soberano do estudante, formulário de solicitação de validação à IES, timeline de status e autorização de compliance.
+- `/university`: Portal IES com fila de triagem de solicitações de alunos, emissão manual de diplomas e diretório geral de alunos matriculados.
 - `/admin-protocol`: Master Registry e governança descentralizada do ecossistema.
+- `/sobre`: Página institucional sobre o LattesChain como produto oficial da **Jovian Tech** e validade universal.
+- `/precos`: Tabela de preços, planos para universidades (Start, Campus Pro, Enterprise), planos para RHs e gratuidade para estudantes.
 
-### 6.5 Branch de Demonstração com Dados Mockados (`demo/mock-showcase`)
-Para apresentações de pitch e demonstrações infalíveis sem risco de latência ou rate-limit de RPCs públicos da Devnet:
+### 6.5 Branches do Repositório: Produção Real vs Demonstração
+
+- **Branch `dev-alex` (Ambiente Real / Zero Mock)**:
+  Contém o código de produção limpo, sem componentes ou dados sintéticos. Todas as operações de emissão, cadastro de IES, validação de passaporte de aluno e auditoria de documentos consultam e persistem diretamente no Supabase e na rede Solana Devnet via Serverless Functions.
+
+- **Branch `demo/mock-showcase` (Ambiente de Demonstração & Pitch)**:
+  Branch isolada contendo dados canônicos pré-configurados (UFMG, USP, PUC Minas, estudante com histórico e diplomas Soulbound) e motor de equivalência curricular determinístico resiliente a falhas de rede, ideal para gravação de vídeos e apresentação no Hackathon Universitário Superteam Brasil.
 ```bash
+# Para rodar o ambiente de demonstração com mock canônico:
 git checkout demo/mock-showcase
 npm run dev
 ```
-Esta branch contém cenários pré-configurados com instituições (UFMG, USP, PUC Minas), histórico curricular completo do aluno e botões de preenchimento automático para o pitch de 5 minutos.
+
+### 6.6 Integrações MCP (Model Context Protocol)
+
+O ecossistema conta com suporte a servidores MCP para automação e orquestração de DataSecAIOps:
+- **Vercel MCP** (`https://mcp.vercel.com`): Gerenciamento de projetos, deploys, análise de build logs e monitoramento de Web Analytics.
+- **Supabase MCP** (`https://mcp.supabase.com/mcp`): Gerenciamento de bancos de dados, migrations, branches e queries SQL.
+- **Context7 MCP**: Resolução semântica de documentações técnicas e SDKs.
+- **Chrome DevTools MCP**: Automação e inspeção de fluxos em navegadores headless/headed.
+
+Para conectar o Vercel MCP em qualquer cliente:
+```bash
+npx -y add-mcp https://mcp.vercel.com -g -y -a antigravity -a gemini-cli
+```
 
 ---
 
