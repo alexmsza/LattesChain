@@ -51,7 +51,7 @@ function ResetForm() {
         </p>
         <Link
           href="/recuperar-senha"
-          className="mt-6 inline-block rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 px-5 py-2.5 text-sm font-bold text-navy-900"
+          className="mt-6 inline-block rounded-full bg-solana-purple px-5 py-2.5 text-sm font-bold text-white hover:bg-solana-purpleDeep"
         >
           Solicitar novo link
         </Link>
@@ -69,7 +69,7 @@ function ResetForm() {
         </p>
         <button
           onClick={() => router.push("/login")}
-          className="mt-6 inline-block rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 px-5 py-2.5 text-sm font-bold text-navy-900"
+          className="mt-6 inline-block rounded-full bg-gradient-to-r from-solana-green to-emerald-400 px-5 py-2.5 text-sm font-bold text-navy-900"
         >
           Ir para o login
         </button>
@@ -78,10 +78,10 @@ function ResetForm() {
   }
 
   return (
-    <div className="glass-panel rounded-2xl p-8 glow-green">
+    <div className="glass-panel rounded-2xl p-8 glow-purple">
       <div className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-solana-green/10 border border-solana-green/30">
-          <KeyRound className="h-7 w-7 text-solana-green" />
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-solana-purple/10 border border-solana-purple/30">
+          <KeyRound className="h-7 w-7 text-solana-purple" />
         </div>
         <h1 className="font-display text-2xl font-bold text-white">Redefinir senha</h1>
         <p className="mt-2 text-sm text-slate-400">Escolha uma nova senha para sua conta.</p>
@@ -106,7 +106,7 @@ function ResetForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Mín. 8 caracteres, com letras e números"
-              className="w-full rounded-xl border border-slate-700 bg-navy-800/50 py-3 pl-10 pr-11 text-sm text-white placeholder:text-slate-500 focus:border-solana-green/60 focus:outline-none focus:ring-1 focus:ring-solana-green/40"
+              className="w-full rounded-xl border border-slate-700 bg-navy-800/50 py-3 pl-10 pr-11 text-sm text-white placeholder:text-slate-500 focus:border-solana-purple/60 focus:outline-none focus:ring-1 focus:ring-solana-purple/40"
             />
             <button
               type="button"
@@ -129,14 +129,14 @@ function ResetForm() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Repita a nova senha"
-              className="w-full rounded-xl border border-slate-700 bg-navy-800/50 py-3 pl-10 pr-4 text-sm text-white placeholder:text-slate-500 focus:border-solana-green/60 focus:outline-none focus:ring-1 focus:ring-solana-green/40"
+              className="w-full rounded-xl border border-slate-700 bg-navy-800/50 py-3 pl-10 pr-4 text-sm text-white placeholder:text-slate-500 focus:border-solana-purple/60 focus:outline-none focus:ring-1 focus:ring-solana-purple/40"
             />
           </div>
         </div>
         <button
           type="submit"
           disabled={loading}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 px-4 py-3 text-sm font-bold text-navy-900 shadow-md shadow-solana-green/20 transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-solana-purple px-4 py-3 text-sm font-bold text-white shadow-md shadow-solana-purple/20 transition-all hover:bg-solana-purpleDeep disabled:cursor-not-allowed disabled:opacity-60"
         >
           {loading ? (
             <>
