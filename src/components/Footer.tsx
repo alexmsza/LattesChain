@@ -3,12 +3,12 @@ import { GraduationCap, Github, ExternalLink } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="border-t border-slate-850 bg-[#060910] py-12 text-slate-400">
+    <footer className="border-t border-slate-850 bg-[#0a0714] py-12 text-slate-400">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 mb-3">
-              <GraduationCap className="h-6 w-6 text-solana-green" />
+              <GraduationCap className="h-6 w-6 text-solana-purple" />
               <span className="font-display text-lg font-bold text-white">
                 Lattes<span className="text-solana-green">Chain</span>
               </span>
@@ -26,17 +26,17 @@ export function Footer() {
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200 mb-4">Protocolo</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/validator" className="hover:text-solana-green transition-colors">
+                <Link href="/validator" className="hover:text-solana-purple transition-colors">
                   Validador Público RH
                 </Link>
               </li>
               <li>
-                <Link href="/student" className="hover:text-solana-green transition-colors">
+                <Link href="/student" className="hover:text-solana-purple transition-colors">
                   Passaporte do Aluno
                 </Link>
               </li>
               <li>
-                <Link href="/university" className="hover:text-solana-green transition-colors">
+                <Link href="/university" className="hover:text-solana-purple transition-colors">
                   Painel da Universidade
                 </Link>
               </li>
@@ -51,7 +51,7 @@ export function Footer() {
                   href="https://attest.solana.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 hover:text-solana-green transition-colors"
+                  className="flex items-center gap-1.5 hover:text-solana-purple transition-colors"
                 >
                   Solana Attestation Service <ExternalLink className="h-3 w-3" />
                 </a>
@@ -61,7 +61,7 @@ export function Footer() {
                   href="https://solana.com/docs/core/token-extensions"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 hover:text-solana-green transition-colors"
+                  className="flex items-center gap-1.5 hover:text-solana-purple transition-colors"
                 >
                   Token-2022 Extensions <ExternalLink className="h-3 w-3" />
                 </a>
@@ -71,7 +71,7 @@ export function Footer() {
                   href="https://supabase.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 hover:text-solana-green transition-colors"
+                  className="flex items-center gap-1.5 hover:text-solana-purple transition-colors"
                 >
                   Supabase Backend <ExternalLink className="h-3 w-3" />
                 </a>
