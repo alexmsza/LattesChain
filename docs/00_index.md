@@ -27,6 +27,8 @@
 | `14_solana_wallet_connection_and_security.md` | Carteira Solana & Segurança | Conexão Web3 (Phantom/Solflare), SecurityGuard anti-scraping e créditos |
 | `15_mec_xml_parser_rvdd_and_lgpd_compliance.md` | Conformidade MEC, XML & LGPD | Parser do XML MEC (Portarias 330/554), RVDD QR Code, Lote CSV e LGPD |
 | `16_mainnet_migration_and_gasless_relayer_spec.md` | Migração Mainnet & Relayer Gasless | Infraestrutura Helius/QuickNode, Fee Payer e State Compression |
+| `17_financial_model_infrastructure_costs_and_pricing.md` | Modelo Financeiro & Precificação B2B | Custos de nuvem, cálculo de gás, margem de 94% e precificação IES/RH |
+| `18_external_api_and_erp_integration_guide.md` | Guia de Integração de APIs & ERPs Legados | Chaves de API, emissão/verificação REST, TOTVS RM, ATS e SDKs |
 | `adr/001-007` | ADRs | 7 decisões de arquitetura formalizadas |
 | `LattesChain.md` | Documento mestre (histórico) | Visão original — **subsumido** pelos docs numerados; manter como referência |
 

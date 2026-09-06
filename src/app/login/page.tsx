@@ -22,6 +22,7 @@ const ROLE_HOME: Record<string, string> = {
   STUDENT: "/student",
   INSTITUTION: "/university",
   EMPLOYER: "/validator",
+  ADMIN: "/admin-protocol",
 };
 
 function LoginForm() {
