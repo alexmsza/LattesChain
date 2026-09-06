@@ -1,137 +1,182 @@
-# EduCore Protocol (LattesChain) 🎓⛓️
+# LattesChain — Passaporte Acadêmico Global Descentralizado 🎓⛓️
 
-[![Solana](https://img.shields.io/badge/Blockchain-Solana%20Devnet-9945FF?logo=solana)](https://solana.com)
-[![Next.js 14](https://img.shields.io/badge/Frontend-Next.js%2014-black?logo=next.js)](https://nextjs.org)
-[![Go](https://img.shields.io/badge/Backend-Go%201.22%20on%20Fly.io-00ADD8?logo=go)](https://fly.io)
-[![Supabase](https://img.shields.io/badge/Database-Supabase%20Postgres-3ECF8E?logo=supabase)](https://supabase.com)
-[![Anchor](https://img.shields.io/badge/Anchor-0.29.0-2b2b2b)](https://www.anchor-lang.com)
+[![Solana](https://img.shields.io/badge/Blockchain-Solana%20Devnet%20%2F%20Mainnet-9945FF?logo=solana)](https://solana.com)
+[![SAS](https://img.shields.io/badge/Protocolo-Solana%20Attestation%20Service-14F195)](https://attest.solana.com)
+[![Open Source](https://img.shields.io/badge/Stack-100%25%20Free%20%26%20Open--Source-brightgreen)](https://opensource.org)
+[![Superteam Brasil](https://img.shields.io/badge/Hackathon-Superteam%20Brasil-008C4C)](https://uni.superteam.com.br/)
 
-Plataforma B2B SaaS de certificação acadêmica e validação de horas complementares baseada em arquitetura híbrida (Off-Chain/On-Chain). Integra a validade jurídica governamental (**ICP-Brasil**) com a imutabilidade pública da blockchain **Solana**.
-
-> 📚 **Documentação completa**: comece por [`docs/00_index.md`](docs/00_index.md) — índice, status de implementação, issues conhecidas e Definition of Ready para Mainnet.
+> **Projeto submetido ao [Hackathon Universitário Superteam Brasil](https://uni.superteam.com.br/)**  
+> Listagem oficial no Superteam Earn: [Hackathon Universitária Superteam Brasil](https://superteam.fun/earn/listing/hackathon-universitaria-superteam-brasil-1)  
+> **Missão**: Transformar credenciais, diplomas e históricos acadêmicos em atestações soberanas, imutáveis e verificáveis globalmente na **Solana**.
 
 ---
 
-## 🏛️ Arquitetura do Sistema
+## 📑 Documentação e Recursos Principais
 
+- 🎙️ **[Roteiro de Pitch (5 Minutos)](docs/PITCH_DECK.md)**: Minutagem, slides e script de fala guiada para gravação do vídeo de submissão.
+- 📊 **[Plano de Negócios & GTM](docs/BUSINESS_PLAN.md)**: Modelagem B2B2C freemium, unit economics, personas e estratégia beachhead.
+- 🎬 **[Demo Runbook](demo/RUNBOOK.md)**: Passo a passo de execução da demo ao vivo on-chain e IA.
+- 🏗️ **[Visão Geral de Arquitetura](docs/01_architecture_overview.md)**: Topologia, privacidade LGPD e stack open-source.
+
+---
+
+## 1. O Problema (A Dor Real)
+
+Hoje, o histórico educacional do estudante é **refém das instituições de ensino**:
+- **Lentidão & Burocracia**: Solicitações de histórico, validação de horas complementares e transferências de cursos demoram semanas em secretarias acadêmicas e frequentemente envolvem cobrança de taxas.
+- **Fraude Endêmica**: Mais de 10% dos certificados e diplomas apresentados em processos seletivos contêm adulterações em PDF.
+- **Custo para Recrutadores & Universidades**: RHs e faculdades perdem tempo e dinheiro ligando ou enviando e-mails para checar autenticidade de documentos.
+
+---
+
+## 2. A Solução: Passaporte Acadêmico Soberano
+
+O **LattesChain** cria uma ponte direta entre universidades, estudantes e validadores:
+
+```mermaid
+graph LR
+    U[Universidade\nIssuer / Credential] -->|CreateSchema| S[Schema\ndisciplina / diploma]
+    U -->|CreateAttestation| A[Attestation\nna carteira do aluno]
+    S --> A
+    A -->|token soulbound\nToken-2022| AL[Aluno\nHolder]
+    AL -.->|carteira pública / QR Code| V[Validador / RH\nlê direto da Solana]
+    V -->|IA: traduz pra\nlinguagem natural| R[Trust Report & Equivalência]
 ```
-                        ┌──────────────────────────────────┐
-                        │  Frontend Next.js (App Router)   │
-                        │  /admin /university /student     │
-                        │  /validator (upload PDF p/ API)  │
-                        └───────────────┬──────────────────┘
-                                        │ HTTPS
-                                        ▼
-                        ┌──────────────────────────────────┐
-                        │  Go Relayer — Fly.io (região gru)│
-                        │  SHA-256 canônico + BIP44 + ICP  │
-                        └───────┬──────────────────┬───────┘
-                                │                  │
-                 ┌──────────────┴───────┐  ┌───────┴────────────────────┐
-                 ▼                      │  ▼                            ▼
-    ┌─────────────────────────┐         │  ┌─────────────────────────────────┐
-    │ Supabase (Off-Chain)   │         │  │ Solana (On-Chain)               │
-    │ • PII / LGPD + RLS     │◄────────┘  │ • MasterRegistry (Anchor 0.29)   │
-    │ • Vault (master seed)  │   fallback │ • SPL Memo (horas/certificados) │
-    │ • Auth + logs auditoria│            │ • Metaplex Core SBT (diplomas)  │
-    └─────────────────────────┘            │ RPC: Helius → QuickNode        │
-                                           └─────────────────────────────────┘
-```
 
-**Decisões-chave** (ADRs completos em `docs/adr/`):
-- **Fly.io** para o backend Go (região `gru`, scale-to-zero) — ADR-002
-- **Helius primário + QuickNode fallback** com `ExecuteWithFallback` — ADR-001
-- Carteiras alunos custodiais próprias: **Supabase Vault + derivação BIP44** — ADR-004
-- **Metaplex Core SBT** obrigatório para diplomas; SPL Memo para horas — ADR-003/007
-- **Hash do PDF no backend** (`POST /api/verify/pdf`, bytes brutos) — ADR-005
+1. **Emissão Soberana**: A universidade emite uma atestação oficial para a carteira do estudante (onboarding transparente e zero-crypto).
+2. **Propriedade Real**: Cada disciplina, curso livre e diploma torna-se uma credencial imutável na posse do aluno.
+3. **Verificação Instantânea**: Qualquer empresa ou instituição no mundo valida a credencial em 1 segundo direto da blockchain, sem intermediários.
+4. **Camada de IA Inteligente**: A IA processa as ementas emitidas, calcula o grau de equivalência curricular entre instituições e gera relatórios de confiança para recrutadores.
 
 ---
 
-## ⚠️ Estado Atual do Código (MVP incompleto)
+## 3. Por que Solana & Ecossistema?
 
-Este repositório está em fase de esqueleto. Antes de rodar qualquer fluxo end-to-end, leia [`docs/00_index.md` §3](docs/00_index.md) — há issues bloqueantes conhecidas (imports quebrados no Go, derivação de wallet com curva errada, hash de emissão ≠ hash de validação, `is_paused` não aplicado no contrato, transação Solana ainda mock).
+A Solana é a infraestrutura ideal para certificações educacionais em escala global:
+
+- **Solana Attestation Service (SAS)**: Em vez de contratos proprietários opacos, usamos o padrão aberto da Solana (`22zoJMtdu4tQc2PzL74ZUT7FrwgB1Udec8DdW4yw4BdG`), interoperável com Solana ID e Civic.
+- **Token-2022 Soulbound & Revogável**:
+  - `NonTransferable`: Garante que o diploma ou certificado nunca possa ser vendido ou transferido.
+  - `PermanentDelegate`: Permite que a instituição revogue a atestação on-chain em caso de fraude ou erro, sem depender da autorização do aluno.
+- **Custo de Sub-Centavo**: Emissões em massa custam frações de centavo (< R$ 0,01), viabilizando milhões de atestações por semestre.
+- **Privacidade & LGPD por Design**: Nenhum dado sensível (nome, CPF, dados do aluno) vai para a rede. Apenas o hash SHA-256 do documento canônico é ancorado on-chain.
 
 ---
 
-## 📂 Estrutura do Repositório
+## 4. Stack Tecnológica 100% Free, Open-Source & Self-Hosted
+
+Toda a arquitetura foi desenhada para operar a **custo zero de infraestrutura** no MVP:
+
+| Camada | Tecnologia | Licença / Modalidade | Custo |
+| :--- | :--- | :--- | :---: |
+| **Blockchain** | Solana (SAS + Token-2022) | Open Source / Permissionless | Sub-cent (< R$ 0,01) |
+| **Backend / Relayer** | Go (Golang) + Python SAS SDK | Open Source (BSD / MIT) | R$ 0,00 |
+| **Database & Auth** | Supabase (PostgreSQL + RLS) | Open Source / Free Tier | R$ 0,00 |
+| **Frontend** | Next.js + Tailwind CSS | Open Source / Cloudflare Pages / Vercel Free | R$ 0,00 |
+| **Camada de IA** | Ollama / Groq / Google Gemini Free | Open Source / Free Tier API | R$ 0,00 |
+
+---
+
+## 5. Estrutura do Repositório
 
 ```
 LattesChain/
-├── api/                          # Backend Go (Fly.io) — relayer
-│   ├── cmd/main.go               # Gin + zerolog + graceful shutdown
-│   ├── internal/{config,handlers,models,services,utils}
-│   └── fly.toml                  # região gru, porta 8080, health check
-├── docs/                         # Documentação técnica (source of truth)
-│   ├── 00_index.md               # ← COMECE AQUI
-│   ├── 01..06_*.md               # arquitetura, dados, contratos, backend, frontend, segurança
-│   ├── 07_api_openapi.yaml       # spec OpenAPI 3.1
-│   ├── 08_key_management.md      # K1-K7, cerimônias, CloudHSM
-│   ├── 09_threat_model.md        # STRIDE + DFD + DPIA
-│   ├── 10_runbooks.md            # RB-01..RB-10
-│   └── adr/001-007               # decisões de arquitetura
-├── educore_contracts/            # Smart Contracts Rust/Anchor 0.29
-│   ├── Cargo.toml
-│   └── programs/educore_contracts/src/lib.rs
-├── supabase/migrations/          # 001_initial_schema.sql + 002_rls_policies.sql
-├── src/                          # Frontend Next.js (ainda não implementado)
-├── prompts/                      # Prompts de referência históricos
-└── .agents/                      # Regras + skill do orchestrator
+├── README.md                 # Este documento — planejamento e visão consolidada
+├── docs/                     # Especificações detalhadas e documentação técnica
+│   ├── PITCH_DECK.md         # Roteiro de pitch de 5 minutos para submissão
+│   ├── BUSINESS_PLAN.md      # Modelagem de negócios B2B2C e estratégia GTM
+│   ├── 00_index.md           # Índice de documentação técnica
+│   ├── 01_architecture_overview.md # Arquitetura geral do sistema
+│   └── adr/                  # Architecture Decision Records (ADR 001-007)
+├── sas/                      # Pipeline executável do Solana Attestation Service
+│   ├── sas_core.py           # Core: constantes, codecs, PDAs e decoders
+│   ├── sas_client.py         # Builders de instruções e envio de transações
+│   ├── 00_setup_wallets.py   # Criação/carregamento de keypairs locais
+│   ├── 01_create_credential.py # Registro da universidade como emissor
+│   ├── 02_create_schema.py   # Registro dos schemas (disciplina e diploma)
+│   ├── 03_issue_attestation.py # Emissão de atestação on-chain
+│   ├── 04_issue_soulbound.py # Emissão com Token-2022 Soulbound
+│   ├── 05_verify.py          # Verificação de atestações direto da rede
+│   ├── 06_revoke.py          # Demonstração de revogação nativa
+│   └── README.md             # Instruções de setup do módulo SAS
+├── ai/                       # Camada de IA (Equivalência e Relatórios)
+│   ├── equivalence_check.py  # Análise semântica de equivalência de ementas
+│   ├── trust_report.py       # Geração de Trust Report para RH
+│   └── requirements.txt      # Dependências da camada de IA
+├── api/                      # Backend Go Relayer (Open-Source REST API)
+├── supabase/                 # Schemas SQL e Políticas RLS (PostgreSQL)
+└── demo/
+    └── RUNBOOK.md            # Roteiro passo a passo da demo ao vivo
 ```
 
 ---
 
-## 🚀 Como Executar
+## 6. Como Executar a Demonstração On-Chain
 
-### 1. Pré-requisitos
-- Go `1.22+`
-- Rust `1.75+` & Anchor `0.29.0` (Solana CLI `1.18+`)
-- Node.js `18+` (frontend)
-- Contas: Supabase (projeto), Helius (RPC + API key), Fly.io (CLI autenticada)
+### 6.1 Pré-requisitos
+- Python 3.10+ instalado
+- `uv` ou ambiente virtual Python
 
-### 2. Backend Go (local)
+### 6.2 Execução do Pipeline SAS (Solana Devnet)
 ```bash
-cd api
-export EDUCORE_SOLANA_HELIUS_RPC_URL="https://devnet.helius-rpc.com/?api-key=<key>"
-export EDUCORE_SOLANA_PROGRAM_ID="<program_id>"
-export EDUCORE_SUPABASE_URL="https://<ref>.supabase.co"
-export EDUCORE_SUPABASE_SERVICE_ROLE_KEY="<key>"
-go run ./cmd        # escuta :8080
-```
-> Nota: o build está atualmente quebrado por imports de module path (issue I-1 em `docs/00_index.md`).
+# 1. Configurar dependências
+cd sas
+pip install -r requirements.txt
 
-### 3. Deploy Fly.io
-```bash
-fly launch --no-deploy --name educore-relayer --region gru --config api/fly.toml
-fly secrets set EDUCORE_SOLANA_HELIUS_RPC_URL=... EDUCORE_SUPABASE_URL=... ...
-fly deploy --config api/fly.toml
-```
+# 2. Configurar carteiras e fundos de teste
+python 00_setup_wallets.py
 
-### 4. Smart Contracts
-```bash
-cd educore_contracts
-anchor build && anchor test    # requer Anchor.toml (a criar — ver docs/03 §7)
+# 3. Registrar universidade e schemas
+python 01_create_credential.py
+python 02_create_schema.py
+
+# 4. Emitir atestação e mint soulbound
+python 03_issue_attestation.py
+python 04_issue_soulbound.py
+
+# 5. Verificar atestação on-chain
+python 05_verify.py disciplina
+
+# 6. Demonstrar revogação de credencial
+python 06_revoke.py
 ```
 
-### 5. Banco (Supabase)
+### 6.3 Executar a Camada de IA
 ```bash
-supabase db push               # aplica supabase/migrations
-# ⚠️ corrigir bip44_index UINT → INTEGER antes (issue I-2)
+# Ambiente com uv
+uv venv .venv
+.venv\Scripts\activate
+uv pip install -r ai/requirements.txt
+
+# Gerar Trust Report para o RH
+python ai/trust_report.py
+
+# Executar checagem de equivalência curricular
+python ai/equivalence_check.py
 ```
 
----
+### 6.4 Executar a Aplicação Web Full-Stack (Next.js 14)
+```bash
+# Instalar dependências
+npm install
 
-## 🔐 Assinatura ICP-Brasil — MVP vs Produção
+# Rodar servidor de desenvolvimento
+npm run dev
+# Acesse em http://localhost:3000
+```
 
-- **MVP (atual)**: assinatura **mock** gerada no relayer (`MOCK_ICP_BRASIL_SIGNATURE_*`). Rotulada e sem valor jurídico. Apenas Devnet.
-- **Produção (arquitetura final, a implementar)**: **AWS CloudHSM (FIPS 140-2 L3) + Lambda signer** — a chave e-CNPJ (A1) da IES vive dentro do HSM, importada em cerimônia; o Lambda assina o `document_hash` sob demanda via PKCS#11, com trilha de auditoria completa (CloudTrail). Alternativa por IES: serviços de assinatura remota (Valid, Certisign, Lacuna).
-- On-chain grava-se apenas o **hash da assinatura** (a PKCS#7 completa, 1-4KB, fica off-chain).
+#### Rotas Principais da Aplicação:
+- `/`: Landing page com proposta de valor e métricas.
+- `/validator`: Validador público de documentos (PDF/Hash) e Motor de Equivalência Curricular por IA.
+- `/student`: Passaporte acadêmico soberano do estudante com horas complementares e QR code.
+- `/university`: Portal de emissão da universidade integrado com Supabase e Solana Devnet.
+- `/admin-protocol`: Master Registry e governança descentralizada do ecossistema.
 
-Detalhes: [`docs/08_key_management.md`](docs/08_key_management.md) e [`docs/adr/006-icp-brasil-signing.md`](docs/adr/006-icp-brasil-signing.md).
+### 6.5 Branch de Demonstração com Dados Mockados (`demo/mock-showcase`)
+Para apresentações de pitch e demonstrações infalíveis sem risco de latência ou rate-limit de RPCs públicos da Devnet:
+```bash
+git checkout demo/mock-showcase
+npm run dev
+```
+Esta branch contém cenários pré-configurados com instituições (UFMG, USP, PUC Minas), histórico curricular completo do aluno e botões de preenchimento automático para o pitch de 5 minutos.
 
----
-
-## 🛡️ Conformidade & Segurança
-- **LGPD**: PII (nome, CPF, e-mail, PDF) exclusivamente off-chain no Supabase; on-chain apenas hash + assinatura + pubkeys (pseudonimização). Direito ao esquecimento via soft delete off-chain. DPIA esqueleto em `docs/09_threat_model.md` §9.
-- **ICP-Brasil**: Portarias MEC 330/2018 e 554/2019 — camada complementar ao RND (não o substitui).
-- **RLS**: policies por papel (student/institution/service_role) em todas as tabelas.
-- Docs: [`06_security_lgpd_icp.md`](docs/06_security_lgpd_icp.md) • [`09_threat_model.md`](docs/09_threat_model.md) • [`10_runbooks.md`](docs/10_runbooks.md)

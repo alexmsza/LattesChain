@@ -48,6 +48,7 @@ test-ledger/
 !mcp_config.json
 !plugins/**/plugin.json
 !**/*.schema.json
+!.eslintrc.json
 id.json
 keypair.json
 *.pem
@@ -74,3 +75,15 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# SAS Keys & Demo State
+sas/keys/
+sas/.demo_state.json
+.demo_state.json
+
