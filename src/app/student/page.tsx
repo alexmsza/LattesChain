@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   GraduationCap,
   Award,
@@ -11,70 +12,66 @@ import {
   CheckCircle2,
   Share2,
   Copy,
-  BookOpen,
+  RefreshCw,
 } from "lucide-react";
 
-export default function StudentPage() {
+function StudentContent() {
+  const searchParams = useSearchParams();
+  const walletQuery = searchParams.get("wallet");
+  const cpfQuery = searchParams.get("cpf");
+
+  const [loading, setLoading] = useState(true);
   const [showQR, setShowQR] = useState(false);
+  const [selectedRecordForQR, setSelectedRecordForQR] = useState<any>(null);
   const [copied, setCopied] = useState(false);
 
-  // Mock demonstrativo de credenciais do estudante sincronizadas com o banco e SAS
-  const studentData = {
+  const [studentData, setStudentData] = useState({
     name: "Alexandre Silva",
     course: "Ciência da Computação",
     university: "Universidade Federal de Minas Gerais (UFMG)",
     solanaWallet: "EDFKFcXnx1XbqDCo6D5DXBdxxCWT3eLdMDyX1RMpDgtK",
     totalHours: 180,
     requiredHours: 200,
-    records: [
-      {
-        id: "1",
-        type: "DIPLOMA",
-        title: "Bacharelado em Ciência da Computação",
-        institution: "UFMG",
-        date: "Agosto 2026",
-        hours: null,
-        status: "SOULBOUND (TOKEN-2022)",
-        hash: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        tx: "5K2UeXmJ6aP7vN4tL8qR1wZ9yD3bC2fE4gH7jK9mP1rT3vX5",
-      },
-      {
-        id: "2",
-        type: "DISCIPLINA",
-        title: "Estruturas de Dados e Algoritmos Avançados",
-        institution: "UFMG",
-        date: "Julho 2026",
-        hours: 72,
-        status: "ATESTADO NO SAS",
-        hash: "7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069",
-        tx: "3M8nFwK2vP4xL9qT7yD5bC1fE3gH6jK8mP0rT2vX4",
-      },
-      {
-        id: "3",
-        type: "HORAS_COMPLEMENTARES",
-        title: "Hackathon Universitário Superteam Brasil",
-        institution: "Superteam Brasil",
-        date: "Agosto 2026",
-        hours: 60,
-        status: "ATESTADO NO SAS",
-        hash: "9b71d224bd62f3785d96d46ad3ea3d73319bfbc2890caadae2dff72519673ca72",
-        tx: "4N9pGxL3wQ5yM0rU8zE6cD2gF4hI7kL9nQ1sU3wY5",
-      },
-      {
-        id: "4",
-        type: "HORAS_COMPLEMENTARES",
-        title: "Monitoria de Introdução à Programação",
-        institution: "UFMG",
-        date: "Dezembro 2025",
-        hours: 48,
-        status: "ATESTADO NO SAS",
-        hash: "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e",
-        tx: "2L7mEvJ1uO3wK8pS6xD4aB0eD2fG5iJ7lO9qS1uW3",
-      },
-    ],
-  };
+    records: [] as any[],
+  });
 
-  const shareUrl = typeof window !== "undefined" ? `${window.location.origin}/validator?wallet=${studentData.solanaWallet}` : "";
+  useEffect(() => {
+    async function loadStudentData() {
+      setLoading(true);
+      try {
+        let url = "/api/credentials/student";
+        const params = new URLSearchParams();
+        if (walletQuery) params.append("wallet", walletQuery);
+        if (cpfQuery) params.append("cpf", cpfQuery);
+        if (params.toString()) url += `?${params.toString()}`;
+
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+          setStudentData({
+            name: data.student.name,
+            course: data.student.course,
+            university: data.student.university,
+            solanaWallet: data.student.solanaWallet,
+            totalHours: data.student.totalHours,
+            requiredHours: data.student.requiredHours || 200,
+            records: data.records || [],
+          });
+        }
+      } catch (err) {
+        console.error("Erro ao carregar dados do aluno:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadStudentData();
+  }, [walletQuery, cpfQuery]);
+
+  const shareUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/validator?wallet=${studentData.solanaWallet}`
+      : "";
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareUrl);
@@ -99,7 +96,7 @@ export default function StudentPage() {
                 {studentData.course} • <span className="text-solana-green">{studentData.university}</span>
               </p>
               <div className="flex items-center gap-2 mt-1 font-mono text-xs text-slate-400">
-                <span>Carteira:</span>
+                <span>Carteira Soberana:</span>
                 <span className="text-slate-300">{studentData.solanaWallet.substring(0, 16)}...</span>
               </div>
             </div>
@@ -107,11 +104,14 @@ export default function StudentPage() {
 
           <div className="flex flex-wrap items-center gap-3">
             <button
-              onClick={() => setShowQR(true)}
+              onClick={() => {
+                setSelectedRecordForQR(null);
+                setShowQR(true);
+              }}
               className="inline-flex items-center gap-2 rounded-xl bg-slate-800 border border-slate-700 px-4 py-2.5 text-xs font-semibold text-white hover:bg-slate-700"
             >
               <QrCode className="h-4 w-4 text-solana-green" />
-              QR Code de Validação
+              QR Code Geral
             </button>
             <button
               onClick={handleCopy}
@@ -126,45 +126,64 @@ export default function StudentPage() {
         {/* PROGRESS METRICS */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 pt-8 border-t border-slate-800">
           <div className="rounded-2xl bg-navy-900/60 p-4 border border-slate-800">
-            <span className="text-xs text-slate-400 block mb-1">Horas Complementares</span>
+            <span className="text-xs text-slate-400 block mb-1">Horas de Extensão / Complementares</span>
             <div className="font-display text-2xl font-bold text-solana-green">
               {studentData.totalHours} / {studentData.requiredHours} h
             </div>
             <div className="w-full bg-slate-800 h-2 rounded-full mt-2 overflow-hidden">
               <div
-                className="bg-gradient-to-r from-solana-purple to-solana-green h-full rounded-full"
-                style={{ width: `${(studentData.totalHours / studentData.requiredHours) * 100}%` }}
+                className="bg-gradient-to-r from-solana-purple to-solana-green h-full rounded-full transition-all duration-500"
+                style={{
+                  width: `${Math.min((studentData.totalHours / studentData.requiredHours) * 100, 100)}%`,
+                }}
               />
             </div>
           </div>
 
           <div className="rounded-2xl bg-navy-900/60 p-4 border border-slate-800">
             <span className="text-xs text-slate-400 block mb-1">Atestações no SAS</span>
-            <div className="font-display text-2xl font-bold text-white">4 Credenciais</div>
+            <div className="font-display text-2xl font-bold text-white">
+              {studentData.records.length} Credenciais
+            </div>
             <span className="text-xs text-emerald-400 font-medium">100% Verificadas On-Chain</span>
           </div>
 
           <div className="rounded-2xl bg-navy-900/60 p-4 border border-slate-800">
             <span className="text-xs text-slate-400 block mb-1">Status do Diploma</span>
-            <div className="font-display text-2xl font-bold text-amber-400">Pronto p/ Emissão</div>
-            <span className="text-xs text-slate-400">Token-2022 Soulbound</span>
+            <div className="font-display text-2xl font-bold text-amber-400">
+              {studentData.records.some((r) => r.type === "DIPLOMA")
+                ? "Emitido (Soulbound)"
+                : "Apto para Colação"}
+            </div>
+            <span className="text-xs text-slate-400">Token-2022 Intransferível</span>
           </div>
         </div>
       </div>
 
       {/* CREDENTIALS TIMELINE */}
       <div>
-        <h2 className="font-display text-xl font-bold text-white mb-4 flex items-center gap-2">
-          <Award className="h-5 w-5 text-solana-green" />
-          Credenciais & Atestações Registradas
-        </h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-display text-xl font-bold text-white flex items-center gap-2">
+            <Award className="h-5 w-5 text-solana-green" />
+            Credenciais & Atestações Registradas
+          </h2>
+          {loading && (
+            <div className="flex items-center gap-1.5 text-xs text-slate-400">
+              <RefreshCw className="h-3.5 w-3.5 animate-spin text-solana-green" />
+              Sincronizando...
+            </div>
+          )}
+        </div>
 
         <div className="space-y-4">
           {studentData.records.map((record) => (
-            <div key={record.id} className="glass-panel rounded-2xl p-6 transition-all hover:border-slate-700">
+            <div
+              key={record.id}
+              className="glass-panel rounded-2xl p-6 transition-all hover:border-slate-700"
+            >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <div className="flex items-center gap-2 mb-1.5">
+                  <div className="flex flex-wrap items-center gap-2 mb-1.5">
                     <span
                       className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
                         record.type === "DIPLOMA"
@@ -175,15 +194,33 @@ export default function StudentPage() {
                       {record.status}
                     </span>
                     <span className="text-xs text-slate-400">{record.date}</span>
+                    {record.grade && (
+                      <span className="text-xs text-slate-300 font-mono">
+                        • Nota: {record.grade}
+                      </span>
+                    )}
                   </div>
                   <h3 className="font-display text-lg font-semibold text-white">{record.title}</h3>
                   <p className="text-xs text-slate-400 mt-0.5">
                     Emissor: <strong className="text-slate-300">{record.institution}</strong>
                     {record.hours && ` • Carga Horária: ${record.hours}h`}
                   </p>
+                  <div className="text-[10px] font-mono text-slate-500 mt-1 truncate max-w-md">
+                    Hash: {record.hash}
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <button
+                    onClick={() => {
+                      setSelectedRecordForQR(record);
+                      setShowQR(true);
+                    }}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-800/80 px-3 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-700"
+                  >
+                    <QrCode className="h-3.5 w-3.5 text-solana-green" />
+                    QR
+                  </button>
                   <a
                     href={`https://explorer.solana.com/tx/${record.tx}?cluster=devnet`}
                     target="_blank"
@@ -203,17 +240,23 @@ export default function StudentPage() {
       {/* QR CODE MODAL */}
       {showQR && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="glass-panel rounded-3xl p-8 max-w-sm w-full text-center border-solana-green/30 glow-green">
+          <div className="glass-panel rounded-3xl p-8 max-w-sm w-full text-center border-solana-green/30 glow-green animate-in fade-in zoom-in-95">
             <ShieldCheck className="h-10 w-10 text-solana-green mx-auto mb-3" />
-            <h3 className="font-display text-xl font-bold text-white mb-1">QR Code de Validação</h3>
+            <h3 className="font-display text-xl font-bold text-white mb-1">
+              {selectedRecordForQR ? "Validação Específica" : "Passaporte Acadêmico"}
+            </h3>
             <p className="text-xs text-slate-400 mb-6">
-              Apresente este código para recrutadores de RH ou faculdades validarem seu passaporte instantaneamente.
+              {selectedRecordForQR
+                ? `QR Code apontando para o hash ${selectedRecordForQR.title}`
+                : "Apresente para recrutadores validarem seu passaporte instantaneamente."}
             </p>
 
-            {/* Simulated QR Code Graphic */}
-            <div className="bg-white p-4 rounded-2xl inline-block shadow-xl mb-6">
-              <div className="h-44 w-44 bg-slate-900 rounded-lg flex items-center justify-center text-white">
-                <QrCode className="h-32 w-32 text-solana-green" />
+            <div className="bg-white p-4 rounded-2xl inline-block shadow-xl mb-4">
+              <div className="h-44 w-44 bg-slate-900 rounded-lg flex flex-col items-center justify-center text-white p-2">
+                <QrCode className="h-28 w-28 text-solana-green" />
+                <span className="text-[9px] font-mono text-slate-400 mt-2 truncate w-full">
+                  {selectedRecordForQR ? selectedRecordForQR.hash.substring(0, 18) + "..." : studentData.solanaWallet.substring(0, 18) + "..."}
+                </span>
               </div>
             </div>
 
@@ -229,5 +272,19 @@ export default function StudentPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function StudentPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">
+          Carregando passaporte acadêmico...
+        </div>
+      }
+    >
+      <StudentContent />
+    </Suspense>
   );
 }

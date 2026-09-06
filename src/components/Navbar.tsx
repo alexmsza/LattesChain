@@ -11,6 +11,7 @@ import {
   LogOut,
   UserCircle2,
   Loader2,
+  Activity,
 } from "lucide-react";
 import { useSession } from "@/lib/useSession";
 
@@ -18,6 +19,7 @@ const ROLE_HOME: Record<string, string> = {
   STUDENT: "/student",
   INSTITUTION: "/university",
   EMPLOYER: "/validator",
+  ADMIN: "/admin-protocol",
 };
 
 export function Navbar() {
@@ -30,6 +32,7 @@ export function Navbar() {
     { href: "/validator", label: "Validador RH", icon: ShieldCheck, public: true },
     { href: "/student", label: "Meu Passaporte", icon: UserCheck, public: false },
     { href: "/university", label: "Portal IES", icon: Building2, public: false },
+    { href: "/admin-protocol", label: "Protocolo", icon: Activity, public: false },
   ];
 
   const handleSignOut = async () => {

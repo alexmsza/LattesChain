@@ -21,6 +21,7 @@
 | `08_key_management.md` | Gestão de Chaves | Inventário K1-K7, cerimônias, CloudHSM |
 | `09_threat_model.md` | Threat Model | STRIDE + DFD, riscos rankeados, DPIA esqueleto |
 | `10_runbooks.md` | Runbooks | RB-01 a RB-10 resposta a incidentes |
+| `11_fullstack_and_demo_guide.md` | Guia Full-Stack & Demo | APIs Next.js, persistência Supabase, equivalência de IA e branch mock |
 | `adr/001-007` | ADRs | 7 decisões de arquitetura formalizadas |
 | `LattesChain.md` | Documento mestre (histórico) | Visão original — **subsumido** pelos docs numerados; manter como referência |
 
@@ -29,9 +30,11 @@
 | Componente | Estado | Evidência |
 | :--- | :--- | :--- |
 | Smart contracts Anchor | 🟡 Código escrito, **sem testes, sem build verificado** | `educore_contracts/programs/.../lib.rs` (495 linhas) |
-| Migrations SQL | 🟡 Escritas, **não aplicadas** (e com 1 bug: `UINT`) | `supabase/migrations/001+002` |
-| Backend Go | 🟡 Esqueleto completo, **não compila** (imports), sem tx real | `api/` |
-| Frontend Next.js | 🟢 **Implementado e build verificado** (`/`, `/validator`, `/student`, `/university`) | `src/` |
+| Solana Attestation Service (SAS) | 🟢 **Implementado e funcional (Devnet)** | `sas/00_setup_wallets.py` a `sas/06_revoke.py` |
+| Migrations SQL | 🟢 **Aplicadas no Supabase** (`001 + 002 + 003`) | `supabase/migrations/` |
+| Backend APIs Next.js | 🟢 **Implementadas e integradas** (issue, student, verify, equivalence, trust-report) | `src/app/api/credentials/*`, `src/app/api/ai/*` |
+| Frontend Next.js | 🟢 **Implementado, conectado e build verificado** (`/`, `/validator`, `/student`, `/university`, `/admin-protocol`) | `src/` |
+| Camada de IA | 🟢 **Multi-provedor com fallback determinístico local** (Equivalência Curricular + Trust Report) | `src/app/api/ai/*`, `ai/` |
 | Autenticação multi-perfil (Estudante/IES/RH) | 🟢 **Implementado, E2E verificado** (`/login`, `/cadastro`, `/recuperar-senha`, `/redefinir-senha` + APIs + middleware de guards) | `src/app/login`, `src/app/api/auth/*`, `src/middleware.ts` |
 | Aprovação de cadastro via email (Lark SMTP/IMAP) | 🟢 **Funcional e verificado E2E** (links HMAC de aprovar/reprovar chegam ao admin e funcionam) | `src/lib/server/mailer.ts`, `src/app/api/auth/approve|reject` |
 | Recuperação de senha por email | 🟢 **Funcional e verificado E2E** (token uso único 1h, hash SHA-256 no banco) | `password_reset_tokens`, `src/app/api/auth/forgot|reset-password` |

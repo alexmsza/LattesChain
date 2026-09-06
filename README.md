@@ -143,12 +143,40 @@ python 06_revoke.py
 
 ### 6.3 Executar a Camada de IA
 ```bash
-cd ../ai
-pip install -r requirements.txt
+# Ambiente com uv
+uv venv .venv
+.venv\Scripts\activate
+uv pip install -r ai/requirements.txt
 
 # Gerar Trust Report para o RH
-python trust_report.py
+python ai/trust_report.py
 
 # Executar checagem de equivalência curricular
-python equivalence_check.py
+python ai/equivalence_check.py
 ```
+
+### 6.4 Executar a Aplicação Web Full-Stack (Next.js 14)
+```bash
+# Instalar dependências
+npm install
+
+# Rodar servidor de desenvolvimento
+npm run dev
+# Acesse em http://localhost:3000
+```
+
+#### Rotas Principais da Aplicação:
+- `/`: Landing page com proposta de valor e métricas.
+- `/validator`: Validador público de documentos (PDF/Hash) e Motor de Equivalência Curricular por IA.
+- `/student`: Passaporte acadêmico soberano do estudante com horas complementares e QR code.
+- `/university`: Portal de emissão da universidade integrado com Supabase e Solana Devnet.
+- `/admin-protocol`: Master Registry e governança descentralizada do ecossistema.
+
+### 6.5 Branch de Demonstração com Dados Mockados (`demo/mock-showcase`)
+Para apresentações de pitch e demonstrações infalíveis sem risco de latência ou rate-limit de RPCs públicos da Devnet:
+```bash
+git checkout demo/mock-showcase
+npm run dev
+```
+Esta branch contém cenários pré-configurados com instituições (UFMG, USP, PUC Minas), histórico curricular completo do aluno e botões de preenchimento automático para o pitch de 5 minutos.
+

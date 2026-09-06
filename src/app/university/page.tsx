@@ -11,9 +11,9 @@ import {
   AlertTriangle,
   RefreshCw,
   ExternalLink,
-  ShieldAlert,
+  ShieldCheck,
+  BookOpen,
 } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
 
 export default function UniversityPage() {
   const [docType, setDocType] = useState<"HORAS_COMPLEMENTARES" | "DISCIPLINA" | "DIPLOMA">("DISCIPLINA");
@@ -22,10 +22,15 @@ export default function UniversityPage() {
   const [studentWallet, setStudentWallet] = useState("EDFKFcXnx1XbqDCo6D5DXBdxxCWT3eLdMDyX1RMpDgtK");
   const [courseName, setCourseName] = useState("");
   const [workloadHours, setWorkloadHours] = useState("72");
-  const [grade, setGrade] = useState("9.0");
+  const [grade, setGrade] = useState("9.5");
+  const [semester, setSemester] = useState("2026.1");
+  const [ementaTexto, setEmentaTexto] = useState(
+    "Estruturas de Dados e Algoritmos: complexidade assintótica, listas, árvores, grafos, tabelas hash, algoritmos de ordenação e busca."
+  );
   const [file, setFile] = useState<File | null>(null);
   const [issuing, setIssuing] = useState(false);
   const [lastIssued, setLastIssued] = useState<any>(null);
+  const [recentIssuances, setRecentIssuances] = useState<any[]>([]);
 
   const handleIssue = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,8 +43,8 @@ export default function UniversityPage() {
     setLastIssued(null);
 
     try {
-      // Computa SHA-256
-      let docHash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+      // Computa SHA-256 localmente antes de enviar
+      let docHash = "";
       if (file) {
         const buffer = await file.arrayBuffer();
         const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
@@ -47,32 +52,55 @@ export default function UniversityPage() {
         docHash = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
       } else {
         const encoder = new TextEncoder();
-        const data = encoder.encode(`${studentCpf}-${courseName}-${Date.now()}`);
-        const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+        const rawString = `${studentCpf}-${courseName}-${workloadHours}-${Date.now()}`;
+        const hashBuffer = await crypto.subtle.digest("SHA-256", encoder.encode(rawString));
         const hashArray = Array.from(new Uint8Array(hashBuffer));
         docHash = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
       }
 
-      const dummyTx = "5K2UeXmJ6aP7vN4tL8qR1wZ9yD3bC2fE4gH7jK9mP1rT3vX5";
+      // Envia requisição para a rota de emissão integrada
+      const res = await fetch("/api/credentials/issue", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          student_name: studentName,
+          student_cpf: studentCpf,
+          student_wallet: studentWallet,
+          document_type: docType,
+          course_name: courseName,
+          workload_hours: parseInt(workloadHours || "60", 10),
+          grade,
+          semester,
+          ementa_texto: docType === "DISCIPLINA" ? ementaTexto : undefined,
+          document_hash: docHash,
+        }),
+      });
 
-      // Salva no Supabase
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Falha na emissão da credencial.");
+      }
+
       const issuedData = {
         student_name: studentName,
         course_name: courseName,
         document_type: docType,
         document_hash: docHash,
-        solana_tx: dummyTx,
+        solana_tx: data.solana_tx_signature,
+        explorer_url: data.explorer_url,
         issued_at: new Date().toLocaleTimeString("pt-BR"),
-        status: docType === "DIPLOMA" ? "TOKEN-2022 SOULBOUND" : "ATESTADO NO SAS",
+        status: data.status_onchain || (docType === "DIPLOMA" ? "TOKEN-2022 SOULBOUND" : "ATESTADO NO SAS"),
       };
 
       setLastIssued(issuedData);
+      setRecentIssuances((prev) => [issuedData, ...prev]);
+
       setCourseName("");
       setStudentName("");
       setFile(null);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert("Erro ao emitir credencial.");
+      alert(`Erro ao emitir credencial: ${err.message}`);
     } finally {
       setIssuing(false);
     }
@@ -89,7 +117,7 @@ export default function UniversityPage() {
           Emissão de Atestações On-Chain
         </h1>
         <p className="text-slate-400 text-sm sm:text-base">
-          Emita disciplinas, diplomas e horas complementares como atestações imutáveis no Solana Attestation Service.
+          Emita disciplinas, diplomas e horas complementares como atestações imutáveis no Solana Attestation Service (SAS).
         </p>
       </div>
 
@@ -187,11 +215,11 @@ export default function UniversityPage() {
               />
             </div>
 
-            {/* Carga Horária & Nota */}
-            <div className="grid grid-cols-2 gap-4">
+            {/* Carga Horária, Nota & Semestre */}
+            <div className="grid grid-cols-3 gap-3">
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-                  Carga Horária (Horas)
+                  Carga Horária (h)
                 </label>
                 <input
                   type="number"
@@ -212,7 +240,35 @@ export default function UniversityPage() {
                   className="w-full rounded-xl border border-slate-800 bg-navy-900/90 px-3.5 py-2.5 text-sm text-white focus:border-solana-green focus:outline-none"
                 />
               </div>
+
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+                  Semestre
+                </label>
+                <input
+                  type="text"
+                  value={semester}
+                  onChange={(e) => setSemester(e.target.value)}
+                  className="w-full rounded-xl border border-slate-800 bg-navy-900/90 px-3.5 py-2.5 text-sm text-white focus:border-solana-green focus:outline-none"
+                />
+              </div>
             </div>
+
+            {/* Ementa Texto (Apenas se disciplina) */}
+            {docType === "DISCIPLINA" && (
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+                  Conteúdo da Ementa (Dados Off-Chain para Motor de IA)
+                </label>
+                <textarea
+                  rows={3}
+                  value={ementaTexto}
+                  onChange={(e) => setEmentaTexto(e.target.value)}
+                  placeholder="Descreva os tópicos da ementa..."
+                  className="w-full rounded-xl border border-slate-800 bg-navy-900/90 px-3.5 py-2.5 text-xs text-slate-200 focus:border-solana-green focus:outline-none leading-relaxed"
+                />
+              </div>
+            )}
 
             {/* Upload PDF */}
             <div>
@@ -236,7 +292,7 @@ export default function UniversityPage() {
                 />
                 <Upload className="h-5 w-5 text-solana-green mx-auto mb-1" />
                 <span className="text-xs text-slate-300">
-                  {file ? file.name : "Clique para anexar o PDF oficial"}
+                  {file ? file.name : "Clique para anexar o PDF oficial do certificado ou histórico"}
                 </span>
               </div>
             </div>
@@ -248,7 +304,7 @@ export default function UniversityPage() {
               className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 py-3 text-sm font-bold text-navy-900 shadow-lg shadow-solana-green/20 hover:scale-[1.01] active:scale-[0.98] transition-all disabled:opacity-50"
             >
               {issuing ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              {issuing ? "Emitindo Atestação na Solana..." : "Emitir Atestação On-Chain"}
+              {issuing ? "Emitindo Atestação no Solana Attestation Service..." : "Emitir Atestação On-Chain"}
             </button>
           </form>
         </div>
@@ -272,6 +328,12 @@ export default function UniversityPage() {
                   3xmiVKqEs25voqLmWRvrjrnGrkEDMqyXUstW34vwZWcH
                 </span>
               </div>
+              <div>
+                <span className="text-slate-500 block">Padrão Tecnológico</span>
+                <span className="rounded-full bg-solana-green/10 border border-solana-green/30 px-2 py-0.5 text-[10px] font-semibold text-solana-green">
+                  SAS + Token-2022 Soulbound
+                </span>
+              </div>
             </div>
           </div>
 
@@ -281,14 +343,14 @@ export default function UniversityPage() {
                 <CheckCircle2 className="h-5 w-5" />
                 Atestação Emitida com Sucesso!
               </div>
-              <p className="text-xs text-slate-300 mb-3">
-                <strong>{lastIssued.student_name}</strong> recebeu a credencial de <em>{lastIssued.course_name}</em>.
+              <p className="text-xs text-slate-300 mb-2">
+                <strong>{lastIssued.student_name}</strong> recebeu a atestação de <em>{lastIssued.course_name}</em>.
               </p>
               <div className="text-[11px] font-mono text-slate-400 truncate mb-3">
                 Hash: {lastIssued.document_hash}
               </div>
               <a
-                href={`https://explorer.solana.com/tx/${lastIssued.solana_tx}?cluster=devnet`}
+                href={lastIssued.explorer_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 text-xs font-semibold text-solana-green hover:underline"
@@ -296,6 +358,23 @@ export default function UniversityPage() {
                 Ver Transação no Solana Explorer
                 <ExternalLink className="h-3 w-3" />
               </a>
+            </div>
+          )}
+
+          {/* Histórico Recente */}
+          {recentIssuances.length > 0 && (
+            <div className="glass-panel rounded-3xl p-6">
+              <h4 className="font-display text-xs uppercase tracking-wider text-slate-400 font-semibold mb-3">
+                Emitidas Nesta Sessão ({recentIssuances.length})
+              </h4>
+              <div className="space-y-2.5 max-h-48 overflow-y-auto pr-1">
+                {recentIssuances.map((rec, i) => (
+                  <div key={i} className="rounded-xl bg-navy-900/80 p-2.5 border border-slate-800 text-xs">
+                    <div className="font-semibold text-white truncate">{rec.course_name}</div>
+                    <div className="text-[10px] text-slate-400">{rec.student_name} • {rec.status}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
