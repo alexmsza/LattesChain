@@ -1,4 +1,5 @@
 import Link from "next/link";
+import VisualFlowPipeline from "@/components/VisualFlowPipeline";
 import {
   ShieldCheck,
   GraduationCap,
@@ -77,6 +78,13 @@ export default function Home() {
               <div className="text-xs text-slate-400 mt-1">Zero PII On-Chain</div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* VISUAL PIPELINE & TIMELINE SECTION */}
+      <section className="relative px-4 py-20 sm:px-6 lg:px-8 border-t border-slate-800/80 bg-slate-950/70">
+        <div className="mx-auto max-w-6xl">
+          <VisualFlowPipeline />
         </div>
       </section>
 
