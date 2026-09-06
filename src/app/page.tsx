@@ -30,15 +30,15 @@ export default function Home() {
           </div>
 
           <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.08] mb-6">
-            O seu histórico acadêmico não pertence à faculdade.{" "}
+            A ponte de confiança universal entre{" "}
             <span className="bg-gradient-to-r from-solana-green via-emerald-300 to-solana-purple bg-clip-text text-transparent">
-              Ele pertence a você.
+              Faculdades, Estudantes e Empresas.
             </span>
           </h1>
 
-          <p className="mx-auto max-w-2xl text-base sm:text-xl text-slate-300 leading-relaxed mb-10">
-            O <strong>LattesChain</strong> é o passaporte acadêmico descentralizado sobre a Solana.
-            Transformamos diplomas, horas complementares e disciplinas em atestações imutáveis, soberanas e verificáveis em 1 segundo por qualquer empresa no mundo.
+          <p className="mx-auto max-w-3xl text-base sm:text-xl text-slate-300 leading-relaxed mb-10">
+            O <strong>LattesChain</strong> potencializa a credibilidade acadêmica sobre a rede Solana.
+            A <strong>faculdade</strong> confere autenticidade global e proteção de marca aos seus documentos, o <strong>estudante</strong> apresenta seus títulos e horas em qualquer instituição ou processo seletivo com máxima facilidade, e as <strong>empresas</strong> recebem talentos com confiabilidade garantida em 1 segundo.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4">
@@ -56,6 +56,13 @@ export default function Home() {
             >
               <GraduationCap className="h-5 w-5 text-solana-green" />
               Acessar Meu Passaporte
+            </Link>
+            <Link
+              href="/university"
+              className="inline-flex items-center gap-2 rounded-xl border border-solana-green/30 bg-solana-green/10 px-6 py-3.5 text-sm font-semibold text-solana-green backdrop-blur-sm transition-all hover:bg-solana-green/20 active:scale-[0.98]"
+            >
+              <Building2 className="h-5 w-5 text-solana-green" />
+              Portal da Faculdade (IES)
             </Link>
           </div>
 
@@ -78,6 +85,37 @@ export default function Home() {
               <div className="text-xs text-slate-400 mt-1">Zero PII On-Chain</div>
             </div>
           </div>
+
+          {/* Tripartite Pillars Bar */}
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl mx-auto text-left">
+            <div className="glass-panel rounded-2xl p-5 border-solana-green/20 bg-slate-900/60">
+              <div className="flex items-center gap-2 text-solana-green font-bold text-sm mb-2">
+                <Building2 className="h-4 w-4" />
+                Para Faculdades & Universidades
+              </div>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Credibilidade universal instantânea para seus títulos. Zero risco de fraudes de diplomas com o nome da IES e redução drástica de sobrecarga nas secretarias acadêmicas.
+              </p>
+            </div>
+            <div className="glass-panel rounded-2xl p-5 border-solana-purple/20 bg-slate-900/60">
+              <div className="flex items-center gap-2 text-solana-purple font-bold text-sm mb-2">
+                <GraduationCap className="h-4 w-4" />
+                Para Estudantes & Alunos
+              </div>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Máxima facilidade para entregar documentos em outras faculdades, intercâmbios ou processos seletivos. Passaporte acadêmico soberano, unificado e sem burocracia.
+              </p>
+            </div>
+            <div className="glass-panel rounded-2xl p-5 border-amber-400/20 bg-slate-900/60">
+              <div className="flex items-center gap-2 text-amber-400 font-bold text-sm mb-2">
+                <FileCheck2 className="h-4 w-4" />
+                Para RHs & Empresas
+              </div>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Receba profissionais com documentos acadêmicos e comprovações de estágio com confiabilidade garantida em 1 segundo, sem depender de telefonemas ou e-mails a secretarias.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -93,10 +131,10 @@ export default function Home() {
         <div className="mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="font-display text-2xl sm:text-4xl font-bold text-white mb-4">
-              A Burocracia Tradicional vs. O Passaporte Soberano
+              Do Gargalo Tradicional à Aliança de Confiança Digital
             </h2>
             <p className="text-slate-400 text-sm sm:text-base">
-              Entenda como a infraestrutura nativa da Solana elimina os gargalos históricos da educação superior.
+              Como a infraestrutura aberta da Solana une Faculdades, Estudantes e RHs eliminando atritos históricos de verificação.
             </p>
           </div>
 
@@ -107,25 +145,25 @@ export default function Home() {
                 <div className="rounded-xl bg-red-500/20 p-3 text-red-400">
                   <Ban className="h-6 w-6" />
                 </div>
-                <h3 className="font-display text-xl font-bold text-white">Como Funciona Hoje</h3>
+                <h3 className="font-display text-xl font-bold text-white">O Modelo Tradicional Sem LattesChain</h3>
               </div>
               <ul className="space-y-4 text-sm text-slate-300">
                 <li className="flex items-start gap-3">
                   <Clock className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Semanas de espera:</strong> Solicitações de histórico e validação de horas demoram até 30 dias em secretarias acadêmicas.
+                    <strong>Secretarias sobrecarregadas:</strong> Semanas de espera para expedição e validação de históricos e certificados de horas complementares.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Ban className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Fraudes frequentes:</strong> PDFs simples são adulterados com facilidade, forçando RHs a ligarem para secretarias.
+                    <strong>Vulnerabilidade a fraudes:</strong> PDFs simples adulterados colocam a reputação da universidade em risco e induzem empresas a erros graves.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Lock className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Dado preso à instituição:</strong> Se a faculdade fechar ou negar atendimento, o histórico do estudante fica inacessível.
+                    <strong>Falta de portabilidade:</strong> Estudantes enfrentam atrito extremo ao transferir matérias para outra faculdade ou comprovar formação no exterior.
                   </span>
                 </li>
               </ul>
@@ -137,25 +175,25 @@ export default function Home() {
                 <div className="rounded-xl bg-solana-green/20 p-3 text-solana-green">
                   <ShieldCheck className="h-6 w-6" />
                 </div>
-                <h3 className="font-display text-xl font-bold text-white">Com o LattesChain</h3>
+                <h3 className="font-display text-xl font-bold text-white">Com o LattesChain (Valor Tripartite)</h3>
               </div>
               <ul className="space-y-4 text-sm text-slate-300">
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="h-5 w-5 text-solana-green shrink-0 mt-0.5" />
                   <span>
-                    <strong>Verificação instantânea:</strong> Qualquer empresa ou faculdade lê a autenticidade direto da blockchain em segundos.
+                    <strong>Credibilidade universal para a IES:</strong> Documentos emitidos pela faculdade têm autenticidade criptográfica imediata e auditável no mundo todo.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="h-5 w-5 text-solana-green shrink-0 mt-0.5" />
                   <span>
-                    <strong>Soulbound & Revogável:</strong> Token-2022 garante que o certificado não pode ser vendido e pode ser revogado pela IES em caso de fraude.
+                    <strong>Facilidade real para o estudante:</strong> Apresentação ágil de diplomas e horas complementares com 1 clique ou QR Code em qualquer instituição.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="h-5 w-5 text-solana-green shrink-0 mt-0.5" />
                   <span>
-                    <strong>IA de Equivalência:</strong> A IA analisa ementas de diferentes faculdades e calcula a compatibilidade de matérias automaticamente.
+                    <strong>Confiabilidade garantida para empresas:</strong> RHs recebem comprovações de candidatos em 1 segundo e com análise inteligente de equivalência por IA.
                   </span>
                 </li>
               </ul>

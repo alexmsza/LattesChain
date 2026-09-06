@@ -19,12 +19,12 @@
 
 ---
 
-## 1. O Problema (A Dor Real)
+## 1. O Problema (A Dor do Ecossistema)
 
-Hoje, o histórico educacional do estudante é **refém das instituições de ensino**:
-- **Lentidão & Burocracia**: Solicitações de histórico, validação de horas complementares e transferências de cursos demoram semanas em secretarias acadêmicas e frequentemente envolvem cobrança de taxas.
-- **Fraude Endêmica**: Mais de 10% dos certificados e diplomas apresentados em processos seletivos contêm adulterações em PDF.
-- **Custo para Recrutadores & Universidades**: RHs e faculdades perdem tempo e dinheiro ligando ou enviando e-mails para checar autenticidade de documentos.
+Hoje, o ecossistema educacional e de contratação sofre com um **gargalo de burocracia documental e verificação manual**:
+- **Sobrecarga nas Secretarias**: Faculdades e universidades gastam milhares de horas por semestre emitindo declarações, autenticando certificados e atendendo ligações de checagem.
+- **Vulnerabilidade a Fraudes**: Mais de 10% dos certificados e diplomas em PDF contêm adulterações, expondo a reputação de instituições sérias e lesando empresas.
+- **Atrito para o Estudante & RH**: Alunos perdem prazos de contratação e intercâmbio esperando validação de documentos, enquanto recrutadores perdem dias em checagens lentas.
 
 ---
 

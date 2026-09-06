@@ -9,15 +9,15 @@
 
 O **LattesChain** (EduCore Protocol) é um protocolo e plataforma descentralizada de **passaporte acadêmico soberano**.
 
-### 1.1 O Problema Central
-- O histórico acadêmico do estudante é hoje refém da universidade emissora.
-- Solicitar certidões, transferências ou validações de horas complementares exige processos burocráticos lentos (15 a 30 dias).
-- Recrutadores de RH e outras universidades sofrem com fraudes documentais em PDFs e precisam ligar ou enviar e-mails para secretarias acadêmicas.
+### 1.1 O Desafio Estrutural
+- Secretarias acadêmicas de faculdades e universidades são sobrecarregadas com conferências manuais de documentos e emissão de declarações.
+- Fraudes em arquivos PDF e certificados físicos colocam em risco a reputação das IES e geram custos elevados para processos seletivos.
+- Estudantes sofrem com lentidão e falta de portabilidade para comprovar horas, estágios e disciplinas em outras instituições nacionais ou internacionais.
 
-### 1.2 A Solução
-- Cada disciplina cursada, hora de extensão e diploma emitido torna-se uma **atestação imutável** gravada na blockchain **Solana**, na carteira do próprio estudante.
-- A validação de autenticidade é **instantânea (< 1 segundo)** e pública, sem intermediários.
-- Uma **camada de IA** traduz dados técnicos on-chain em relatórios de confiança para RHs e calcula automaticamente a equivalência curricular entre diferentes universidades.
+### 1.2 A Solução Tripartite
+- **Para a IES**: Emissão on-chain na **Solana** com credibilidade universal imediata, controle de revogação via Token-2022 e automação de secretarias.
+- **Para o Estudante**: Passaporte acadêmico soberano com posse direta das suas atestações e facilidade para apresentar comprovantes oficiais com 1 clique ou QR Code.
+- **Para Empresas & RHs**: Confiabilidade garantida com verificação matemática em menos de 1 segundo e relatórios de equivalência curricular gerados por IA.
 
 ---
 
