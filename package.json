@@ -6,7 +6,33 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "validator:start": "solana-test-validator --reset --url https://api.devnet.solana.com --clone Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo --clone 22zoJMtdu4tQc2PzL74ZUT7FrwgB1Udec8DdW4yw4BdG",
+    "validator:check": "node scripts/validator-template-generator.mjs check",
+    "validator:template": "node scripts/validator-template-generator.mjs generate",
+    "validator:cmd": "node scripts/validator-template-generator.mjs start",
+    "anchor:build": "cd educore_contracts && anchor build",
+    "anchor:test": "cd educore_contracts && anchor test --skip-local-validator",
+    "anchor:localnet": "solana-test-validator --reset --url https://api.devnet.solana.com --clone Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo --clone 22zoJMtdu4tQc2PzL74ZUT7FrwgB1Udec8DdW4yw4BdG"
+  },
+  "create-solana-dapp": {
+    "instructions": [
+      "Inicie o validador local com as dependências clonadas (SPL Memo e SAS):",
+      "+{pm} run validator:start",
+      "Verifique a saúde do validador e os programas clonados:",
+      "+{pm} run validator:check",
+      "Gere novos templates de teste facilmente:",
+      "+{pm} run validator:template -- anchor meu_teste",
+      "+{pm} run validator:template -- python meu_teste_sas",
+      "Execute o build e os testes dos smart contracts:",
+      "+{pm} run anchor:build",
+      "+{pm} run anchor:test"
+    ],
+    "rename": {
+      "educore_contracts": {
+        "in": ["educore_contracts", "src"]
+      }
+    }
   },
   "dependencies": {
     "@solana/web3.js": "^1.95.8",

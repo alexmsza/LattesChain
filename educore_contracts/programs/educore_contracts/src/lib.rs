@@ -35,6 +35,9 @@ pub mod educore_contracts {
         cnpj: String,
         name: String,
     ) -> Result<()> {
+        // Check if master registry is paused
+        require!(!ctx.accounts.master_registry.is_paused, ErrorCode::ProgramPaused);
+
         // Validate CNPJ format (14 digits)
         require!(cnpj.len() == 14, ErrorCode::InvalidCNPJLength);
         require!(cnpj.chars().all(|c| c.is_ascii_digit()), ErrorCode::InvalidCNPJFormat);
@@ -98,6 +101,9 @@ pub mod educore_contracts {
         // Validate ICP signature not empty
         require!(!icp_signature.is_empty(), ErrorCode::EmptyICPSignature);
         
+        // Check if master registry is paused
+        require!(!ctx.accounts.master_registry.is_paused, ErrorCode::ProgramPaused);
+
         // Check if university is active
         let university = &ctx.accounts.university_record;
         require!(university.is_active, ErrorCode::UniversityInactive);
@@ -146,6 +152,9 @@ pub mod educore_contracts {
     ) -> Result<()> {
         require!(events.len() <= 10, ErrorCode::BatchTooLarge);
         
+        // Check if master registry is paused
+        require!(!ctx.accounts.master_registry.is_paused, ErrorCode::ProgramPaused);
+
         let university = &ctx.accounts.university_record;
         require!(university.is_active, ErrorCode::UniversityInactive);
 
