@@ -188,3 +188,16 @@ git checkout demo/mock-showcase
 npm run dev
 ```
 
+### 6.6 Integrações MCP (Model Context Protocol)
+
+O ecossistema conta com suporte a servidores MCP para automação e orquestração de DataSecAIOps:
+- **Vercel MCP** (`https://mcp.vercel.com`): Gerenciamento de projetos, deploys, análise de build logs e monitoramento de Web Analytics.
+- **Supabase MCP** (`https://mcp.supabase.com/mcp`): Gerenciamento de bancos de dados, migrations, branches e queries SQL.
+- **Context7 MCP**: Resolução semântica de documentações técnicas e SDKs.
+- **Chrome DevTools MCP**: Automação e inspeção de fluxos em navegadores headless/headed.
+
+Para conectar o Vercel MCP em qualquer cliente:
+```bash
+npx -y add-mcp https://mcp.vercel.com -g -y -a antigravity -a gemini-cli
+```
+
