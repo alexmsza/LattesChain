@@ -3,6 +3,7 @@ import { Inter, Archivo } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { DemoBanner } from "@/components/DemoBanner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -38,6 +39,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${inter.variable} ${archivo.variable} dark`}>
       <body className="flex min-h-screen flex-col bg-[#080c14] text-slate-100 antialiased selection:bg-solana-green/30 selection:text-solana-green">
+        <DemoBanner />
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
