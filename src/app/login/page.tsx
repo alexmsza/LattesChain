@@ -128,6 +128,70 @@ function LoginForm() {
           </div>
         )}
 
+        {/* PAINEL DE ACESSO RÁPIDO DE DEMONSTRAÇÃO (SEM SENHA) */}
+        <div className="mb-6 rounded-2xl border border-solana-green/40 bg-navy-950/80 p-4">
+          <div className="flex items-center gap-2 mb-2 text-xs font-bold text-solana-green">
+            <span className="flex h-2 w-2 rounded-full bg-solana-green animate-ping" />
+            Acesso Rápido Mock (Sem Autenticação):
+          </div>
+          <p className="text-[11px] text-slate-400 mb-3">
+            Navegue diretamente pelos 4 portais da plataforma com dados canônicos:
+          </p>
+          <div className="grid grid-cols-2 gap-2">
+            <Link
+              href="/student"
+              className="flex items-center gap-2 rounded-xl bg-purple-950/40 border border-purple-500/30 p-2.5 text-xs text-purple-200 hover:bg-purple-900/50 hover:border-purple-400 transition-all"
+            >
+              <GraduationCap className="h-4 w-4 text-solana-purple shrink-0" />
+              <div className="text-left">
+                <span className="font-bold block">1. Estudante</span>
+                <span className="text-[10px] text-slate-400">Alexandre (UFMG)</span>
+              </div>
+            </Link>
+
+            <Link
+              href="/university"
+              className="flex items-center gap-2 rounded-xl bg-blue-950/40 border border-blue-500/30 p-2.5 text-xs text-blue-200 hover:bg-blue-900/50 hover:border-blue-400 transition-all"
+            >
+              <Building2 className="h-4 w-4 text-blue-400 shrink-0" />
+              <div className="text-left">
+                <span className="font-bold block">2. IES Emissora</span>
+                <span className="text-[10px] text-slate-400">Portal UFMG / MEC</span>
+              </div>
+            </Link>
+
+            <Link
+              href="/validator"
+              className="flex items-center gap-2 rounded-xl bg-emerald-950/40 border border-emerald-500/30 p-2.5 text-xs text-emerald-200 hover:bg-emerald-900/50 hover:border-emerald-400 transition-all"
+            >
+              <Briefcase className="h-4 w-4 text-solana-green shrink-0" />
+              <div className="text-left">
+                <span className="font-bold block">3. RH / Empresas</span>
+                <span className="text-[10px] text-slate-400">Validador + IA</span>
+              </div>
+            </Link>
+
+            <Link
+              href="/admin-protocol"
+              className="flex items-center gap-2 rounded-xl bg-amber-950/40 border border-amber-500/30 p-2.5 text-xs text-amber-200 hover:bg-amber-900/50 hover:border-amber-400 transition-all"
+            >
+              <CheckCircle2 className="h-4 w-4 text-amber-400 shrink-0" />
+              <div className="text-left">
+                <span className="font-bold block">4. Protocolo</span>
+                <span className="text-[10px] text-slate-400">Master Registry</span>
+              </div>
+            </Link>
+          </div>
+        </div>
+
+        <div className="relative flex items-center justify-center my-6">
+          <div className="border-t border-slate-800 w-full" />
+          <span className="bg-navy-900 px-3 text-[11px] uppercase tracking-wider text-slate-500 shrink-0">
+            ou acesse com e-mail cadastrado
+          </span>
+          <div className="border-t border-slate-800 w-full" />
+        </div>
+
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
             <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-slate-300">

@@ -15,27 +15,34 @@ export function DemoBanner() {
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Link
-            href="/validator"
-            className="inline-flex items-center gap-1 rounded-lg bg-solana-green/15 border border-solana-green/40 px-2 py-0.5 text-[11px] font-bold text-solana-green hover:bg-solana-green/25"
-          >
-            <ShieldCheck className="h-3 w-3" />
-            1. Validador RH
-          </Link>
+        <div className="flex flex-wrap items-center gap-2">
           <Link
             href="/student"
-            className="inline-flex items-center gap-1 rounded-lg bg-solana-purple/20 border border-solana-purple/40 px-2 py-0.5 text-[11px] font-bold text-purple-300 hover:bg-solana-purple/30"
+            className="inline-flex items-center gap-1 rounded-lg bg-solana-purple/20 border border-solana-purple/40 px-2.5 py-1 text-[11px] font-bold text-purple-300 hover:bg-solana-purple/30 transition-all"
           >
             <UserCheck className="h-3 w-3" />
-            2. Passaporte
+            🎓 1. Aluno (Passaporte)
           </Link>
           <Link
             href="/university"
-            className="inline-flex items-center gap-1 rounded-lg bg-navy-800 border border-slate-700 px-2 py-0.5 text-[11px] font-semibold text-slate-200 hover:bg-slate-700"
+            className="inline-flex items-center gap-1 rounded-lg bg-blue-900/30 border border-blue-500/40 px-2.5 py-1 text-[11px] font-semibold text-blue-300 hover:bg-blue-900/50 transition-all"
           >
             <Building2 className="h-3 w-3" />
-            3. Emissor IES
+            🏛️ 2. IES (Emissor)
+          </Link>
+          <Link
+            href="/validator"
+            className="inline-flex items-center gap-1 rounded-lg bg-solana-green/15 border border-solana-green/40 px-2.5 py-1 text-[11px] font-bold text-solana-green hover:bg-solana-green/25 transition-all"
+          >
+            <ShieldCheck className="h-3 w-3" />
+            🏢 3. RH / Empresas (Validador + IA)
+          </Link>
+          <Link
+            href="/admin-protocol"
+            className="inline-flex items-center gap-1 rounded-lg bg-amber-900/30 border border-amber-500/40 px-2.5 py-1 text-[11px] font-semibold text-amber-300 hover:bg-amber-900/50 transition-all"
+          >
+            <Sparkles className="h-3 w-3" />
+            🛡️ 4. Protocolo (Admin)
           </Link>
         </div>
       </div>
