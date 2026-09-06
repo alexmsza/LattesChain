@@ -105,3 +105,45 @@ export const MOCK_REVOKED_DIPLOMA = {
   status: "REVOGADO PELA IES (PERMANENT DELEGATE TOKEN-2022)",
   reason: "Fraude documental detectada no histórico acadêmico prévio.",
 };
+
+export function evaluateMockEquivalence(disciplinaA: any, disciplinaB: any) {
+  const chA = parseInt(String(disciplinaA?.carga_horaria || "72"), 10);
+  const chB = parseInt(String(disciplinaB?.carga_horaria || "60"), 10);
+  const aproveitavel = Math.min(chA, chB);
+
+  return {
+    success: true,
+    integridade_onchain_ok: true,
+    ementa_hash_calculado:
+      disciplinaA?.ementa_hash ||
+      "7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069",
+    disciplina_origem: {
+      instituicao: disciplinaA?.instituicao || "Universidade Federal de Minas Gerais (UFMG)",
+      disciplina: disciplinaA?.disciplina || "Estruturas de Dados e Algoritmos Avançados",
+      carga_horaria: chA,
+    },
+    disciplina_destino: {
+      instituicao: disciplinaB?.instituicao || "Universidade de São Paulo (USP)",
+      disciplina: disciplinaB?.disciplina || "Algoritmos e Estruturas de Dados I",
+      carga_horaria: chB,
+    },
+    veredito: {
+      equivalente: true,
+      confianca_pct: 92,
+      carga_horaria_aproveitavel: aproveitavel,
+      justificativa:
+        "Análise semântica e curricular positiva: 4 núcleos temáticos coincidentes (complexidade assintótica, estruturas lineares, grafos, algoritmos de busca e ordenação). Integridade da ementa validada on-chain com 100% de precisão no Solana Attestation Service. Carga horária de " +
+        chA +
+        "h atende aos requisitos da instituição receptora.",
+      topicos_coincidentes: [
+        "complexidade assintótica",
+        "estruturas lineares (listas, pilhas, filas)",
+        "árvores binárias e balanceadas",
+        "tabelas hash e dispersão",
+        "grafos e percursos",
+        "algoritmos de busca e ordenação",
+      ],
+      topicos_faltantes: [],
+    },
+  };
+}

@@ -15,24 +15,26 @@ import {
   RefreshCw,
 } from "lucide-react";
 
+import { MOCK_SHOWCASE_STUDENT } from "@/lib/mockData";
+
 function StudentContent() {
   const searchParams = useSearchParams();
   const walletQuery = searchParams.get("wallet");
   const cpfQuery = searchParams.get("cpf");
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [showQR, setShowQR] = useState(false);
   const [selectedRecordForQR, setSelectedRecordForQR] = useState<any>(null);
   const [copied, setCopied] = useState(false);
 
   const [studentData, setStudentData] = useState({
-    name: "Alexandre Silva",
-    course: "Ciência da Computação",
-    university: "Universidade Federal de Minas Gerais (UFMG)",
-    solanaWallet: "EDFKFcXnx1XbqDCo6D5DXBdxxCWT3eLdMDyX1RMpDgtK",
-    totalHours: 180,
-    requiredHours: 200,
-    records: [] as any[],
+    name: MOCK_SHOWCASE_STUDENT.name,
+    course: MOCK_SHOWCASE_STUDENT.course,
+    university: MOCK_SHOWCASE_STUDENT.university,
+    solanaWallet: MOCK_SHOWCASE_STUDENT.solanaWallet,
+    totalHours: MOCK_SHOWCASE_STUDENT.totalHours,
+    requiredHours: MOCK_SHOWCASE_STUDENT.requiredHours,
+    records: MOCK_SHOWCASE_STUDENT.records,
   });
 
   useEffect(() => {
