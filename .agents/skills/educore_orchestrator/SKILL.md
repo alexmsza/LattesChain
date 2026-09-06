@@ -1,67 +1,67 @@
 ---
 name: educore_orchestrator
-description: Orquestração do desenvolvimento do EduCore Protocol (LattesChain) — Solana/Anchor, Go/Fly.io, Supabase, Next.js. Use ao construir, testar, deployar ou depurar qualquer componente do projeto.
+description: Orquestração do desenvolvimento do LattesChain (EduCore Protocol) — Solana SAS/Token-2022, Next.js/Vercel, Supabase (PostgreSQL + RLS + Storage) e Camada de IA.
 ---
 
-# EduCore Orchestrator Skill
+# LattesChain Orchestrator Skill
 
-Orquestra o desenvolvimento do EduCore Protocol (LattesChain). Antes de qualquer código, consulte `docs/00_index.md` (índice, issues conhecidas I-1..I-13, Definition of Ready).
+Orquestra o desenvolvimento completo do LattesChain. Antes de executar qualquer código, consulte `docs/00_index.md`, `docs/PITCH_DECK.md` e `docs/BUSINESS_PLAN.md`.
 
-## Mapa de Decisões (ADRs — não redecidir)
+---
 
-| Tema | Decisão | ADR |
+## 1. Stack e Primitivas Centrais
+
+| Camada | Tecnologia / Padrão | Função |
 | :--- | :--- | :--- |
-| Blockchain | Solana, Anchor 0.29, Helius→QuickNode | 001 |
-| Hosting backend | Fly.io região gru (NÃO Vercel) | 002 |
-| SBT diploma | Metaplex Core, mutable=false | 003 |
-| Carteiras alunos | Supabase Vault + SLIP-10/BIP44 Ed25519 | 004 |
-| Hash de PDF | Sempre no backend, bytes brutos | 005 |
-| ICP-Brasil | Mock MVP → CloudHSM+Lambda produção | 006 |
-| Tokens | Memo p/ horas, Core SBT p/ diplomas | 007 |
+| **Blockchain** | Solana (SAS + Token-2022) | Atestações padronizadas (`22zoJM...`) e Soulbound Tokens revogáveis |
+| **Frontend** | Next.js 14+ / Vercel | Portal Web para Aluno, Universidade e Validador RH |
+| **Backend / DB** | Supabase (Postgres + Auth + Storage + RLS) | Gestão de dados off-chain, autenticação e custódia de PDFs |
+| **Camada de IA** | `ai/llm_client.py` (Multi-provedor) | Equivalência curricular semântica e geração de Trust Report |
 
-## Fluxos Operacionais
+---
 
-### 1. Smart Contracts (`educore_contracts/`)
+## 2. Fluxos Operacionais de Desenvolvimento
+
+### 2.1 Solana Attestation Service (`sas/`)
 ```bash
-anchor build          # compila
-anchor test           # solana-test-validator + testes (requer Anchor.toml)
-anchor keys sync      # após gerar Program ID real (substituir placeholder)
-anchor deploy --provider.cluster devnet
-```
-- Spec de instruções/eventos/erros: `docs/03_smart_contracts_anchor.md`.
-- Lacunas a corrigir antes de Mainnet: §8.1 (is_paused), §8.2 (DV CNPJ), §8.3 (hash da assinatura).
+# Ambiente e dependências via uv
+uv venv .venv
+.venv\Scripts\activate
+uv pip install -r sas/requirements.txt -r ai/requirements.txt
 
-### 2. Backend Go (`api/`)
+# Execução do pipeline sequencial
+python sas/00_setup_wallets.py       # Setup de carteiras
+python sas/01_create_credential.py   # Registro da IES
+python sas/02_create_schema.py       # Schemas (disciplina / diploma)
+python sas/03_issue_attestation.py   # Emissão de atestação
+python sas/04_issue_soulbound.py     # Mint Token-2022 Soulbound
+python sas/05_verify.py disciplina   # Validação on-chain
+python sas/06_revoke.py              # Demonstração de revogação
+```
+
+### 2.2 Camada de IA (`ai/`)
 ```bash
-cd api
-go build ./...        # deve compilar (issue I-1: imports educore-api/* errados)
-go test ./...
-go run ./cmd          # local :8080 — requer envs EDUCORE_* (ver docs/04 §2)
-fly deploy --config fly.toml
+python ai/trust_report.py            # Gera Trust Report para RH a partir de dados on-chain
+python ai/equivalence_check.py       # Avalia equivalência entre duas ementas
 ```
-- Endpoints/fluxos: `docs/04_backend_relayer_go.md`; OpenAPI: `docs/07_api_openapi.yaml`.
-- Issues bloqueantes: I-1 (imports), I-3 (derivação Ed25519), I-4 (pdf_file_hash), I-6 (tx real).
 
-### 3. Frontend Next.js (`src/`)
+### 2.3 Frontend Next.js (`src/` / Vercel)
 ```bash
-npm install && npm run dev    # ainda não implementado — spec em docs/05
+npm install                          # Instala dependências
+npm run dev                          # Servidor local em :3000
+npm run build                        # Build de produção para deploy na Vercel
 ```
-- Auth matrix e user flows definidos em `docs/05_frontend_spec.md` (§3, §4).
-- Regra UX: zero termos crypto na visão aluno/RH.
 
-### 4. Supabase (`supabase/migrations/`)
+### 2.4 Supabase (`supabase/migrations/`)
 ```bash
-supabase db push      # aplica 001 + 002
+supabase db push                     # Aplica schemas e políticas RLS
 ```
-- Corrigir `bip44_index UINT` → `INTEGER` (issue I-2) antes de aplicar.
-- Testar RLS com fixtures de cada papel (student/institution/anon/service_role) — gaps em `docs/02_data_models.md` §5.
 
-## Regras Invioláveis (segurança/LGPD)
-1. Nenhuma PII on-chain (nem em Memo, contas ou metadados de token).
-2. Master seed BIP39: apenas Supabase Vault + memória do processo; jamais em log/response.
-3. Secrets apenas via `fly secrets set` — nunca em código, `fly.toml` ou commit.
-4. Toda mudança de código atualiza o doc correspondente no mesmo PR.
-5. Assinatura mock ICP (`MOCK_ICP_BRASIL_SIGNATURE_*`) é aceitável SOMENTE em Devnet com `EDUCORE_APP_MOCK_ICP_SIGNING=true`; Mainnet exige CloudHSM (docs/08).
+---
 
-## Incidentes
-Runbooks RB-01..RB-10 em `docs/10_runbooks.md` (vazamento de chave, pause global, RPC down, breach LGPD, reconstrução de índice, etc.).
+## 3. Regras Invioláveis de Segurança & LGPD
+1. **Nenhum PII On-Chain**: CPF, nomes e dados pessoais nunca são enviados para a blockchain; apenas hashes SHA-256 e pubkeys.
+2. **Revogação Nativa**: Credenciais tokenizadas devem sempre carregar a extensão `PermanentDelegate` apontando para a universidade emissora.
+3. **Secrets Seguros**: Chaves de API e Service Role Keys nunca devem ser commitadas no repositório.
+4. **Documentação Contínua**: Toda alteração de schema ou rota deve atualizar a documentação em `docs/`.
+

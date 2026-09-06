@@ -1,13 +1,16 @@
 # EduCore Protocol — Índice da Documentação
 
 > Ponto de entrada único da documentação. Este arquivo substitui o papel de "SPEC consolidada" apontado no relatório de ideação (passo 6).
-> Última atualização: 2026-08-29.
+> Última atualização: 2026-08-31.
 
 ## 1. Mapa dos Documentos
 
 | Doc | Título | Função |
 | :--- | :--- | :--- |
 | `00_index.md` | **Este arquivo** | Índice, status do projeto, issues conhecidas, Definition of Ready |
+| `ARQUITETURA_E_FLUXOS_GERAL.md` | **Manual Completo de Arquitetura & Fluxos** | Guia de ponta a ponta: todas as tecnologias, fluxos operacionais, autenticação e LGPD |
+| `PITCH_DECK.md` | Roteiro de Pitch (5 Min) | Script e minutagem para vídeo do Hackathon Superteam Brasil |
+| `BUSINESS_PLAN.md` | Plano de Negócios & GTM | Modelo B2B2C, personas, análise competitiva e pricing |
 | `01_architecture_overview.md` | Visão Geral | Topologia, componentes, ambientes, custos, DR |
 | `02_data_models.md` | Modelagem de Dados | ER off-chain, contas on-chain, RLS, issues do schema |
 | `03_smart_contracts_anchor.md` | Smart Contracts | Instruções, eventos, erros, build/test/deploy, lacunas |
@@ -18,6 +21,7 @@
 | `08_key_management.md` | Gestão de Chaves | Inventário K1-K7, cerimônias, CloudHSM |
 | `09_threat_model.md` | Threat Model | STRIDE + DFD, riscos rankeados, DPIA esqueleto |
 | `10_runbooks.md` | Runbooks | RB-01 a RB-10 resposta a incidentes |
+| `11_fullstack_and_demo_guide.md` | Guia Full-Stack & Demo | APIs Next.js, persistência Supabase, equivalência de IA e branch mock |
 | `adr/001-007` | ADRs | 7 decisões de arquitetura formalizadas |
 | `LattesChain.md` | Documento mestre (histórico) | Visão original — **subsumido** pelos docs numerados; manter como referência |
 
@@ -26,9 +30,15 @@
 | Componente | Estado | Evidência |
 | :--- | :--- | :--- |
 | Smart contracts Anchor | 🟡 Código escrito, **sem testes, sem build verificado** | `educore_contracts/programs/.../lib.rs` (495 linhas) |
-| Migrations SQL | 🟡 Escritas, **não aplicadas** (e com 1 bug: `UINT`) | `supabase/migrations/001+002` |
-| Backend Go | 🟡 Esqueleto completo, **não compila** (imports), sem tx real | `api/` |
-| Frontend Next.js | 🔴 **Não existe** (nenhum arquivo em `src/`) | — |
+| Solana Attestation Service (SAS) | 🟢 **Implementado e funcional (Devnet)** | `sas/00_setup_wallets.py` a `sas/06_revoke.py` |
+| Migrations SQL | 🟢 **Aplicadas no Supabase** (`001 + 002 + 003`) | `supabase/migrations/` |
+| Backend APIs Next.js | 🟢 **Implementadas e integradas** (issue, student, verify, equivalence, trust-report) | `src/app/api/credentials/*`, `src/app/api/ai/*` |
+| Frontend Next.js | 🟢 **Implementado, conectado e build verificado** (`/`, `/validator`, `/student`, `/university`, `/admin-protocol`) | `src/` |
+| Camada de IA | 🟢 **Multi-provedor com fallback determinístico local** (Equivalência Curricular + Trust Report) | `src/app/api/ai/*`, `ai/` |
+| Autenticação multi-perfil (Estudante/IES/RH) | 🟢 **Implementado, E2E verificado** (`/login`, `/cadastro`, `/recuperar-senha`, `/redefinir-senha` + APIs + middleware de guards) | `src/app/login`, `src/app/api/auth/*`, `src/middleware.ts` |
+| Aprovação de cadastro via email (Lark SMTP/IMAP) | 🟢 **Funcional e verificado E2E** (links HMAC de aprovar/reprovar chegam ao admin e funcionam) | `src/lib/server/mailer.ts`, `src/app/api/auth/approve|reject` |
+| Recuperação de senha por email | 🟢 **Funcional e verificado E2E** (token uso único 1h, hash SHA-256 no banco) | `password_reset_tokens`, `src/app/api/auth/forgot|reset-password` |
+| Supabase DB & RLS | 🟢 **Conectado e Migrações Aplicadas** (`001 + 002`) | `supabase/migrations/` |
 | Metaplex Core mint | 🔴 Placeholder `not implemented` | `solana.go::MintMetaplexCoreSBT` |
 | Verificação on-chain | 🔴 Placeholder `not implemented` | `solana.go::VerifyDocumentOnChain` |
 | Vault + derivação | 🔴 `GetMasterSeed` placeholder; derivação usa curva errada | `supabase.go`, `crypto.go` |
@@ -55,6 +65,8 @@
 | I-11 | 🟡 | Sem tests Go; sem `Anchor.toml`/workspace completo | `api/`, `educore_contracts/` | Ver doc 03 §7 e doc 04 §8 |
 | I-12 | 🟢 | Health check estático (não probeia Supabase/RPC) | `handlers.go` | Pings reais |
 | I-13 | 🟢 | `verifier_ip` INET cru = PII | `001_schema.sql` | Truncar/hash + retenção |
+| I-14 | 🟡 | Rate limit de auth é **em memória** (janela deslizante por instância serverless) — escala horizontal requer Upstash Redis | `src/lib/server/rateLimit.ts` | Migrar p/ Redis em produção |
+| I-15 | 🟡 | Contas em `PENDING`/`REJECTED` existem no `auth.users` com `email_confirm=true` (login checado no app, não no GoTrue) — divulgação limitada, aceitável no MVP | `src/app/api/auth/signup` | Hook `before_user_created` ou fluxo de convite via `inviteUserByEmail` |
 
 ## 4. Decisões de Arquitetura (resumo — detalhes em `docs/adr/`)
 
