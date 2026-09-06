@@ -29,6 +29,7 @@
 | `16_mainnet_migration_and_gasless_relayer_spec.md` | Migração Mainnet & Relayer Gasless | Infraestrutura Helius/QuickNode, Fee Payer e State Compression |
 | `17_financial_model_infrastructure_costs_and_pricing.md` | Modelo Financeiro & Precificação B2B | Custos de nuvem, cálculo de gás, margem de 94% e precificação IES/RH |
 | `18_external_api_and_erp_integration_guide.md` | Guia de Integração de APIs & ERPs Legados | Chaves de API, emissão/verificação REST, TOTVS RM, ATS e SDKs |
+| `19_project_maturity_and_audit_readiness_report.md` | Relatório de Maturidade & Auditoria | Diagnóstico de entregáveis 100% prontos, componentes parciais e ativação Mainnet |
 | `adr/001-007` | ADRs | 7 decisões de arquitetura formalizadas |
 | `LattesChain.md` | Documento mestre (histórico) | Visão original — **subsumido** pelos docs numerados; manter como referência |
 
