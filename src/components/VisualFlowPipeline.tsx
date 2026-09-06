@@ -181,7 +181,7 @@ export default function VisualFlowPipeline() {
           Pipeline de Confiança Ponta a Ponta
         </div>
         <h2 className="font-display text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
-          Como o LattesChain Funciona
+          Como o <span className="pill-highlight font-extrabold">LattesChain</span> Funciona
         </h2>
         <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
           Da assinatura na faculdade até a contratação no RH: entenda a jornada completa de uma credencial acadêmica imutável na Solana.

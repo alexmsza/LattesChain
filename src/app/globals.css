@@ -72,3 +72,11 @@ body {
 .numbered-row:last-child {
   border-bottom: 1px solid rgba(226, 232, 240, 0.1);
 }
+
+/* Decorative dot cluster: scattered dots fading out from one corner */
+.dot-cluster {
+  background-image: radial-gradient(rgba(138, 51, 245, 0.45) 1.5px, transparent 1.5px);
+  background-size: 18px 18px;
+  -webkit-mask-image: radial-gradient(circle at 25% 30%, black, transparent 72%);
+  mask-image: radial-gradient(circle at 25% 30%, black, transparent 72%);
+}

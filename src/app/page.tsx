@@ -30,7 +30,7 @@ export default function Home() {
           </div>
 
           <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.08] mb-6">
-            A ponte de confiança universal entre{" "}
+            A ponte de <span className="pill-highlight font-extrabold">confiança</span> universal entre{" "}
             <span className="bg-gradient-to-r from-solana-purple via-violet-400 to-solana-purpleSoft bg-clip-text text-transparent">
               Faculdades, Estudantes e Empresas.
             </span>
@@ -203,8 +203,9 @@ export default function Home() {
       </section>
 
       {/* THREE PILLARS */}
-      <section className="px-4 py-20 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-5xl">
+      <section className="relative px-4 py-20 sm:px-6 lg:px-8 overflow-hidden">
+        <div className="dot-cluster pointer-events-none absolute -left-10 top-0 h-[420px] w-[420px]" />
+        <div className="relative mx-auto max-w-5xl">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 mb-14 items-end">
             <h2 className="font-display text-2xl sm:text-4xl font-bold text-white">
               Arquitetura em Três Pilares Nativos
