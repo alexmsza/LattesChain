@@ -65,6 +65,7 @@ npx -y add-mcp https://mcp.vercel.com -g -y -a antigravity -a gemini-cli
 | Servidor | Endpoint / Comando | Escopo |
 | :--- | :--- | :--- |
 | **Vercel** | `https://mcp.vercel.com` | Deploys, logs, Core Web Vitals e documentação |
+| **GitHub** | `npx @modelcontextprotocol/server-github` | Repositórios, commits, branches, PRs e issues |
 | **Supabase** | `https://mcp.supabase.com/mcp` | PostgreSQL, RLS, Storage, Edge Functions e Migrations |
 | **Context7** | `https://mcp.context7.com/mcp` | Resolução contextual de bibliotecas e SDKs |
 | **Chrome DevTools**| `npx chrome-devtools-mcp` | Automação e inspeção de UI / E2E |
