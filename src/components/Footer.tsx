@@ -93,6 +93,11 @@ export function Footer() {
                   Sobre a Jovian Tech
                 </Link>
               </li>
+              <li>
+                <Link href="/privacidade" className="text-solana-green hover:underline transition-colors flex items-center gap-1">
+                  Política de Privacidade (LGPD)
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -123,21 +128,21 @@ export function Footer() {
                     title="Instagram de Alex Miqueias"
                   >
                     <Instagram className="h-3.5 w-3.5" />
-                    @alexmsza
+                    Instagram
                   </a>
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-slate-800/80">
+              <div className="pt-1 border-t border-slate-800/80">
                 <span className="text-slate-300 font-semibold block">Jovian Tech</span>
-                <span className="text-slate-500 text-[11px] block">Venture Builder & GovTech</span>
+                <span className="text-slate-500 text-[11px] block">Hub & Empresa Parceira</span>
                 <div className="flex items-center gap-2 mt-1.5">
                   <a
                     href="https://jovian.foo/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 text-[11px] text-solana-green hover:underline transition-colors"
-                    title="Website da Jovian Tech"
+                    title="Website Jovian Tech"
                   >
                     <Globe className="h-3.5 w-3.5" />
                     jovian.foo
@@ -162,7 +167,9 @@ export function Footer() {
         <div className="border-t border-slate-800/60 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
           <p>© {new Date().getFullYear()} LattesChain / EduCore Protocol • Desenvolvido por Alex Miqueias • Jovian Tech.</p>
           <div className="flex items-center gap-4">
-            <span>Privacidade & LGPD por Design (Zero PII on-chain)</span>
+            <Link href="/privacidade" className="text-slate-400 hover:text-solana-green transition-colors underline">
+              Privacidade & LGPD por Design (Zero PII on-chain)
+            </Link>
           </div>
         </div>
       </div>

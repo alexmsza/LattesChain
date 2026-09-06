@@ -25,6 +25,7 @@
 | `12_tripartite_and_business_architecture.md` | Arquitetura Tripartite & Negócios | Modelo de valor compartilhado IES ⇄ Estudante ⇄ RH e compliance |
 | `13_mcp_integrations_and_vercel_setup.md` | Guia MCP & CI/CD Vercel | Setup Vercel MCP, Supabase Preview CI e boas práticas de deploy |
 | `14_solana_wallet_connection_and_security.md` | Carteira Solana & Segurança | Conexão Web3 (Phantom/Solflare), SecurityGuard anti-scraping e créditos |
+| `15_mec_xml_parser_rvdd_and_lgpd_compliance.md` | Conformidade MEC, XML & LGPD | Parser do XML MEC (Portarias 330/554), RVDD QR Code, Lote CSV e LGPD |
 | `adr/001-007` | ADRs | 7 decisões de arquitetura formalizadas |
 | `LattesChain.md` | Documento mestre (histórico) | Visão original — **subsumido** pelos docs numerados; manter como referência |
 

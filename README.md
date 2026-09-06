@@ -263,11 +263,16 @@ Para mais detalhes sobre a execução do pipeline Python SAS e testes isolados, 
 
 ## 9. Privacidade, Conformidade MEC e Segurança
 
-- **100% LGPD por Design**: Nenhum dado pessoal identificável (PII) é registrado na blockchain. Apenas a função de mão única SHA-256 do documento canônico é ancorada na rede. O documento original permanece armazenado com segurança pela instituição emissora.
-- **Portaria MEC nº 330/2018 e nº 554/2019**: O protocolo foi concebido para incorporar os requisitos do Diploma Digital do MEC, permitindo a validação de arquivos XML assinados com certificados digitais padrão ICP-Brasil acoplados à atestação on-chain.
+- **100% LGPD por Design**: Nenhum dado pessoal identificável (PII) é registrado na blockchain. Apenas a função de mão única SHA-256 do documento canônico é ancorada na rede. O titular conta com política pública e canal de DPO formal em **[/privacidade](src/app/privacidade/page.tsx)**.
+- **Portarias MEC nº 330/2018 e nº 554/2019 (Diploma Digital)**: Suporte nativo a upload e parser de arquivos XML do MEC com extração de diplomado, curso, carga horária, livro, folha e registro acadêmico, mantendo fallback 100% editável para inserção manual.
+- **Representação Visual do Diploma Digital (RVDD) com QR Code Dinâmico**: Geração de QR Code vetorial SVG escaneável por qualquer smartphone diretamente na folha de Certidão de Veracidade acadêmica em PDF.
+- **Emissão em Lote (Batch Issuance via CSV)**: Módulo dedicado para faculdades emitirem atestações para turmas inteiras com template CSV, pré-visualização e barra de progresso em tempo real.
+- **Padrão Internacional W3C Verifiable Credentials**: Exportação de credenciais no formato JSON-LD interoperável com carteiras digitais globais.
 - **Circuit Breakers & Defesa em Profundidade**: Todos os contratos do protocolo contam com verificação de integridade e mecanismos de pausa de emergência protegidos por chaves multisig.
 - **Client-Side SecurityGuard & Anti-Scraping**: Proteção ativa contra inspeção indevida e cópia não autorizada de código/fontes críticas, bloqueando atalhos de devtools (`F12`, `Ctrl+Shift+I/J/C`, `Ctrl+U`, `Ctrl+S`), interceptando clique direito com toast institucional e desabilitando arraste de elementos (`dragstart`).
 - **HTTP Security Headers**: Configuração de `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy` e `X-XSS-Protection` com remoção do cabeçalho `X-Powered-By`.
+
+Para detalhes técnicos e jurídicos da conformidade, consulte **[docs/15_mec_xml_parser_rvdd_and_lgpd_compliance.md](docs/15_mec_xml_parser_rvdd_and_lgpd_compliance.md)**.
 
 ---
 
