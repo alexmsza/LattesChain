@@ -33,15 +33,23 @@ export function Navbar() {
   const { session, profile, loading, signOut } = useSession();
   const { language, setLanguage, dict } = useLanguage();
 
-  const navItems = [
+  const baseNavItems = [
     { href: "/", label: dict.nav.home, icon: GraduationCap },
     { href: "/validator", label: dict.nav.validator, icon: ShieldCheck },
     { href: "/student", label: dict.nav.student, icon: UserCheck },
     { href: "/university", label: dict.nav.university, icon: Building2 },
-    { href: "/admin-protocol", label: dict.nav.protocol, icon: Activity },
     { href: "/sobre", label: dict.nav.about, icon: Info },
     { href: "/precos", label: dict.nav.pricing, icon: Tag },
   ];
+
+  const navItems =
+    profile?.role === "ADMIN"
+      ? [
+          ...baseNavItems.slice(0, 4),
+          { href: "/admin-protocol", label: dict.nav.protocol, icon: Activity },
+          ...baseNavItems.slice(4),
+        ]
+      : baseNavItems;
 
   const handleSignOut = async () => {
     await signOut();
@@ -64,7 +72,7 @@ export function Navbar() {
             <span className="font-display text-lg font-bold tracking-tight text-white">
               Lattes<span className="text-solana-green">Chain</span>
             </span>
-            <span className="text-[10px] uppercase tracking-widest text-slate-400">Jovian Tech Protocol</span>
+            <span className="text-[10px] uppercase tracking-widest text-slate-400">Edu Core Protocol</span>
           </div>
         </Link>
 
@@ -76,11 +84,10 @@ export function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-all ${
-                  isActive
+                className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-all ${isActive
                     ? "bg-solana-green/10 text-solana-green border border-solana-green/30 font-semibold"
                     : "text-slate-300 hover:bg-slate-800/60 hover:text-white"
-                }`}
+                  }`}
               >
                 <Icon className="h-3.5 w-3.5" />
                 {item.label}
@@ -97,11 +104,10 @@ export function Navbar() {
                 key={lang}
                 type="button"
                 onClick={() => setLanguage(lang)}
-                className={`rounded-lg px-2 py-1 uppercase transition-all ${
-                  language === lang
+                className={`rounded-lg px-2 py-1 uppercase transition-all ${language === lang
                     ? "bg-solana-green text-navy-900 font-bold shadow-sm"
                     : "text-slate-400 hover:text-white"
-                }`}
+                  }`}
                 title={`Mudar idioma para ${lang.toUpperCase()}`}
               >
                 {lang}

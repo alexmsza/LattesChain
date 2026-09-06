@@ -34,6 +34,7 @@ CREATE INDEX IF NOT EXISTS idx_vr_status ON validation_requests(status);
 CREATE INDEX IF NOT EXISTS idx_vr_hash ON validation_requests(document_hash);
 
 -- Trigger updated_at
+DROP TRIGGER IF EXISTS update_validation_requests_updated_at ON validation_requests;
 CREATE TRIGGER update_validation_requests_updated_at
     BEFORE UPDATE ON validation_requests
     FOR EACH ROW
@@ -65,8 +66,11 @@ ALTER TABLE validation_requests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE employer_compliance_requests ENABLE ROW LEVEL SECURITY;
 
 -- Políticas de RLS permissivas para o Service Role do backend
+DROP POLICY IF EXISTS "Service role full access validation_requests" ON validation_requests;
 CREATE POLICY "Service role full access validation_requests" ON validation_requests
     FOR ALL USING (true) WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Service role full access employer_compliance_requests" ON employer_compliance_requests;
 CREATE POLICY "Service role full access employer_compliance_requests" ON employer_compliance_requests
     FOR ALL USING (true) WITH CHECK (true);
+

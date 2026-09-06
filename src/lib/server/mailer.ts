@@ -21,9 +21,9 @@ const transporter = nodemailer.createTransport({
   port: PORT,
   secure: SECURE,
   auth: { user: USER, pass: PASS },
-  connectionTimeout: 10_000,
-  greetingTimeout: 10_000,
-  socketTimeout: 20_000,
+  connectionTimeout: 4_000,
+  greetingTimeout: 4_000,
+  socketTimeout: 5_000,
 });
 
 export async function sendMail(options: {
@@ -32,6 +32,10 @@ export async function sendMail(options: {
   html: string;
   text?: string;
 }) {
+  if (!USER || !PASS) {
+    console.warn("[mailer] SMTP_USER ou SMTP_PASS ausentes no ambiente. E-mail simulado para:", options.to);
+    return { messageId: "simulated-smtp-fallback" };
+  }
   return transporter.sendMail({
     from: FROM,
     to: options.to,

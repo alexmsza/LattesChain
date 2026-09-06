@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   ShieldCheck,
   FileSearch,
@@ -19,10 +20,17 @@ import {
   Briefcase,
   Send,
   Check,
+  Printer,
+  Download,
+  QrCode,
+  Share2,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { DynamicQRCode } from "@/components/DynamicQRCode";
 
-export default function ValidatorPage() {
+function ValidatorContent() {
+  const searchParams = useSearchParams();
+  const queryParam = searchParams.get("query") || searchParams.get("hash");
   const { dict } = useLanguage();
   const [activeTab, setActiveTab] = useState<"VERIFY" | "EQUIVALENCE" | "COMPLIANCE">("VERIFY");
 
@@ -126,6 +134,13 @@ export default function ValidatorPage() {
     }
   };
 
+  useEffect(() => {
+    if (queryParam) {
+      setSearchQuery(queryParam);
+      handleVerify(queryParam);
+    }
+  }, [queryParam]);
+
   const generateTrustReport = async (facts: any) => {
     setLoadingAI(true);
     try {
@@ -150,6 +165,46 @@ export default function ValidatorPage() {
 
     setTrustReport("Parecer gerado com base nas atestações on-chain validadas.");
     setLoadingAI(false);
+  };
+
+  const handleDownloadW3C = (res: any) => {
+    const vc = {
+      "@context": [
+        "https://www.w3.org/2018/credentials/v1",
+        "https://purl.imsglobal.org/spec/ob/v3p0/context.json"
+      ],
+      id: `urn:uuid:${res.record_id || res.id || Date.now()}`,
+      type: ["VerifiableCredential", "AcademicCredential", "EduCoreAttestation"],
+      issuer: {
+        id: `did:solana:${res.institution_pubkey || "3xmiVKqEs25voqLmWRvrjrnGrkEDMqyXUstW34vwZWcH"}`,
+        name: res.institution_name,
+        cnpj: res.institution_cnpj
+      },
+      issuanceDate: res.issued_at || new Date().toISOString(),
+      credentialSubject: {
+        id: res.student_wallet ? `did:solana:${res.student_wallet}` : `urn:hash:${res.document_hash}`,
+        name: res.student_name,
+        course: res.metadata?.course_name || res.document_type,
+        workloadHours: res.metadata?.workload_hours,
+        documentType: res.document_type
+      },
+      proof: {
+        type: "SolanaAttestationService2024",
+        created: res.issued_at || new Date().toISOString(),
+        proofPurpose: "assertionMethod",
+        solanaTxSignature: res.solana_tx_signature,
+        documentHashSha256: res.document_hash,
+        verificationUrl: `https://latteschain.vercel.app/validator?hash=${res.document_hash}`
+      }
+    };
+
+    const blob = new Blob([JSON.stringify(vc, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `lattes_chain_w3c_vc_${res.document_hash?.substring(0, 10) || "cred"}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   const handleCheckEquivalence = async () => {
@@ -412,42 +467,136 @@ export default function ValidatorPage() {
                 </div>
 
                 {verificationResult.isValid && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-800/80 pt-6 text-sm">
-                    <div>
-                      <span className="text-xs text-slate-500 uppercase tracking-wider block">Instituição Emissora</span>
-                      <span className="font-semibold text-slate-200">{verificationResult.institution_name}</span>
-                      <div className="text-xs text-slate-400">CNPJ: {verificationResult.institution_cnpj}</div>
-                    </div>
-                    <div>
-                      <span className="text-xs text-slate-500 uppercase tracking-wider block">Título / Curso</span>
-                      <span className="font-semibold text-slate-200">
-                        {verificationResult.metadata?.course_name || verificationResult.document_type}
-                      </span>
-                      {verificationResult.metadata?.workload_hours && (
-                        <div className="text-xs text-slate-400">
-                          Carga Horária: {verificationResult.metadata.workload_hours}h
+                  <>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 border-t border-slate-800/80 pt-6 text-sm">
+                      <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <span className="text-xs text-slate-500 uppercase tracking-wider block">Instituição Emissora</span>
+                          <span className="font-semibold text-slate-200">{verificationResult.institution_name}</span>
+                          <div className="text-xs text-slate-400">CNPJ: {verificationResult.institution_cnpj}</div>
                         </div>
-                      )}
+                        <div>
+                          <span className="text-xs text-slate-500 uppercase tracking-wider block">Título / Curso</span>
+                          <span className="font-semibold text-slate-200">
+                            {verificationResult.metadata?.course_name || verificationResult.document_type}
+                          </span>
+                          {verificationResult.metadata?.workload_hours && (
+                            <div className="text-xs text-slate-400">
+                              Carga Horária: {verificationResult.metadata.workload_hours}h
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <span className="text-xs text-slate-500 uppercase tracking-wider block">Hash SHA-256</span>
+                          <span className="font-mono text-xs text-slate-300 truncate block">
+                            {verificationResult.document_hash}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-xs text-slate-500 uppercase tracking-wider block">Transação Solana</span>
+                          <a
+                            href={`https://explorer.solana.com/tx/${verificationResult.solana_tx_signature}?cluster=devnet`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1 font-mono text-xs text-solana-green hover:underline"
+                          >
+                            {verificationResult.solana_tx_signature?.substring(0, 22)}...
+                            <ExternalLink className="h-3 w-3" />
+                          </a>
+                        </div>
+                      </div>
+
+                      {/* QR CODE DINÂMICO CONFORME RVDD DO MEC */}
+                      <div className="flex flex-col items-center justify-center p-4 rounded-2xl bg-navy-950/60 border border-slate-800 text-center">
+                        <DynamicQRCode
+                          value={`https://latteschain.vercel.app/validator?hash=${verificationResult.document_hash}`}
+                          size={120}
+                        />
+                        <span className="text-[11px] font-semibold text-slate-300 mt-2 flex items-center gap-1">
+                          <QrCode className="h-3.5 w-3.5 text-solana-green" />
+                          QR Code RVDD (MEC)
+                        </span>
+                        <span className="text-[10px] text-slate-400">Escaneie para validar em smartphone</span>
+                      </div>
                     </div>
-                    <div>
-                      <span className="text-xs text-slate-500 uppercase tracking-wider block">Hash SHA-256</span>
-                      <span className="font-mono text-xs text-slate-300 truncate block">
-                        {verificationResult.document_hash}
-                      </span>
+
+                    <div className="mt-6 pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3 no-print">
+                      <div className="text-xs text-slate-400">
+                        Padrão W3C VC & Portarias MEC nº 330/2018 e 554/2019
+                      </div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <button
+                          onClick={() => handleDownloadW3C(verificationResult)}
+                          className="inline-flex items-center gap-1.5 rounded-xl bg-navy-800 hover:bg-slate-700 border border-slate-700 px-3.5 py-2 text-xs font-bold text-slate-200 hover:text-white transition-all shadow-sm"
+                        >
+                          <Download className="h-3.5 w-3.5 text-solana-purple" />
+                          Exportar W3C Credential (JSON-LD)
+                        </button>
+                        <button
+                          onClick={() => window.print()}
+                          className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 text-navy-900 px-4 py-2 text-xs font-bold hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md"
+                        >
+                          <Printer className="h-3.5 w-3.5" />
+                          Imprimir / Salvar Certidão (PDF)
+                        </button>
+                      </div>
                     </div>
-                    <div>
-                      <span className="text-xs text-slate-500 uppercase tracking-wider block">Transação Solana</span>
-                      <a
-                        href={`https://explorer.solana.com/tx/${verificationResult.solana_tx_signature}?cluster=devnet`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1 font-mono text-xs text-solana-green hover:underline"
-                      >
-                        {verificationResult.solana_tx_signature?.substring(0, 22)}...
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
+
+                    {/* BLOCO IMPRESSO OFICIAL: CERTIDÃO DE VERACIDADE ACADÊMICA */}
+                    <div className="hidden print:block p-8 border-2 border-black bg-white text-black font-serif my-6 space-y-6">
+                      <div className="text-center border-b-2 border-black pb-4">
+                        <h1 className="text-2xl font-bold uppercase tracking-wide">República Federativa do Brasil</h1>
+                        <h2 className="text-lg font-semibold">{verificationResult.institution_name}</h2>
+                        <p className="text-xs text-gray-700 mt-1">
+                          Certidão de Veracidade e Autenticidade Digital de Documento Acadêmico
+                        </p>
+                        <p className="text-[10px] text-gray-500">
+                          Em conformidade com as Portarias MEC nº 330/2018 e nº 554/2019 e Art. 10 da MP 2.200-2/2001
+                        </p>
+                      </div>
+
+                      <div className="space-y-3 text-sm leading-relaxed">
+                        <p>
+                          Certifica-se, para os devidos fins de direito e comprovação perante órgãos públicos e privados,
+                          que o documento acadêmico referenciado abaixo foi validado e possui registro de atestação imutável
+                          no protocolo <strong>LattesChain (EduCore Protocol)</strong> ancorado na rede pública <strong>Solana</strong>.
+                        </p>
+
+                        <div className="border border-gray-400 p-4 rounded text-xs space-y-1.5 bg-gray-50 font-sans">
+                          <div><strong>Diplomado/Titular:</strong> {verificationResult.student_name || "Discente Regular"}</div>
+                          <div><strong>Instituição Emissora:</strong> {verificationResult.institution_name} (CNPJ: {verificationResult.institution_cnpj})</div>
+                          <div><strong>Curso/Título:</strong> {verificationResult.metadata?.course_name || verificationResult.document_type}</div>
+                          <div><strong>Tipo de Documento:</strong> {verificationResult.document_type}</div>
+                          {verificationResult.metadata?.workload_hours && (
+                            <div><strong>Carga Horária Atestada:</strong> {verificationResult.metadata.workload_hours} horas</div>
+                          )}
+                          <div className="pt-2 font-mono break-all">
+                            <strong>Digest Criptográfico (SHA-256):</strong><br />{verificationResult.document_hash}
+                          </div>
+                          <div className="font-mono break-all">
+                            <strong>Assinatura da Atestação Solana:</strong><br />{verificationResult.solana_tx_signature}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between pt-4 border-t border-gray-300">
+                          <div>
+                            <p className="text-xs text-gray-700">
+                              Para consultar a validade deste registro a qualquer momento, aponte a câmera do seu celular para o QR Code ao lado ou acesse:
+                            </p>
+                            <p className="text-[11px] font-mono text-blue-700 mt-1">
+                              https://latteschain.vercel.app/validator?hash={verificationResult.document_hash}
+                            </p>
+                          </div>
+                          <div className="shrink-0 pl-4">
+                            <DynamicQRCode
+                              value={`https://latteschain.vercel.app/validator?hash=${verificationResult.document_hash}`}
+                              size={110}
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  </>
                 )}
               </div>
 
@@ -759,5 +908,19 @@ export default function ValidatorPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function ValidatorPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">
+          Carregando validador RH...
+        </div>
+      }
+    >
+      <ValidatorContent />
+    </Suspense>
   );
 }

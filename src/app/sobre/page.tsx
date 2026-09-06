@@ -67,6 +67,50 @@ export default function SobrePage() {
         </div>
       </div>
 
+      {/* LEADERSHIP & DEVELOPER SECTION */}
+      <div className="glass-panel rounded-3xl p-8 border-slate-800 space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-2 max-w-xl">
+            <span className="text-xs font-bold uppercase tracking-widest text-solana-purple">
+              Autoria & Engenharia do Sistema
+            </span>
+            <h3 className="font-display text-xl sm:text-2xl font-bold text-white">
+              Desenvolvido por Alex Miqueias • Jovian Tech
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Solução concebida e implementada para o Hackathon Universitário Superteam Brasil 2026, unindo contratos Token-2022 Soulbound, Solana Attestation Service e infraestrutura DataSecAIOps.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <a
+              href="https://www.linkedin.com/in/alexmiqueias/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl border border-blue-500/40 bg-blue-950/20 px-4 py-2.5 text-xs font-bold text-blue-300 hover:bg-blue-900/40 transition-all"
+            >
+              LinkedIn do Desenvolvedor
+            </a>
+            <a
+              href="https://www.instagram.com/alexmsza/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl border border-pink-500/40 bg-pink-950/20 px-4 py-2.5 text-xs font-bold text-pink-300 hover:bg-pink-900/40 transition-all"
+            >
+              Instagram @alexmsza
+            </a>
+            <a
+              href="https://jovian.foo/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl border border-solana-green/40 bg-solana-green/10 px-4 py-2.5 text-xs font-bold text-solana-green hover:bg-solana-green/20 transition-all"
+            >
+              Website jovian.foo
+            </a>
+          </div>
+        </div>
+      </div>
+
       {/* 4 PILARES TECNOLÓGICOS */}
       <div className="space-y-6">
         <div className="text-center max-w-2xl mx-auto">

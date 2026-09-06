@@ -31,6 +31,7 @@ export const metadata: Metadata = {
 };
 
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
+import { SecurityGuard } from "@/components/SecurityGuard";
 
 export default function RootLayout({
   children,
@@ -41,6 +42,7 @@ export default function RootLayout({
     <html lang="pt-BR" className={`${inter.variable} ${archivo.variable} dark`}>
       <body className="flex min-h-screen flex-col bg-[#080c14] text-slate-100 antialiased selection:bg-solana-green/30 selection:text-solana-green">
         <LanguageProvider>
+          <SecurityGuard />
           <Navbar />
           <main className="flex-1">{children}</main>
           <Footer />

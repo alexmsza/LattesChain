@@ -25,11 +25,11 @@
 *(Slide 1: Título de Impacto + Estatísticas de Burocracia)*
 
 > **Narrador**:  
-> "Hoje, o seu histórico acadêmico não é seu: ele é refém da instituição onde você estudou.
+> "Hoje, a emissão e a verificação de títulos acadêmicos ainda estão presas ao século passado: documentos em papel e PDFs fáceis de falsificar.
 > 
-> Quando um estudante precisa validar horas complementares, transferir de faculdade ou comprovar uma matéria cursada no exterior, ele entra em um labirinto burocrático: solicitações em secretarias que demoram semanas, cobrança de taxas por 'segunda via' e PDFs que qualquer um pode falsificar em minutos.
+> A faculdade investe anos na formação dos seus alunos, mas quando emite um diploma ou histórico, suas secretarias ficam sobrecarregadas com solicitações manuais de autenticação e conferência. Para o estudante, transferir créditos ou comprovar certificados para estágios vira uma maratona de espera. E para o RH ou outra faculdade, verificar se aquele PDF é verdadeiro exige dias de checagem.
 > 
-> Do outro lado, recrutadores de RH e outras universidades perdem tempo e recursos tentando verificar autenticidade de documentos, enquanto mais de 10% dos diplomas e certificados apresentados no mercado contêm fraudes. O histórico educacional precisa pertencer a quem o construiu: o aluno."
+> O LattesChain nasce não para afastar as instituições, mas para criar uma ponte de confiança universal: a faculdade projeta seus títulos com credibilidade global e zero fraudes; o estudante apresenta suas conquistas com total facilidade; e a empresa contrata com segurança garantida em menos de um segundo."
 
 ---
 

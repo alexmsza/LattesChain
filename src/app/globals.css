@@ -54,3 +54,21 @@ body {
     linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
 }
+
+/* Print Stylesheet for Official Attestation Certificates */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+  }
+  header, footer, nav, .no-print {
+    display: none !important;
+  }
+  .glass-panel {
+    border: 1px solid #cbd5e1 !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+    color: #0f172a !important;
+  }
+}
+
