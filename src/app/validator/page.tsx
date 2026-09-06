@@ -23,7 +23,9 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
-export default function ValidatorPage() {
+function ValidatorContent() {
+  const searchParams = useSearchParams();
+  const queryParam = searchParams.get("query") || searchParams.get("hash");
   const { dict } = useLanguage();
   const [activeTab, setActiveTab] = useState<"VERIFY" | "EQUIVALENCE" | "COMPLIANCE">("VERIFY");
 
