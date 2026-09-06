@@ -14,6 +14,7 @@
 ## 📑 Documentação e Recursos Principais
 
 - 🎙️ **[Roteiro de Pitch (5 Minutos)](docs/PITCH_DECK.md)**: Minutagem, slides e script de fala guiada para gravação do vídeo de submissão.
+- 🏛️ **[Arquitetura Tripartite & Modelo de Negócios](docs/12_tripartite_and_business_architecture.md)**: Ciclo Estudante ⇄ IES ⇄ RH, compliance de estágios, validade universal e Jovian Tech.
 - 📊 **[Plano de Negócios & GTM](docs/BUSINESS_PLAN.md)**: Modelagem B2B2C freemium, unit economics, personas e estratégia beachhead.
 - 🎬 **[Demo Runbook](demo/RUNBOOK.md)**: Passo a passo de execução da demo ao vivo on-chain e IA.
 - 🏗️ **[Visão Geral de Arquitetura](docs/01_architecture_overview.md)**: Topologia, privacidade LGPD e stack open-source.
@@ -166,11 +167,13 @@ npm run dev
 ```
 
 #### Rotas Principais da Aplicação:
-- `/`: Landing page com proposta de valor e métricas.
-- `/validator`: Validador público de documentos (PDF/Hash) e Motor de Equivalência Curricular por IA.
-- `/student`: Passaporte acadêmico soberano do estudante com horas complementares e QR code.
-- `/university`: Portal de emissão da universidade integrado com Supabase e Solana Devnet.
+- `/`: Landing page com proposta de valor, métricas e seletor de idiomas (PT, EN, ES).
+- `/validator`: Validador público de documentos (PDF/Hash), Motor de Equivalência Curricular por IA e Solicitação de Comprovação para Estágios/Vagas (Compliance RH).
+- `/student`: Passaporte acadêmico soberano do estudante, formulário de solicitação de validação à IES, timeline de status e autorização de compliance.
+- `/university`: Portal IES com fila de triagem de solicitações de alunos, emissão manual de diplomas e diretório geral de alunos matriculados.
 - `/admin-protocol`: Master Registry e governança descentralizada do ecossistema.
+- `/sobre`: Página institucional sobre o LattesChain como produto oficial da **Jovian Tech** e validade universal.
+- `/precos`: Tabela de preços, planos para universidades (Start, Campus Pro, Enterprise), planos para RHs e gratuidade para estudantes.
 
 ### 6.5 Branches do Repositório: Produção Real vs Demonstração
 
