@@ -80,3 +80,20 @@ body {
   -webkit-mask-image: radial-gradient(circle at 25% 30%, black, transparent 72%);
   mask-image: radial-gradient(circle at 25% 30%, black, transparent 72%);
 }
+
+/* Print Stylesheet for Official Attestation Certificates */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+  }
+  header, footer, nav, .no-print {
+    display: none !important;
+  }
+  .glass-panel {
+    border: 1px solid #cbd5e1 !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+    color: #0f172a !important;
+  }
+}

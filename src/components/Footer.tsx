@@ -1,30 +1,31 @@
 import Link from "next/link";
-import { GraduationCap, Github, ExternalLink } from "lucide-react";
+import { GraduationCap, ExternalLink, Linkedin, Instagram, Globe } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="border-t border-slate-850 bg-[#0a0714] py-12 text-slate-400">
+    <footer className="border-t border-slate-850 bg-[#0a0714] py-12 text-slate-400 no-print">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
-          <div className="md:col-span-2">
-            <div className="flex items-center gap-2 mb-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+          {/* COLUNA 1: PROJETO */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
               <GraduationCap className="h-6 w-6 text-solana-purple" />
               <span className="font-display text-lg font-bold text-white">
                 Lattes<span className="text-solana-green">Chain</span>
               </span>
             </div>
-            <p className="text-sm leading-relaxed text-slate-400 max-w-md">
-              Passaporte acadêmico descentralizado e soberano construído sobre a Solana.
-              Transformando históricos, diplomas e horas complementares em atestações imutáveis e verificáveis globalmente.
+            <p className="text-xs leading-relaxed text-slate-400">
+              Passaporte acadêmico soberano sobre a Solana. Atestações oficiais, diplomas e histórico com credibilidade universal para IES, estudantes e empresas.
             </p>
-            <div className="mt-4 flex items-center gap-3 text-xs text-slate-500">
-              <span>Construído para o Hackathon Universitário Superteam Brasil</span>
+            <div className="pt-2 text-[11px] text-slate-500">
+              Construído para o Hackathon Universitário Superteam Brasil 2026.
             </div>
           </div>
 
+          {/* COLUNA 2: PROTOCOLO & GUIAS */}
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200 mb-4">Protocolo</h4>
-            <ul className="space-y-2 text-sm">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200 mb-4">Protocolo & Guias</h4>
+            <ul className="space-y-2 text-xs">
               <li>
                 <Link href="/validator" className="hover:text-solana-purple transition-colors">
                   Validador Público RH
@@ -37,15 +38,26 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/university" className="hover:text-solana-purple transition-colors">
-                  Painel da Universidade
+                  Portal da Universidade (IES)
+                </Link>
+              </li>
+              <li>
+                <Link href="/guia-carteira" className="text-solana-purple hover:underline flex items-center gap-1 font-semibold">
+                  Guia: Como Conectar a Carteira Solana
+                </Link>
+              </li>
+              <li>
+                <Link href="/sobre" className="hover:text-solana-purple transition-colors">
+                  Governança & Arquitetura
                 </Link>
               </li>
             </ul>
           </div>
 
+          {/* COLUNA 3: TECNOLOGIA */}
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200 mb-4">Tecnologia</h4>
-            <ul className="space-y-2 text-sm">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200 mb-4">Tecnologia On-Chain</h4>
+            <ul className="space-y-2 text-xs">
               <li>
                 <a
                   href="https://attest.solana.com"
@@ -76,14 +88,88 @@ export function Footer() {
                   Supabase Backend <ExternalLink className="h-3 w-3" />
                 </a>
               </li>
+              <li>
+                <Link href="/sobre" className="hover:text-solana-purple transition-colors">
+                  Sobre a Jovian Tech
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacidade" className="text-solana-purple hover:underline transition-colors flex items-center gap-1">
+                  Política de Privacidade (LGPD)
+                </Link>
+              </li>
             </ul>
+          </div>
+
+          {/* COLUNA 4: DESENVOLVEDOR & VENTURE BUILDER */}
+          <div>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200 mb-4">Engenharia & Autoria</h4>
+            <div className="space-y-3 text-xs">
+              <div>
+                <span className="text-slate-300 font-semibold block">Alex Miqueias</span>
+                <span className="text-slate-500 text-[11px] block">Lead Architect & Developer</span>
+                <div className="flex items-center gap-2 mt-1.5">
+                  <a
+                    href="https://www.linkedin.com/in/alexmiqueias/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-[11px] text-blue-400 hover:text-blue-300 transition-colors"
+                    title="LinkedIn de Alex Miqueias"
+                  >
+                    <Linkedin className="h-3.5 w-3.5" />
+                    LinkedIn
+                  </a>
+                  <span className="text-slate-700">•</span>
+                  <a
+                    href="https://www.instagram.com/alexmsza/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-[11px] text-pink-400 hover:text-pink-300 transition-colors"
+                    title="Instagram de Alex Miqueias"
+                  >
+                    <Instagram className="h-3.5 w-3.5" />
+                    Instagram
+                  </a>
+                </div>
+              </div>
+
+              <div className="pt-1 border-t border-slate-800/80">
+                <span className="text-slate-300 font-semibold block">Jovian Tech</span>
+                <span className="text-slate-500 text-[11px] block">Hub & Empresa Parceira</span>
+                <div className="flex items-center gap-2 mt-1.5">
+                  <a
+                    href="https://jovian.foo/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-[11px] text-solana-purple hover:underline transition-colors"
+                    title="Website Jovian Tech"
+                  >
+                    <Globe className="h-3.5 w-3.5" />
+                    jovian.foo
+                  </a>
+                  <span className="text-slate-700">•</span>
+                  <a
+                    href="https://www.linkedin.com/company/jovian-tech-foo/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-[11px] text-blue-400 hover:text-blue-300 transition-colors"
+                    title="LinkedIn da Jovian Tech"
+                  >
+                    <Linkedin className="h-3.5 w-3.5" />
+                    LinkedIn
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         <div className="border-t border-slate-800/60 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
-          <p>© {new Date().getFullYear()} LattesChain / EduCore Protocol. Código Open Source.</p>
+          <p>© {new Date().getFullYear()} LattesChain / EduCore Protocol • Desenvolvido por Alex Miqueias • Jovian Tech.</p>
           <div className="flex items-center gap-4">
-            <span>Privacidade & LGPD por Design (Zero PII on-chain)</span>
+            <Link href="/privacidade" className="text-slate-400 hover:text-solana-purple transition-colors underline">
+              Privacidade & LGPD por Design (Zero PII on-chain)
+            </Link>
           </div>
         </div>
       </div>

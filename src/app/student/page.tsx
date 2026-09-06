@@ -23,8 +23,10 @@ import {
   Check,
   XCircle,
   Eye,
+  Download,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { DynamicQRCode } from "@/components/DynamicQRCode";
 
 function StudentContent() {
   const searchParams = useSearchParams();
@@ -213,10 +215,49 @@ function StudentContent() {
         alert(`Erro ao submeter: ${errData.error || "Tente novamente."}`);
       }
     } catch (err: any) {
-      alert(`Falha ao conectar: ${err.message}`);
+      alert(`Falha na requisição: ${err.message}`);
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleDownloadStudentW3C = (rec: any) => {
+    const vc = {
+      "@context": [
+        "https://www.w3.org/2018/credentials/v1",
+        "https://purl.imsglobal.org/spec/ob/v3p0/context.json"
+      ],
+      id: `urn:uuid:${rec.id || Date.now()}`,
+      type: ["VerifiableCredential", "AcademicCredential", "EduCoreAttestation"],
+      issuer: {
+        id: "did:solana:3xmiVKqEs25voqLmWRvrjrnGrkEDMqyXUstW34vwZWcH",
+        name: rec.institution || studentData.university,
+      },
+      issuanceDate: new Date().toISOString(),
+      credentialSubject: {
+        id: `did:solana:${studentData.solanaWallet}`,
+        name: studentData.name,
+        title: rec.title,
+        hours: rec.hours,
+        status: rec.status,
+      },
+      proof: {
+        type: "SolanaAttestationService2024",
+        created: new Date().toISOString(),
+        proofPurpose: "assertionMethod",
+        solanaTxSignature: rec.tx,
+        documentHashSha256: rec.hash,
+        verificationUrl: `https://latteschain.vercel.app/validator?hash=${rec.hash}`
+      }
+    };
+
+    const blob = new Blob([JSON.stringify(vc, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `lattes_chain_vc_${rec.hash?.substring(0, 10) || "cred"}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   // Autorização de Compliance para Empresa
@@ -371,7 +412,7 @@ function StudentContent() {
                 >
                   <div className="space-y-2.5">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="rounded-full bg-solana-purple/10 border border-solana-purple/30 px-2.5 py-0.5 text-[10px] font-bold text-solana-purple">
+                      <span className="rounded-full bg-solana-green/10 border border-solana-green/30 px-2.5 py-0.5 text-[10px] font-bold text-solana-green">
                         {rec.status}
                       </span>
                       <span className="text-[11px] text-slate-400">{rec.date}</span>
@@ -383,18 +424,37 @@ function StudentContent() {
                     </div>
                   </div>
 
-                  <div className="pt-4 mt-4 border-t border-slate-800/80 flex items-center justify-between text-xs">
+                  <div className="pt-4 mt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-xs">
                     <span className="text-slate-300 font-semibold">
                       {rec.hours ? `${rec.hours}h` : rec.grade ? `Nota: ${rec.grade}` : "Atestado Oficial"}
                     </span>
-                    <a
-                      href={`https://explorer.solana.com/tx/${rec.tx}?cluster=devnet`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-solana-purple hover:underline font-mono text-[11px]"
-                    >
-                      Explorer <ExternalLink className="h-3 w-3" />
-                    </a>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          setSelectedRecordForQR(rec);
+                          setShowQR(true);
+                        }}
+                        title="Ver QR Code do Documento"
+                        className="p-1.5 rounded-lg bg-navy-800 hover:bg-slate-700 text-slate-300 hover:text-solana-purple transition-all"
+                      >
+                        <QrCode className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDownloadStudentW3C(rec)}
+                        title="Exportar W3C Verifiable Credential (JSON-LD)"
+                        className="p-1.5 rounded-lg bg-navy-800 hover:bg-slate-700 text-slate-300 hover:text-solana-purple transition-all"
+                      >
+                        <Download className="h-3.5 w-3.5" />
+                      </button>
+                      <a
+                        href={`https://explorer.solana.com/tx/${rec.tx}?cluster=devnet`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-solana-purple hover:underline font-mono text-[11px]"
+                      >
+                        Explorer <ExternalLink className="h-3 w-3" />
+                      </a>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -703,17 +763,41 @@ function StudentContent() {
       {showQR && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
           <div className="glass-panel rounded-3xl p-8 max-w-sm w-full border-solana-purple/40 text-center space-y-4 animate-in zoom-in-95">
-            <h3 className="font-display text-lg font-bold text-white">{dict.student.qrModalTitle}</h3>
-            <p className="text-xs text-slate-400">{dict.student.qrModalDesc}</p>
-            <div className="bg-white p-4 rounded-2xl mx-auto w-48 h-48 flex items-center justify-center">
-              {/* QR Code Simulado de Alta Fidelidade */}
-              <QrCode className="h-40 w-40 text-navy-900" />
+            <h3 className="font-display text-lg font-bold text-white">
+              {selectedRecordForQR ? selectedRecordForQR.title : dict.student.qrModalTitle}
+            </h3>
+            <p className="text-xs text-slate-400">
+              {selectedRecordForQR
+                ? "Aponte a câmera do seu celular para validar este documento acadêmico instantaneamente."
+                : dict.student.qrModalDesc}
+            </p>
+            <div className="mx-auto flex items-center justify-center py-2">
+              <DynamicQRCode
+                value={
+                  selectedRecordForQR
+                    ? `https://latteschain.vercel.app/validator?hash=${selectedRecordForQR.hash}`
+                    : `https://latteschain.vercel.app/student?wallet=${studentData.solanaWallet}`
+                }
+                size={160}
+              />
             </div>
-            <div className="font-mono text-[10px] text-slate-400 truncate">
-              {studentData.solanaWallet}
+            <div className="font-mono text-[10px] text-slate-400 truncate bg-slate-900/60 p-2 rounded-lg border border-slate-800">
+              {selectedRecordForQR ? `Hash: ${selectedRecordForQR.hash}` : studentData.solanaWallet}
             </div>
+            {selectedRecordForQR && (
+              <button
+                onClick={() => handleDownloadStudentW3C(selectedRecordForQR)}
+                className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl border border-solana-purple/50 bg-solana-purple/20 py-2 text-xs font-semibold text-purple-300 hover:bg-solana-purple/30 transition-all"
+              >
+                <Download className="h-3.5 w-3.5" />
+                Baixar W3C Credential (JSON-LD)
+              </button>
+            )}
             <button
-              onClick={() => setShowQR(false)}
+              onClick={() => {
+                setShowQR(false);
+                setSelectedRecordForQR(null);
+              }}
               className="w-full rounded-xl border border-slate-700 bg-navy-800 py-2.5 text-xs font-bold text-white hover:bg-slate-700 transition-all"
             >
               Fechar

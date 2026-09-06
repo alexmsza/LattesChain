@@ -165,15 +165,15 @@ Implementado interativamente na landing page ([`VisualFlowPipeline.tsx`](src/com
 
 | Rota | Descrição | Acesso |
 | :--- | :--- | :---: |
-| `/` | Landing page institucional com timeline visual do fluxo e simulador interativo | Público |
-| `/validator` | Validador público de documentos, test drive e motor de equivalência curricular por IA | Público |
+| `/` | Landing page com posicionamento tripartite, métricas e pipeline interativo | Público |
+| `/validator` | Validador público de documentos, exportação de certidão PDF e motor de IA | Público |
 | `/student` | Passaporte acadêmico do aluno com barra de horas MEC, QR code e solicitações | Estudante |
 | `/university` | Portal do emissor IES com emissão on-chain, triagem de pedidos e diretório | IES |
-| `/admin-protocol` | Governança do Master Registry, credenciamento de IES e circuit breakers | Administrador |
+| `/admin-protocol` | Governança de autoridades IES e homologação de novos usuários com 1 clique | Administrador |
 | `/precos` | Planos comerciais para Universidades, RHs e gratuidade para estudantes | Público |
 | `/sobre` | Detalhamento institucional do protocolo LattesChain e Jovian Tech | Público |
-| `/login` | Autenticação unificada por perfil com Supabase Auth | Público |
-| `/cadastro` | Cadastro de novos alunos ou instituições parceiras | Público |
+| `/login` | Autenticação com verificação de perfil aprovado (Supabase Auth) | Público |
+| `/cadastro` | Solicitação de cadastro com validação de CPF/CNPJ e ticket de protocolo | Público |
 
 ### 6.2 Endpoints REST da API
 
@@ -189,6 +189,11 @@ Implementado interativamente na landing page ([`VisualFlowPipeline.tsx`](src/com
 | `POST` | `/api/requests/institution/review` | Aprova ou rejeita solicitações de alunos pela universidade |
 | `POST` | `/api/compliance/request` | Cria solicitação de compliance educacional para processos seletivos |
 | `GET` | `/api/compliance/student` | Consulta termos e autorizações de compliance de um candidato |
+| `GET` | `/api/admin/users` | Lista contas de usuários cadastradas com filtro por status (`PENDING`, `APPROVED`, etc.) |
+| `POST` | `/api/admin/users/review` | Aprova ou rejeita solicitação de cadastro com envio de notificação |
+| `POST` | `/api/auth/signup` | Criação de usuário no Supabase Auth com ticket e perfil pendente |
+| `GET` | `/api/auth/approve` | Link assinado HMAC-SHA256 para homologação de cadastro via email |
+| `GET` | `/api/auth/reject` | Link assinado HMAC-SHA256 para recusa de cadastro via email |
 
 ---
 
@@ -258,17 +263,35 @@ Para mais detalhes sobre a execução do pipeline Python SAS e testes isolados, 
 
 ## 9. Privacidade, Conformidade MEC e Segurança
 
-- **100% LGPD por Design**: Nenhum dado pessoal identificável (PII) é registrado na blockchain. Apenas a função de mão única SHA-256 do documento canônico é ancorada na rede. O documento original permanece armazenado com segurança pela instituição emissora.
-- **Portaria MEC nº 330/2018 e nº 554/2019**: O protocolo foi concebido para incorporar os requisitos do Diploma Digital do MEC, permitindo a validação de arquivos XML assinados com certificados digitais padrão ICP-Brasil acoplados à atestação on-chain.
+- **100% LGPD por Design**: Nenhum dado pessoal identificável (PII) é registrado na blockchain. Apenas a função de mão única SHA-256 do documento canônico é ancorada na rede. O titular conta com política pública e canal de DPO formal em **[/privacidade](src/app/privacidade/page.tsx)**.
+- **Portarias MEC nº 330/2018 e nº 554/2019 (Diploma Digital)**: Suporte nativo a upload e parser de arquivos XML do MEC com extração de diplomado, curso, carga horária, livro, folha e registro acadêmico, mantendo fallback 100% editável para inserção manual.
+- **Representação Visual do Diploma Digital (RVDD) com QR Code Dinâmico**: Geração de QR Code vetorial SVG escaneável por qualquer smartphone diretamente na folha de Certidão de Veracidade acadêmica em PDF.
+- **Emissão em Lote (Batch Issuance via CSV)**: Módulo dedicado para faculdades emitirem atestações para turmas inteiras com template CSV, pré-visualização e barra de progresso em tempo real.
+- **Padrão Internacional W3C Verifiable Credentials**: Exportação de credenciais no formato JSON-LD interoperável com carteiras digitais globais.
 - **Circuit Breakers & Defesa em Profundidade**: Todos os contratos do protocolo contam com verificação de integridade e mecanismos de pausa de emergência protegidos por chaves multisig.
+- **Client-Side SecurityGuard & Anti-Scraping**: Proteção ativa contra inspeção indevida e cópia não autorizada de código/fontes críticas, bloqueando atalhos de devtools (`F12`, `Ctrl+Shift+I/J/C`, `Ctrl+U`, `Ctrl+S`), interceptando clique direito com toast institucional e desabilitando arraste de elementos (`dragstart`).
+- **HTTP Security Headers**: Configuração de `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy` e `X-XSS-Protection` com remoção do cabeçalho `X-Powered-By`.
+
+Para detalhes técnicos e jurídicos da conformidade, consulte **[docs/15_mec_xml_parser_rvdd_and_lgpd_compliance.md](docs/15_mec_xml_parser_rvdd_and_lgpd_compliance.md)**.
 
 ---
 
-## 10. Equipe e Reconhecimentos
+## 10. Guia de Conexão com a Carteira Solana
 
-Desenvolvido para o **Hackathon Universitário Superteam Brasil**:
-- **Solana Attestation Service (SAS)**
-- **Token-2022 Extensions (NonTransferable & PermanentDelegate)**
-- **Superteam Brasil Community**
+O LattesChain inclui um **[Guia Interativo de Conexão (/guia-carteira)](src/app/guia-carteira/page.tsx)** dedicado para todos os participantes do ecossistema:
+- **Estudantes**: Instalação da Phantom/Solflare/Backpack, criação de chave pública e obtenção de SOL na Devnet.
+- **Faculdades (IES)**: Conexão via Master Authority e PDA de Emissor Credenciado.
+- **Recrutadores e RH**: Verificação de atestações via link/hash público sem necessidade de tokens cripto.
 
-Para suporte, parcerias e credenciamento de novas universidades, consulte **[docs/12_tripartite_and_business_architecture.md](docs/12_tripartite_and_business_architecture.md)** ou entre em contato com a equipe Jovian Tech.
+Consulte o documento completo: **[docs/14_solana_wallet_connection_and_security.md](docs/14_solana_wallet_connection_and_security.md)**.
+
+---
+
+## 11. Autoria, Engenharia e Reconhecimentos
+
+- **Liderança Técnica & Desenvolvimento**: [Alex Miqueias](https://www.linkedin.com/in/alexmiqueias/) · [Instagram (@alexmsza)](https://www.instagram.com/alexmsza/)
+- **Empresa Parceira / Hub de Inovação**: [Jovian Tech](https://jovian.foo/) · [LinkedIn da Jovian](https://www.linkedin.com/company/jovian-tech-foo/)
+- **Ecossistema**: Desenvolvido com suporte e foco no **Hackathon Universitário Superteam Brasil**, alavancando **Solana Attestation Service (SAS)** e **Token-2022 Extensions**.
+
+Para suporte institucional, credenciamento de IES ou integração empresarial, consulte **[docs/12_tripartite_and_business_architecture.md](docs/12_tripartite_and_business_architecture.md)**.
+

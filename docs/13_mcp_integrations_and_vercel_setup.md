@@ -70,3 +70,16 @@ npx -y add-mcp https://mcp.vercel.com -g -y -a antigravity -a gemini-cli
 | **Context7** | `https://mcp.context7.com/mcp` | Resolução contextual de bibliotecas e SDKs |
 | **Chrome DevTools**| `npx chrome-devtools-mcp` | Automação e inspeção de UI / E2E |
 | **Notion** | `npx @notionhq/notion-mcp-server` | Base de conhecimento e documentação de produto |
+
+---
+
+## 5. Boas Práticas de CI/CD: Vercel & Supabase Preview
+
+### 5.1 Escopo Restrito no `.vercelignore`
+No padrão do `.gitignore`/`.vercelignore`, regras de diretório sem barra inicial (ex: `api/`) realizam match recursivo em qualquer profundidade, descartando inadvertidamente diretórios como `src/app/api/`.
+- **Regra Mandatória**: Ancorar exclusões com barra no início (`/api/`, `/sas/`, `/ai/`) para preservar as rotas do Next.js App Router.
+
+### 5.2 Idempotência de Migrations no Supabase CI
+O GitHub App do Supabase executa validações de migração a cada PR ou push.
+- **Regra Mandatória**: Triggers e policies devem sempre utilizar comandos defensivos (`DROP TRIGGER IF EXISTS` e `DROP POLICY IF EXISTS`) antes de novas definições para evitar erros `SQLSTATE 42710` que bloqueiam deploys de produção.
+
