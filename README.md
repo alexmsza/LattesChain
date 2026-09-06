@@ -19,6 +19,7 @@
 - 📊 **[Plano de Negócios & GTM](docs/BUSINESS_PLAN.md)**: Modelagem B2B2C freemium, unit economics, personas e estratégia beachhead.
 - 💰 **[Modelo Financeiro & Custos de Infra](docs/17_financial_model_infrastructure_costs_and_pricing.md)**: Custos de Mainnet, cálculo de gás, margem de 94% e precificação de planos IES/RH.
 - 🔌 **[Manual de APIs & ERPs Legados](docs/18_external_api_and_erp_integration_guide.md)**: Chaves de API, emissão/verificação REST, integração com TOTVS RM e ATS de RH.
+- 📋 **[Relatório de Maturidade & Auditoria](docs/19_project_maturity_and_audit_readiness_report.md)**: Diagnóstico de entregáveis 100% prontos, componentes parciais e ativação Mainnet.
 - 🚀 **[Especificação de Migração Mainnet](docs/16_mainnet_migration_and_gasless_relayer_spec.md)**: State Compression (Bubblegum), nós RPC Helius e arquitetura gasless.
 - 🛡️ **[Relatório de Auditoria & Due Diligence](DUE_DILIGENCE_AUDIT.md)**: Auditoria técnica independente de 52KB cobrindo contratos Anchor, segurança e LGPD.
 - 🎬 **[Demo Runbook](demo/RUNBOOK.md)**: Passo a passo para execução da demonstração ao vivo on-chain e IA.
