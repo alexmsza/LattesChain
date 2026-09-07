@@ -133,7 +133,7 @@ body {
   mask-image: radial-gradient(circle at 25% 30%, black, transparent 72%);
 }
 
-/* Dynamic Pipeline Flow Animations */
+/* Dynamic Pipeline Flow Animations (Subtle & Elegant) */
 @keyframes flow-travel {
   0% {
     background-position: -200% 0;
@@ -148,11 +148,11 @@ body {
     left: 0%;
     opacity: 0;
   }
-  15% {
-    opacity: 1;
+  20% {
+    opacity: 0.55;
   }
-  85% {
-    opacity: 1;
+  80% {
+    opacity: 0.55;
   }
   100% {
     left: 100%;
@@ -160,63 +160,44 @@ body {
   }
 }
 
-@keyframes pulse-ring {
-  0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 var(--accent-glow);
-  }
-  70% {
-    transform: scale(1.02);
-    box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
-  }
-  100% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
-  }
-}
-
 .flow-line-animated {
   background: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0.05) 0%,
-    var(--primary) 35%,
-    rgba(255, 255, 255, 0.95) 50%,
-    var(--primary) 65%,
-    rgba(255, 255, 255, 0.05) 100%
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 25%,
+    var(--primary) 50%,
+    rgba(255, 255, 255, 0.03) 75%,
+    transparent 100%
   );
   background-size: 200% 100%;
-  animation: flow-travel 3.2s linear infinite;
+  animation: flow-travel 6s linear infinite;
 }
 
 .flow-particle-1 {
   position: absolute;
   top: 50%;
-  width: 12px;
-  height: 12px;
+  width: 6px;
+  height: 6px;
   border-radius: 9999px;
-  background: radial-gradient(circle, #ffffff 10%, var(--primary) 70%, transparent 100%);
-  box-shadow: 0 0 16px 3px var(--primary);
+  background: var(--primary);
+  box-shadow: 0 0 8px 1px var(--primary);
   transform: translate(-50%, -50%);
-  animation: particle-travel 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: particle-travel 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   pointer-events: none;
 }
 
 .flow-particle-2 {
   position: absolute;
   top: 50%;
-  width: 10px;
-  height: 10px;
+  width: 6px;
+  height: 6px;
   border-radius: 9999px;
-  background: radial-gradient(circle, #ffffff 10%, var(--secondary) 70%, transparent 100%);
-  box-shadow: 0 0 14px 3px var(--secondary);
+  background: var(--secondary);
+  box-shadow: 0 0 8px 1px var(--secondary);
   transform: translate(-50%, -50%);
-  animation: particle-travel 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  animation-delay: 2s;
+  animation: particle-travel 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: 3s;
   pointer-events: none;
-}
-
-.step-active-pulse {
-  animation: pulse-ring 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 /* Print Stylesheet for Official Attestation Certificates */

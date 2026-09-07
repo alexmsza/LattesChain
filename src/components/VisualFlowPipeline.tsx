@@ -307,47 +307,52 @@ export default function VisualFlowPipeline() {
 
       {/* Horizontal Timeline Navigation com Linha Dinâmica */}
       <div className="relative mb-8 px-2">
-        {/* Animated Connecting Flow Line Container (Desktop) */}
-        <div className="hidden md:block absolute top-[52px] left-12 right-12 h-2 -translate-y-1/2 z-0">
-          {/* Base rail */}
-          <div className="absolute inset-0 bg-slate-850/90 rounded-full border border-slate-800" />
+        {/* Animated Connecting Flow Line Container (Desktop) - Fina, suave e discreta */}
+        <div className="hidden md:block absolute top-[52px] left-12 right-12 h-[2px] -translate-y-1/2 z-0 pointer-events-none">
+          {/* Base rail discreto */}
+          <div className="absolute inset-0 bg-slate-800/50 rounded-full" />
 
-          {/* Active progress fill */}
+          {/* Active progress fill suave */}
           <div
-            className={`absolute top-0 left-0 bottom-0 bg-gradient-to-r ${accentGrad} rounded-full transition-all duration-700 ease-out`}
+            className={`absolute top-0 left-0 bottom-0 bg-gradient-to-r ${accentGrad} rounded-full opacity-60 transition-all duration-700 ease-out`}
             style={{ width: `${fillPercent}%` }}
           />
 
-          {/* High-speed animated laser flow beam across the full line */}
-          <div className="absolute inset-0 flow-line-animated rounded-full opacity-70" />
+          {/* Fluxo contínuo tênue e discreto */}
+          <div className="absolute inset-0 flow-line-animated rounded-full opacity-35" />
 
-          {/* Traveling energy particles */}
+          {/* Partículas sutis e calmas */}
           <div className="flow-particle-1" />
           <div className="flow-particle-2" />
         </div>
 
-        {/* Pipeline Step Blocks */}
+        {/* Pipeline Step Blocks - 100% opacos para cobrir a linha */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 relative z-10">
           {PIPELINE_STEPS.map((step, index) => {
             const isActive = selectedStep === step.id;
             const isCompleted = step.id < selectedStep;
 
+            const cardSolidBg = isPurple ? "bg-[#140e22]" : "bg-[#0b1320]";
+            const cardActiveSolidBg = isPurple ? "bg-[#1c1332]" : "bg-[#0e1d32]";
+
             return (
-              <div key={step.id} className="relative flex flex-col items-center">
+              <div key={step.id} className="relative z-10 flex flex-col items-center">
                 <button
                   type="button"
                   onClick={() => handleSelectStep(step.id)}
-                  className={`w-full flex flex-col items-center text-center p-4 rounded-2xl transition-all duration-300 border relative overflow-hidden group ${
+                  className={`w-full flex flex-col items-center text-center p-4 rounded-2xl transition-all duration-200 border relative overflow-hidden group shadow-sm ${
                     isActive
-                      ? `bg-slate-850/95 ${accentBorder} ${accentGlow} shadow-xl scale-[1.04] step-active-pulse`
+                      ? `${cardActiveSolidBg} ${accentBorder} ring-1 ${
+                          isPurple ? "ring-solana-purple/30 shadow-solana-purple/10" : "ring-solana-green/30 shadow-solana-green/10"
+                        } shadow-md`
                       : isCompleted
-                      ? `bg-slate-900/80 border-slate-700 hover:border-slate-600 hover:bg-slate-850/60`
-                      : `bg-slate-900/50 border-slate-800/80 opacity-75 hover:opacity-100 hover:border-slate-700 hover:bg-slate-850/50`
+                      ? `${cardSolidBg} border-slate-750 hover:border-slate-700 text-slate-300`
+                      : `${cardSolidBg} border-slate-800 text-slate-400 hover:border-slate-700 hover:text-white`
                   }`}
                 >
-                  {/* Micro Progress Bar on Active Block */}
+                  {/* Micro Progress Bar on Active Block (Suave) */}
                   {isActive && isAutoPlay && !isHovered && (
-                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-800/80">
+                    <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-slate-800">
                       <div
                         className={`h-full bg-gradient-to-r ${accentGrad} transition-all duration-75`}
                         style={{ width: `${progress}%` }}
@@ -355,24 +360,24 @@ export default function VisualFlowPipeline() {
                     </div>
                   )}
 
-                  {/* Status Indicator Badge */}
-                  <div className="absolute top-2 right-2">
+                  {/* Status Indicator Badge (Calmo, sem ping) */}
+                  <div className="absolute top-2.5 right-2.5">
                     {isCompleted ? (
                       <div className={`rounded-full p-0.5 ${isPurple ? "bg-solana-purple/20 text-solana-purple" : "bg-solana-green/20 text-solana-green"}`}>
                         <Check className="h-3 w-3 stroke-[3]" />
                       </div>
                     ) : isActive ? (
-                      <span className={`flex h-2 w-2 rounded-full ${isPurple ? "bg-solana-purple" : "bg-solana-green"} animate-ping`} />
+                      <span className={`flex h-2 w-2 rounded-full ${isPurple ? "bg-solana-purple" : "bg-solana-green"}`} />
                     ) : null}
                   </div>
 
-                  {/* Circle Number / Icon */}
+                  {/* Circle Number / Icon (Estável, sem scale brusco) */}
                   <div
-                    className={`w-11 h-11 rounded-full flex items-center justify-center font-display font-extrabold text-sm mb-2.5 transition-all duration-300 ${
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-display font-extrabold text-sm mb-2.5 transition-colors duration-200 ${
                       isActive
-                        ? `bg-gradient-to-br ${accentGrad} text-navy-900 shadow-lg scale-110`
+                        ? `bg-gradient-to-br ${accentGrad} text-navy-900 shadow-sm`
                         : isCompleted
-                        ? `${isPurple ? "bg-solana-purple/20 text-solana-purple border border-solana-purple/40" : "bg-solana-green/20 text-solana-green border border-solana-green/40"}`
+                        ? `${isPurple ? "bg-solana-purple/15 text-solana-purple border border-solana-purple/30" : "bg-solana-green/15 text-solana-green border border-solana-green/30"}`
                         : "bg-slate-800 text-slate-400 border border-slate-750 group-hover:border-slate-700"
                     }`}
                   >
@@ -398,7 +403,7 @@ export default function VisualFlowPipeline() {
       </div>
 
       {/* Active Step Showcase Card with Smooth Transitions */}
-      <div className="glass-panel rounded-3xl p-6 sm:p-10 border-slate-750 bg-gradient-to-b from-slate-900/90 to-slate-950/90 shadow-2xl mb-12 relative overflow-hidden transition-all duration-500">
+      <div className="rounded-3xl p-6 sm:p-10 border border-slate-800 bg-[#0c1322] shadow-xl mb-12 relative overflow-hidden transition-all duration-300">
         {/* Background glow according to current step */}
         <div
           className={`pointer-events-none absolute -right-20 -bottom-20 w-80 h-80 rounded-full blur-[100px] opacity-25 ${
