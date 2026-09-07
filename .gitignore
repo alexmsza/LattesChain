@@ -87,3 +87,4 @@ sas/keys/
 sas/.demo_state.json
 .demo_state.json
 
+tsconfig.tsbuildinfo

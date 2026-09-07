@@ -484,7 +484,7 @@ export default function AdminProtocolPage() {
           <div className="pt-2">
             <Link
               href="/login?next=%2Fadmin-protocol"
-              className="inline-flex items-center justify-center gap-2 w-full rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 py-3 text-xs font-bold text-navy-900 shadow-md shadow-solana-green/20 hover:scale-[1.01] transition-all"
+              className="inline-flex items-center justify-center gap-2 w-full rounded-full bg-solana-purple py-3 text-xs font-bold text-white shadow-md shadow-solana-purple/20 hover:bg-solana-purpleDeep hover:scale-[1.01] transition-all"
             >
               Fazer Login como Administrador <ArrowRight className="h-4 w-4" />
             </Link>
@@ -499,8 +499,8 @@ export default function AdminProtocolPage() {
       {/* HEADER PRINCIPAL */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-800/80 pb-6">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-solana-purple/40 bg-purple-950/30 px-3 py-1 text-xs font-semibold text-purple-300 mb-2">
-            <Activity className="h-3.5 w-3.5 text-solana-green animate-pulse" />
+          <div className="inline-flex items-center gap-2 rounded-full border border-solana-purple/40 bg-solana-purple/10 px-3 py-1 text-xs font-semibold text-solana-purple mb-2">
+            <Activity className="h-3.5 w-3.5 text-solana-purple animate-pulse" />
             Master Registry & DataSecAIOps Protocol Owner
           </div>
           <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-white">
@@ -520,9 +520,9 @@ export default function AdminProtocolPage() {
           </div>
 
           <div className="glass-panel px-3 py-1.5 rounded-xl border-slate-800 flex items-center gap-2 text-xs">
-            <Zap className="h-3.5 w-3.5 text-solana-green" />
+            <Zap className="h-3.5 w-3.5 text-solana-purple" />
             <span className="text-slate-400">Fee Payer:</span>
-            <span className="font-mono font-bold text-solana-green">
+            <span className="font-mono font-bold text-solana-purple">
               {systemHealth?.relayer_wallet?.balance_sol ?? "1.45"} SOL
             </span>
           </div>
@@ -607,7 +607,7 @@ export default function AdminProtocolPage() {
             {/* FORMULÁRIO DE NOVO CREDENCIAMENTO */}
             <div className="glass-panel rounded-2xl p-6 border-slate-800 h-fit space-y-4">
               <div className="flex items-center gap-2 text-white font-bold text-sm">
-                <PlusCircle className="h-4 w-4 text-solana-green" />
+                <PlusCircle className="h-4 w-4 text-solana-purple" />
                 Credenciar Nova IES no Protocolo
               </div>
               <p className="text-xs text-slate-400 leading-relaxed">
@@ -629,7 +629,7 @@ export default function AdminProtocolPage() {
                     value={newName}
                     onChange={(e) => setNewName(e.target.value)}
                     placeholder="Ex: Universidade de Brasília (UnB)"
-                    className="w-full bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-solana-green outline-none"
+                    className="w-full bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-solana-purple outline-none"
                   />
                 </div>
 
@@ -640,7 +640,7 @@ export default function AdminProtocolPage() {
                     value={newCnpj}
                     onChange={(e) => setNewCnpj(e.target.value)}
                     placeholder="00038174000143"
-                    className="w-full bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-solana-green outline-none"
+                    className="w-full bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-solana-purple outline-none"
                   />
                 </div>
 
@@ -653,7 +653,7 @@ export default function AdminProtocolPage() {
                     value={newPubkey}
                     onChange={(e) => setNewPubkey(e.target.value)}
                     placeholder="Ex: 3xmiVKqEs25voqLmWRvrjrnGrkEDMqyXUstW34vwZWcH"
-                    className="w-full bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-mono focus:border-solana-green outline-none"
+                    className="w-full bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-mono focus:border-solana-purple outline-none"
                   />
                 </div>
 
@@ -730,7 +730,7 @@ export default function AdminProtocolPage() {
 
                         <div>
                           <span className="text-slate-500 block text-[10px]">Total Emitido:</span>
-                          <span className="font-semibold text-solana-green">
+                          <span className="font-semibold text-solana-purple">
                             {inst.issuance_stats?.total || 0} credenciais
                           </span>
                         </div>
@@ -909,7 +909,7 @@ export default function AdminProtocolPage() {
                         <td className="py-3 px-4 whitespace-nowrap font-mono text-[11px] text-emerald-400">
                           {tx.document_hash.slice(0, 10)}...{tx.document_hash.slice(-8)}
                         </td>
-                        <td className="py-3 px-4 whitespace-nowrap font-mono text-[11px] text-solana-green">
+                        <td className="py-3 px-4 whitespace-nowrap font-mono text-[11px] text-solana-purple">
                           <a
                             href={tx.explorer_url}
                             target="_blank"
@@ -1374,7 +1374,7 @@ curl -X POST https://latteschain.vercel.app/api/v1/credentials/issue \\
                 <span className="text-xs font-semibold text-slate-400">Gasless Relayer Solana</span>
                 <span className="h-2 w-2 rounded-full bg-emerald-400" />
               </div>
-              <div className="text-2xl font-bold font-mono text-solana-green">
+              <div className="text-2xl font-bold font-mono text-solana-purple">
                 {systemHealth?.relayer_wallet?.balance_sol ?? 1.45} SOL
               </div>
               <p className="text-[11px] text-slate-400 font-mono break-all">
