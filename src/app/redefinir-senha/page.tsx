@@ -4,11 +4,15 @@ import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Lock, Eye, EyeOff, Loader2, AlertCircle, CheckCircle2, KeyRound } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 function ResetForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token") || "";
+
+  const { dict } = useLanguage();
+  const t = dict.auth.resetPassword;
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -30,7 +34,7 @@ function ResetForm() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "Falha ao redefinir a senha.");
+        setError(data.error || "Falha ao definir a senha.");
         return;
       }
       setDone(true);
@@ -45,15 +49,15 @@ function ResetForm() {
     return (
       <div className="glass-panel rounded-2xl p-8 text-center">
         <AlertCircle className="mx-auto mb-4 h-12 w-12 text-red-400" />
-        <h1 className="font-display text-xl font-bold text-white">Link inválido</h1>
+        <h1 className="font-display text-xl font-bold text-white">{t.invalidLinkTitle}</h1>
         <p className="mt-2 text-sm text-slate-400">
-          Este link de redefinição está incompleto. Solicite um novo pelo email.
+          {t.invalidLinkDesc}
         </p>
         <Link
           href="/recuperar-senha"
-          className="mt-6 inline-block rounded-full bg-solana-purple px-5 py-2.5 text-sm font-bold text-white hover:bg-solana-purpleDeep"
+          className="mt-6 inline-block rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 px-5 py-2.5 text-sm font-bold text-navy-900"
         >
-          Solicitar novo link
+          {t.requestNewLink}
         </Link>
       </div>
     );
@@ -63,28 +67,28 @@ function ResetForm() {
     return (
       <div className="glass-panel rounded-2xl p-8 text-center">
         <CheckCircle2 className="mx-auto mb-4 h-14 w-14 text-solana-green" />
-        <h1 className="font-display text-xl font-bold text-white">Senha redefinida!</h1>
+        <h1 className="font-display text-xl font-bold text-white">{t.doneTitle}</h1>
         <p className="mt-2 text-sm text-slate-400">
-          Sua nova senha está ativa. Entre com ela na plataforma.
+          {t.doneDesc}
         </p>
         <button
           onClick={() => router.push("/login")}
-          className="mt-6 inline-block rounded-full bg-gradient-to-r from-solana-green to-emerald-400 px-5 py-2.5 text-sm font-bold text-navy-900"
+          className="mt-6 inline-block rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 px-5 py-2.5 text-sm font-bold text-navy-900 shadow-md shadow-solana-green/20"
         >
-          Ir para o login
+          {t.goToLogin}
         </button>
       </div>
     );
   }
 
   return (
-    <div className="glass-panel rounded-2xl p-8 glow-purple">
+    <div className="glass-panel rounded-2xl p-8 glow-green">
       <div className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-solana-purple/10 border border-solana-purple/30">
-          <KeyRound className="h-7 w-7 text-solana-purple" />
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-solana-green/10 border border-solana-green/30">
+          <KeyRound className="h-7 w-7 text-solana-green" />
         </div>
-        <h1 className="font-display text-2xl font-bold text-white">Redefinir senha</h1>
-        <p className="mt-2 text-sm text-slate-400">Escolha uma nova senha para sua conta.</p>
+        <h1 className="font-display text-2xl font-bold text-white">{t.title}</h1>
+        <p className="mt-2 text-sm text-slate-400">{t.subtitle}</p>
       </div>
 
       {error && (
@@ -96,7 +100,7 @@ function ResetForm() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-slate-300">Nova senha</label>
+          <label className="mb-1.5 block text-sm font-medium text-slate-300">{t.newPasswordLabel}</label>
           <div className="relative">
             <Lock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
             <input
@@ -106,7 +110,7 @@ function ResetForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Mín. 8 caracteres, com letras e números"
-              className="w-full rounded-xl border border-slate-700 bg-navy-800/50 py-3 pl-10 pr-11 text-sm text-white placeholder:text-slate-500 focus:border-solana-purple/60 focus:outline-none focus:ring-1 focus:ring-solana-purple/40"
+              className="w-full rounded-xl border border-slate-700 bg-navy-800/50 py-3 pl-10 pr-11 text-sm text-white placeholder:text-slate-500 focus:border-solana-green/60 focus:outline-none focus:ring-1 focus:ring-solana-green/40"
             />
             <button
               type="button"
@@ -119,7 +123,7 @@ function ResetForm() {
           </div>
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-slate-300">Confirmar nova senha</label>
+          <label className="mb-1.5 block text-sm font-medium text-slate-300">{t.confirmPasswordLabel}</label>
           <div className="relative">
             <Lock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
             <input
@@ -129,21 +133,21 @@ function ResetForm() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Repita a nova senha"
-              className="w-full rounded-xl border border-slate-700 bg-navy-800/50 py-3 pl-10 pr-4 text-sm text-white placeholder:text-slate-500 focus:border-solana-purple/60 focus:outline-none focus:ring-1 focus:ring-solana-purple/40"
+              className="w-full rounded-xl border border-slate-700 bg-navy-800/50 py-3 pl-10 pr-4 text-sm text-white placeholder:text-slate-500 focus:border-solana-green/60 focus:outline-none focus:ring-1 focus:ring-solana-green/40"
             />
           </div>
         </div>
         <button
           type="submit"
           disabled={loading}
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-solana-purple px-4 py-3 text-sm font-bold text-white shadow-md shadow-solana-purple/20 transition-all hover:bg-solana-purpleDeep disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 px-4 py-3 text-sm font-bold text-navy-900 shadow-md shadow-solana-green/20 transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {loading ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin" /> Redefinindo...
+              <Loader2 className="h-4 w-4 animate-spin" /> {t.submitting}
             </>
           ) : (
-            "Redefinir senha"
+            t.submit
           )}
         </button>
       </form>

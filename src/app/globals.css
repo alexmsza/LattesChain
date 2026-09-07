@@ -3,14 +3,61 @@
 @tailwind utilities;
 
 :root {
+  --background: #080c14;
+  --foreground: #f8fafc;
+  --card-bg: rgba(16, 29, 50, 0.6);
+  --card-border: rgba(226, 232, 240, 0.1);
+  --card-border-hover: rgba(20, 241, 149, 0.3);
+  --header-bg: rgba(8, 12, 20, 0.9);
+  --primary: #14F195;
+  --secondary: #9945FF;
+  --gold: #e0a82e;
+
+  /* Navy scale RGB for opacity support */
+  --navy-900: 11 19 32;
+  --navy-800: 16 29 50;
+  --navy-700: 22 39 68;
+  --navy-600: 30 54 93;
+
+  /* Brand and Solana colors RGB */
+  --solana-purple: 153 69 255;
+  --solana-purple-soft: 196 137 255;
+  --solana-purple-deep: 125 38 217;
+  --solana-green: 20 241 149;
+
+  --accent-color: #14F195;
+  --accent-glow: rgba(20, 241, 149, 0.25);
+  --accent-glow-box: 0 0 35px -5px rgba(20, 241, 149, 0.25);
+}
+
+[data-theme="purple"],
+.theme-purple {
+  /* Elementus Purple System Tokens */
   --background: #0e0a18;
   --foreground: #f8fafc;
   --card-bg: rgba(27, 21, 44, 0.6);
   --card-border: rgba(226, 232, 240, 0.1);
   --card-border-hover: rgba(138, 51, 245, 0.35);
+  --header-bg: rgba(14, 10, 24, 0.9);
   --primary: #8a33f5;
   --secondary: #14F195;
   --gold: #e0a82e;
+
+  /* Elementus Navy/Violet scale RGB */
+  --navy-900: 14 10 24;
+  --navy-800: 27 21 44;
+  --navy-700: 36 28 56;
+  --navy-600: 52 39 80;
+
+  /* Elementus Vibrant Purple RGB */
+  --solana-purple: 138 51 245;
+  --solana-purple-soft: 209 171 249;
+  --solana-purple-deep: 107 33 217;
+  --solana-green: 20 241 149;
+
+  --accent-color: #8a33f5;
+  --accent-glow: rgba(138, 51, 245, 0.35);
+  --accent-glow-box: 0 0 35px -5px rgba(138, 51, 245, 0.3);
 }
 
 body {
@@ -19,6 +66,7 @@ body {
   min-height: 100vh;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   overflow-x: hidden;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* Glassmorphism utility */
@@ -47,10 +95,14 @@ body {
   box-shadow: 0 0 35px -5px rgba(224, 168, 46, 0.25);
 }
 
+.glow-dynamic {
+  box-shadow: var(--accent-glow-box);
+}
+
 /* Radial background grids */
 .bg-grid-pattern {
   background-size: 40px 40px;
-  background-image:
+  background-image: 
     linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
 }
@@ -79,6 +131,73 @@ body {
   background-size: 18px 18px;
   -webkit-mask-image: radial-gradient(circle at 25% 30%, black, transparent 72%);
   mask-image: radial-gradient(circle at 25% 30%, black, transparent 72%);
+}
+
+/* Dynamic Pipeline Flow Animations (Subtle & Elegant) */
+@keyframes flow-travel {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes particle-travel {
+  0% {
+    left: 0%;
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.55;
+  }
+  80% {
+    opacity: 0.55;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+.flow-line-animated {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 25%,
+    var(--primary) 50%,
+    rgba(255, 255, 255, 0.03) 75%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: flow-travel 6s linear infinite;
+}
+
+.flow-particle-1 {
+  position: absolute;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--primary);
+  box-shadow: 0 0 8px 1px var(--primary);
+  transform: translate(-50%, -50%);
+  animation: particle-travel 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+.flow-particle-2 {
+  position: absolute;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--secondary);
+  box-shadow: 0 0 8px 1px var(--secondary);
+  transform: translate(-50%, -50%);
+  animation: particle-travel 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: 3s;
+  pointer-events: none;
 }
 
 /* Print Stylesheet for Official Attestation Certificates */

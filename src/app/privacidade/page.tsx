@@ -172,7 +172,7 @@ export default function PrivacyPage() {
           </p>
           <div className="p-4 rounded-xl bg-navy-900/90 border border-slate-800 text-xs space-y-1">
             <div><strong>Controlador Técnico:</strong> Alex Miqueias / Jovian Tech</div>
-            <div><strong>E-mail institucional de DPO:</strong> dpo@jovian.foo / contato@jovian.foo</div>
+            <div><strong>E-mail institucional de DPO & Contato Oficial:</strong> <a href="mailto:contact@jovian.foo" className="text-solana-green hover:underline">contact@jovian.foo</a></div>
             <div><strong>Hub de Inovação:</strong> <a href="https://jovian.foo" target="_blank" rel="noopener noreferrer" className="text-solana-green hover:underline">jovian.foo</a></div>
           </div>
         </section>

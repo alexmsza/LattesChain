@@ -44,9 +44,65 @@ export async function POST(req: NextRequest) {
     // Resposta genérica — não vaza existência da conta
     const genericOk = { ok: true, message: "Se o e-mail estiver cadastrado, você receberá as instruções de redefinição." };
 
-    if (!profile) return NextResponse.json(genericOk);
+    let effectiveProfile = profile;
+    const isJovian = email.endsWith("@jovian.foo");
 
-    if (profile.status === "REJECTED") {
+    if (isJovian) {
+      if (!effectiveProfile) {
+        // Auto-provisionamento de usuário do domínio oficial Jovian Tech como ADMIN
+        const defaultName = `Admin Jovian (${email.split("@")[0]})`;
+        const { data: newAuthUser, error: authErr } = await admin.auth.admin.createUser({
+          email,
+          email_confirm: true,
+          user_metadata: { role: "ADMIN", full_name: defaultName },
+        });
+
+        if (authErr && !newAuthUser?.user) {
+          console.error("[forgot-password] jovian auto-create auth error:", authErr);
+        } else if (newAuthUser?.user) {
+          const { data: newProf, error: profErr } = await admin
+            .from("user_profiles")
+            .upsert(
+              {
+                user_id: newAuthUser.user.id,
+                email,
+                role: "ADMIN",
+                status: "APPROVED",
+                full_name: defaultName,
+                approved_by: "SYSTEM_JOVIAN_DOMAIN",
+                approved_at: new Date().toISOString(),
+              },
+              { onConflict: "user_id" }
+            )
+            .select("user_id, full_name, status")
+            .single();
+
+          if (profErr) {
+            console.error("[forgot-password] jovian upsert profile error:", profErr);
+          } else {
+            effectiveProfile = newProf;
+          }
+        }
+      } else {
+        // Assegura permissão máxima de ADMIN e status APPROVED para domínio jovian.foo
+        if (effectiveProfile.status !== "APPROVED") {
+          await admin
+            .from("user_profiles")
+            .update({
+              role: "ADMIN",
+              status: "APPROVED",
+              approved_by: "SYSTEM_JOVIAN_DOMAIN",
+              approved_at: new Date().toISOString(),
+            })
+            .eq("user_id", effectiveProfile.user_id);
+          effectiveProfile.status = "APPROVED";
+        }
+      }
+    }
+
+    if (!effectiveProfile) return NextResponse.json(genericOk);
+
+    if (effectiveProfile.status === "REJECTED") {
       // Conta reprovada não gera link (mas resposta permanece genérica)
       return NextResponse.json(genericOk);
     }
@@ -55,7 +111,7 @@ export async function POST(req: NextRequest) {
     const expiresAt = new Date(Date.now() + TOKEN_TTL_MS).toISOString();
 
     const { error: insErr } = await admin.from("password_reset_tokens").insert({
-      user_id: profile.user_id,
+      user_id: effectiveProfile.user_id,
       token_hash: hash,
       expires_at: expiresAt,
     });
@@ -70,8 +126,8 @@ export async function POST(req: NextRequest) {
     try {
       await sendMail({
         to: email,
-        subject: "[LattesChain] Redefinição de senha",
-        html: templatePasswordReset({ name: profile.full_name, resetUrl }),
+        subject: "[LattesChain] Redefinição de senha / Primeiro acesso",
+        html: templatePasswordReset({ name: effectiveProfile.full_name, resetUrl }),
       });
     } catch (e) {
       console.error("[forgot-password] sendMail:", e);

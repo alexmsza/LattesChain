@@ -3,6 +3,9 @@ import { Inter, Archivo } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { LanguageProvider } from "@/lib/i18n/LanguageContext";
+import { ThemeProvider } from "@/lib/theme/ThemeContext";
+import { SecurityGuard } from "@/components/SecurityGuard";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -30,22 +33,21 @@ export const metadata: Metadata = {
   },
 };
 
-import { LanguageProvider } from "@/lib/i18n/LanguageContext";
-import { SecurityGuard } from "@/components/SecurityGuard";
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${inter.variable} ${archivo.variable} dark`}>
-      <body className="flex min-h-screen flex-col bg-[#0e0a18] text-slate-100 antialiased selection:bg-solana-purple/30 selection:text-solana-purple">
+    <html lang="pt-BR" className={`${inter.variable} ${archivo.variable} dark`} suppressHydrationWarning>
+      <body className="flex min-h-screen flex-col bg-background text-foreground antialiased selection:bg-solana-green/30 selection:text-solana-green">
         <LanguageProvider>
-          <SecurityGuard />
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <ThemeProvider>
+            <SecurityGuard />
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </ThemeProvider>
         </LanguageProvider>
       </body>
     </html>

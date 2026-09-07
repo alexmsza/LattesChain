@@ -3,8 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Mail, Loader2, AlertCircle, CheckCircle2, KeyRound } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function ForgotPasswordPage() {
+  const { dict } = useLanguage();
+  const t = dict.auth.forgotPassword;
+
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +27,7 @@ export default function ForgotPasswordPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "Falha ao solicitar redefinição.");
+        setError(data.error || "Falha ao solicitar acesso.");
         return;
       }
       setSent(true);
@@ -44,26 +48,26 @@ export default function ForgotPasswordPage() {
         }}
       />
       <div className="relative w-full max-w-md">
-        <div className="glass-panel rounded-2xl p-8 glow-purple">
+        <div className="glass-panel rounded-2xl p-8 glow-green">
           <div className="mb-8 text-center">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-solana-purple/10 border border-solana-purple/30">
-              <KeyRound className="h-7 w-7 text-solana-purple" />
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-solana-green/10 border border-solana-green/30">
+              <KeyRound className="h-7 w-7 text-solana-green" />
             </div>
-            <h1 className="font-display text-2xl font-bold text-white">Recuperar acesso</h1>
+            <h1 className="font-display text-2xl font-bold text-white">{t.title}</h1>
             <p className="mt-2 text-sm text-slate-400">
-              Informe seu e-mail e enviaremos um link para redefinir sua senha.
+              {t.subtitle}
             </p>
           </div>
 
           {sent ? (
             <div className="text-center">
               <CheckCircle2 className="mx-auto mb-4 h-12 w-12 text-solana-green" />
+              <h3 className="text-base font-bold text-white mb-2">{t.sentTitle}</h3>
               <p className="text-sm text-slate-300">
-                Se o e-mail <b className="text-white">{email}</b> estiver cadastrado, você receberá um link de
-                redefinição válido por 1 hora.
+                {t.sentNotice}
               </p>
               <p className="mt-3 text-xs text-slate-500">
-                Verifique também sua caixa de spam. Não recebeu? Aguarde alguns minutos e tente novamente.
+                {t.sentHelp}
               </p>
               <div className="mt-6 space-y-2">
                 <button
@@ -71,15 +75,15 @@ export default function ForgotPasswordPage() {
                     setSent(false);
                     setEmail("");
                   }}
-                  className="w-full rounded-xl border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-300 hover:border-solana-purple/40 hover:text-white"
+                  className="w-full rounded-xl border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-300 hover:border-solana-green/40 hover:text-white transition-colors"
                 >
-                  Usar outro e-mail
+                  {t.tryAnotherEmail}
                 </button>
                 <Link
                   href="/login"
-                  className="block rounded-full bg-gradient-to-r from-solana-green to-emerald-400 px-4 py-2.5 text-sm font-bold text-navy-900"
+                  className="block rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 px-4 py-2.5 text-sm font-bold text-navy-900 shadow-md shadow-solana-green/20 text-center hover:scale-[1.01] transition-all"
                 >
-                  Voltar ao login
+                  {t.backToLogin}
                 </Link>
               </div>
             </div>
@@ -94,7 +98,7 @@ export default function ForgotPasswordPage() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-slate-300">
-                    E-mail cadastrado
+                    {t.emailLabel}
                   </label>
                   <div className="relative">
                     <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
@@ -105,31 +109,31 @@ export default function ForgotPasswordPage() {
                       autoComplete="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="voce@email.com"
-                      className="w-full rounded-xl border border-slate-700 bg-navy-800/50 py-3 pl-10 pr-4 text-sm text-white placeholder:text-slate-500 focus:border-solana-purple/60 focus:outline-none focus:ring-1 focus:ring-solana-purple/40"
+                      placeholder={t.emailPlaceholder}
+                      className="w-full rounded-xl border border-slate-700 bg-navy-800/50 py-3 pl-10 pr-4 text-sm text-white placeholder:text-slate-500 focus:border-solana-green/60 focus:outline-none focus:ring-1 focus:ring-solana-green/40"
                     />
                   </div>
                 </div>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex w-full items-center justify-center gap-2 rounded-full bg-solana-purple px-4 py-3 text-sm font-bold text-white shadow-md shadow-solana-purple/20 transition-all hover:bg-solana-purpleDeep disabled:cursor-not-allowed disabled:opacity-60"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-solana-green to-emerald-400 px-4 py-3 text-sm font-bold text-navy-900 shadow-md shadow-solana-green/20 transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {loading ? (
                     <>
-                      <Loader2 className="h-4 w-4 animate-spin" /> Enviando...
+                      <Loader2 className="h-4 w-4 animate-spin" /> {t.submitting}
                     </>
                   ) : (
                     <>
-                      <Mail className="h-4 w-4" /> Enviar link de redefinição
+                      <Mail className="h-4 w-4" /> {t.submit}
                     </>
                   )}
                 </button>
               </form>
               <p className="mt-6 text-center text-sm text-slate-400">
-                Lembrou a senha?{" "}
-                <Link href="/login" className="font-semibold text-solana-purple hover:text-solana-purple/80">
-                  Voltar ao login
+                {t.remembered}{" "}
+                <Link href="/login" className="font-semibold text-solana-green hover:text-solana-green/80">
+                  {t.backToLogin}
                 </Link>
               </p>
             </>

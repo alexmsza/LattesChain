@@ -107,6 +107,12 @@ export default function SobrePage() {
             >
               Website jovian.foo
             </a>
+            <a
+              href="mailto:contact@jovian.foo"
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-navy-800/80 px-4 py-2.5 text-xs font-bold text-slate-200 hover:border-solana-green hover:text-white transition-all font-mono"
+            >
+              contact@jovian.foo
+            </a>
           </div>
         </div>
       </div>

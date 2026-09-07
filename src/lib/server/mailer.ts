@@ -1,14 +1,14 @@
 import nodemailer from "nodemailer";
 
 /**
- * Envio de email transacional via Lark Mail (SMTP da conta LattesChain@jovian.foo).
+ * Envio de email transacional via Lark Mail (SMTP da conta contact@jovian.foo).
  * Verificado em produção local: smtp.larksuite.com:465 (SSL) funciona.
  */
 
 const HOST = process.env.SMTP_HOST || "smtp.larksuite.com";
 const PORT = Number(process.env.SMTP_PORT || 465);
 const SECURE = process.env.SMTP_SECURE !== "false";
-const USER = process.env.SMTP_USER || "";
+const USER = process.env.SMTP_USER || "contact@jovian.foo";
 const PASS = process.env.SMTP_PASS || "";
 const FROM = process.env.MAIL_FROM || `LattesChain <${USER}>`;
 
@@ -77,7 +77,7 @@ const button = (href: string, label: string) => `
 <a href="${href}" style="display:inline-block;background:#14F195;color:#0b1320;font-weight:bold;font-size:14px;padding:12px 28px;border-radius:12px;text-decoration:none;margin:16px 0;">${label}</a>
 <div style="font-size:12px;color:#64748b;word-break:break-all;">Se o botão não funcionar, copie e cole este link:<br>${href}</div>`;
 
-/** Email enviado ao ADMIM (LattesChain@jovian.foo) para aprovar/reprovar um novo cadastro. */
+/** Email enviado ao ADMIN (contact@jovian.foo) para aprovar/reprovar um novo cadastro. */
 export function templateApprovalRequest(p: {
   name: string;
   email: string;
