@@ -195,6 +195,11 @@ Implementado interativamente na landing page ([`VisualFlowPipeline.tsx`](src/com
 3. **Isolamento Estrito**: A alternância cromática afeta apenas variáveis CSS e tokens do Tailwind, mantendo absolutamente todos os elementos, textos, cards, recursos e lógicas das páginas inalterados.
 4. **Persistência**: A escolha é armazenada em `localStorage` (`educore_theme`) e aplicada de forma síncrona no carregamento da página.
 
+### 5.6 Pipeline de Dados com Fluxo Dinâmico e Timeline Automatizada
+1. **Linha de Fluxo & Partículas**: Feixe contínuo laser neon (`flow-line-animated`) e partículas de energia simulando a transmissão de dados on-chain em tempo real.
+2. **Rotação Automática Suave**: A timeline avança automaticamente a cada 5 segundos de forma contínua e suave, pausando inteligentemente ao passar o cursor sobre o container para permitir leitura atenta.
+3. **Controle Manual Total**: Botão de Play/Pause integrado no cabeçalho da seção, botões de navegação anterior/próximo e seleção direta de etapas com micro-barras de progresso temporal nos blocos.
+
 ---
 
 ## 6. Mapeamento de Rotas da Interface & Endpoints de API

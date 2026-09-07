@@ -32,6 +32,7 @@
 | `19_project_maturity_and_audit_readiness_report.md` | Relatório de Maturidade & Auditoria | Diagnóstico de entregáveis 100% prontos, componentes parciais e ativação Mainnet |
 | `20_auth_admin_and_i18n_governance.md` | Governança Jovian & i18n | Auto-provisionamento de Admin `@jovian.foo`, primeiro acesso e tradução integral (PT/EN/ES) |
 | `21_theme_switcher_elementus_purple.md` | Sistema Dinâmico de Cores (Elementus Purple) | Alternância de temas cromáticos (Solana Emerald vs Elementus Purple), canais RGB e preservação de UI |
+| `22_visual_flow_pipeline_dynamic_timeline.md` | Pipeline Dinâmico & Auto-Play | Linha de feixe contínuo, partículas de energia, blocos com micro-progresso e rotação suave |
 | `adr/001-007` | ADRs | 7 decisões de arquitetura formalizadas |
 | `LattesChain.md` | Documento mestre (histórico) | Visão original — **subsumido** pelos docs numerados; manter como referência |
 
