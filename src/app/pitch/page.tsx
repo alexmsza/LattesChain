@@ -1,0 +1,1025 @@
+"use client";
+
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import Link from "next/link";
+import {
+  GraduationCap,
+  ShieldCheck,
+  Building2,
+  ChevronLeft,
+  ChevronRight,
+  Play,
+  Pause,
+  RotateCcw,
+  Maximize2,
+  Minimize2,
+  FileText,
+  Clock,
+  Sparkles,
+  ExternalLink,
+  Lock,
+  CheckCircle2,
+  AlertTriangle,
+  Users,
+  Layers,
+  Cpu,
+  ArrowRight,
+  TrendingUp,
+} from "lucide-react";
+
+interface SlideData {
+  id: number;
+  timeRange: string;
+  badge: string;
+  title: string;
+  subtitle: string;
+  category: string;
+  speakerScript: string;
+  keyObjective: string;
+  citations: { name: string; url: string; note: string }[];
+  deliveryTip: string;
+}
+
+const SLIDES_DATA: SlideData[] = [
+  {
+    id: 0,
+    timeRange: "00:00 - 00:30",
+    badge: "Superteam Brasil • Hackathon Universitário 2026",
+    category: "Abertura & Visão Geral",
+    title: "LattesChain",
+    subtitle: "Passaporte Acadêmico Global Descentralizado e Soberano na Solana",
+    keyObjective: "Capturar atenção imediata da banca demonstrando autoridade técnica e relevância institucional.",
+    speakerScript:
+      "Olá banca examinadora e comunidade Superteam Brasil! Nós somos a equipe da Jovian Tech e hoje apresentamos o LattesChain: o protocolo descentralizado que transforma diplomas, créditos e históricos acadêmicos em atestações soberanas, imutáveis e verificáveis em menos de 1 segundo na Solana. Estamos eliminando décadas de burocracia e fraudes com a melhor infraestrutura Web3 do planeta.",
+    citations: [
+      { name: "Superteam Earn", url: "https://superteam.fun/earn", note: "Hackathon Universitário Superteam Brasil" },
+      { name: "Jovian Tech", url: "https://jovian.foo", note: "GovTech • DataSecAIOps • Web3" },
+    ],
+    deliveryTip: "Fale com energia, confiança e postura firme. Faça contato visual com a câmera.",
+  },
+  {
+    id: 1,
+    timeRange: "00:30 - 01:30 (~1 min)",
+    badge: "Bloco 1 • O Problema & Quem Sofre",
+    category: "O Problema",
+    title: "Burocracia Paralisante & Epidemia de Fraudes",
+    subtitle: "Documentos em PDF e papel custam semanas de espera e bilhões em validações manuais",
+    keyObjective: "Comprovar que a dor é real, aguda e validada por dados da UNESCO e relatórios de mercado.",
+    speakerScript:
+      "Hoje, validar diplomas e históricos escolares ainda depende de PDFs comuns e papéis carimbados — fáceis de forjar com qualquer software de edição. Quem sofre com isso? Primeiro, os estudantes, que perdem prazos de intercâmbio, bolsas e vagas no exterior por semanas de espera burocrática e taxas consulares. Segundo, as secretarias acadêmicas, sobrecarregadas com validações manuais por e-mail e telefone, gastando até 30% da sua jornada de trabalho. E terceiro, empresas e recrutadores que gastam até 15 dias e milhares de reais auditando históricos escolares. E como nós sabemos disso? Segundo a UNESCO, a falta de padronização e lentidão documental é o maior entrave para mais de 6 milhões de estudantes transfronteiriços. E no mercado corporativo, o relatório global da HireRight comprova que adulterações educacionais lideram as inconsistências detectadas em triagens de candidatos.",
+    citations: [
+      { name: "UNESCO", url: "https://unesco.org", note: "Global Convention on the Recognition of Qualifications (6M+ estudantes transfronteiriços)" },
+      { name: "HireRight", url: "https://hireright.com", note: "Global Employment Screening Benchmark Report (Fraude educacional lidera inconsistências)" },
+    ],
+    deliveryTip: "Enfatize os números: '6 milhões de estudantes' e '15 dias de espera'. Mostre indignação com o status quo do PDF editável.",
+  },
+  {
+    id: 2,
+    timeRange: "01:30 - 02:30 (~1 min)",
+    badge: "Bloco 2 • A Solução em Linguagem Simples",
+    category: "A Solução",
+    title: "O Passaporte Acadêmico Soberano",
+    subtitle: "Propriedade real do histórico escolar na carteira do aluno com validação em menos de 1 segundo",
+    keyObjective: "Explicar o produto com metáforas simples: não é mais um PDF, é um passaporte digital criptográfico.",
+    speakerScript:
+      "A nossa solução é o LattesChain: um passaporte acadêmico digital e global hospedado na Solana. O fluxo é simples: a universidade emite a credencial oficial assinada criptograficamente direto para a carteira digital do estudante. O aluno não precisa mais pedir 'segunda via' nem implorar carimbos: ele é o dono soberano do seu histórico. Para comprovar suas qualificações, ele compartilha apenas um link ou QR Code com qualquer recrutador ou instituição estrangeira. A validação ocorre em menos de 1 segundo direto na rede pública, eliminando intermediários e custos cartorários. O modelo segue rigorosamente o padrão internacional W3C Verifiable Credentials v2.0, permitindo que as credenciais sejam provadas matematicamente sem depender de servidores centrais da faculdade de origem.",
+    citations: [
+      { name: "W3C Verifiable Credentials", url: "https://w3.org/TR/vc-data-model-2.0", note: "Verifiable Credentials Data Model v2.0 Standard" },
+      { name: "Convenção de Haia", url: "https://hcch.net", note: "Equivalência de Apostilamento Digital transfronteiriço" },
+    ],
+    deliveryTip: "Mantenha a explicação em linguagem simples. Use a analogia do 'passaporte físico' vs 'passaporte na blockchain'.",
+  },
+  {
+    id: 3,
+    timeRange: "02:30 - 03:30 (~1 min)",
+    badge: "Bloco 3 • Por Que Solana? O Fator Blockchain",
+    category: "Diferencial Tecnológico",
+    title: "Primitivas Nativas Que Só a Solana Oferece",
+    subtitle: "SAS nativo, Token-2022 Soulbound revogável, custo sub-centavo e privacidade LGPD",
+    keyObjective: "Responder com autoridade técnica por que a Solana é insubstituível (e não Ethereum ou banco de dados).",
+    speakerScript:
+      "Por que a Solana é indispensável nessa solução e o que ela resolve que outra tecnologia não resolveria? Nós não reinventamos a roda com smart contracts frágeis: usamos as primitivas nativas e auditadas da Solana. Primeiro: o Solana Attestation Service (SAS), o padrão oficial de credenciais abertas da rede, que confere interoperabilidade nativa com Civic e Solana ID. Segundo: o Token-2022 com a extensão NonTransferable — o certificado nasce como um Soulbound Token que cola na carteira do estudante, impedindo a venda ou transferência do diploma. Terceiro: PermanentDelegate — se a universidade detectar fraude administrativa ou anulação judicial, ela revoga a credencial on-chain de forma transparente. Quarto: Custo Sub-Centavo — emitir centenas de milhares de matérias e certificados custa frações de centavos de real, algo economicamente impossível no Ethereum ou Bitcoin. E quinto: Privacidade por Design — em total conformidade com a LGPD e o GDPR, nenhum dado pessoal sensível como CPF ou nome vai para a blockchain; ancoramos apenas o hash criptográfico SHA-256 do documento canônico.",
+    citations: [
+      { name: "Solana Labs", url: "https://docs.solanalabs.com", note: "Solana Attestation Service Architecture" },
+      { name: "SPL Token-2022", url: "https://spl.solana.com/token-2022/extensions", note: "NonTransferable & PermanentDelegate Extensions" },
+    ],
+    deliveryTip: "Este é o slide de maior peso técnico. Destaque o 'Token-2022 NonTransferable + PermanentDelegate' com firmeza.",
+  },
+  {
+    id: 4,
+    timeRange: "03:30 - 04:30 (~1 min)",
+    badge: "Bloco 4 • Na Prática (Demo & Camada de IA)",
+    category: "Demonstração & IA",
+    title: "O Fluxo Tripartite em Ação & Motor Gemini 1.5 Pro",
+    subtitle: "Emissão em 2s, passaporte com QR Code, validador instantâneo e equivalência curricular por IA",
+    keyObjective: "Mostrar que o sistema está construído, funciona ponta a ponta e possui diferenciais de IA reais.",
+    speakerScript:
+      "Vejam como isso funciona na prática nas nossas 4 pontas ativas: Na Emissão (/university), a instituição preenche os dados curriculares, assina a transação na devnet da Solana via SAS e o token intransferível chega à carteira do aluno em menos de 2 segundos. Na Custódia (/student), o estudante acessa seu passaporte unificado com acompanhamento de horas complementares do MEC e gera seu QR Code instantâneo. Na Validação (/validator), qualquer empresa arrasta o PDF ou clica nos nossos presets de teste rápido e a autenticidade é checada na Solana em menos de 400 milissegundos. E como grande diferencial, integramos o motor de IA com Google Gemini 1.5 Pro: ele traduz a blockchain em um 'Trust Report' executivo em linguagem natural e resolve o maior pesadelo acadêmico — a equivalência curricular automática entre ementas de faculdades diferentes.",
+    citations: [
+      { name: "Demo ao Vivo", url: "/validator", note: "Validador público funcional com 4 presets canônicos" },
+      { name: "Passaporte do Aluno", url: "/student", note: "Carteira soberana com barra de horas MEC e QR Code" },
+      { name: "Portal IES", url: "/university", note: "Emissor on-chain com metadados MEC e histórico" },
+    ],
+    deliveryTip: "Aponte para os cards na tela e convide a banca a testar o /validator ao vivo com 1 clique.",
+  },
+  {
+    id: 5,
+    timeRange: "04:30 - 05:00 (~1 min)",
+    badge: "Bloco 5 • Time, Stack MVP & Próximos Passos",
+    category: "Time & Roadmap",
+    title: "Execução Focada & Escalabilidade Global",
+    subtitle: "Stack open-source custo zero, modelo B2B2C freemium e expansão para o Processo de Bolonha",
+    keyObjective: "Transmitir maturidade de produto, clareza no go-to-market e sustentabilidade econômica.",
+    speakerScript:
+      "Quem está por trás do LattesChain? O time é composto por Alex Miqueias e Rogério Alencar Filho, com a incubação da Jovian Tech, unindo forte especialização em Engenharia de Dados, DevSecOps, Inteligência Artificial e Arquitetura Distribuída Solana. Toda a nossa stack do MVP é 100% open-source e com custo zero de infraestrutura: Go ultraleve, Python com IA, Supabase e SDKs Solana. O nosso roadmap possui 3 passos claros: Primeiro, piloto beachhead focado em horas complementares e certificados de extensão com centros acadêmicos parceiros, sem depender de aprovações ministeriais lentas. Segundo, calibração da IA para mapeamento curricular no padrão europeu do Processo de Bolonha (ECTS) e universidades norte-americanas. E terceiro, deploy na mainnet da Solana com State Compression e integração via API REST direta aos ERPs acadêmicos como TOTVS. LattesChain: a soberania educacional na velocidade da Solana!",
+    citations: [
+      { name: "EHEA Bologna Process", url: "https://ehea.info", note: "Bologna Process & ECTS Users' Guide" },
+      { name: "Jovian Tech", url: "https://jovian.foo", note: "Venture Builder & GovTech Incubadora" },
+      { name: "Repositório GitHub", url: "https://github.com/alexmsza/LattesChain", note: "Código 100% Open-Source e Auditado" },
+    ],
+    deliveryTip: "Feche com impacto, energia alta e convite final para a banca inspecionar o código e a demo.",
+  },
+];
+
+export default function PitchDeckPage() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [showNotes, setShowNotes] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [timerSeconds, setTimerSeconds] = useState(0);
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const totalSlides = SLIDES_DATA.length;
+  const slide = SLIDES_DATA[currentSlide];
+
+  // Timer interval
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (isTimerRunning) {
+      interval = setInterval(() => {
+        setTimerSeconds((prev) => prev + 1);
+      }, 1000);
+    } else if (interval) {
+      clearInterval(interval);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isTimerRunning]);
+
+  const toggleTimer = useCallback(() => {
+    setIsTimerRunning((prev) => !prev);
+  }, []);
+
+  const resetTimer = useCallback(() => {
+    setIsTimerRunning(false);
+    setTimerSeconds(0);
+  }, []);
+
+  const formatTime = (totalSec: number) => {
+    const mins = Math.floor(totalSec / 60);
+    const secs = totalSec % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => Math.min(prev + 1, totalSlides - 1));
+  }, [totalSlides]);
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlide((prev) => Math.max(prev - 1, 0));
+  }, []);
+
+  const goToSlide = (idx: number) => {
+    if (idx >= 0 && idx < totalSlides) {
+      setCurrentSlide(idx);
+    }
+  };
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      switch (e.key) {
+        case "ArrowRight":
+        case "PageDown":
+        case " ":
+          e.preventDefault();
+          nextSlide();
+          break;
+        case "ArrowLeft":
+        case "PageUp":
+        case "Backspace":
+          e.preventDefault();
+          prevSlide();
+          break;
+        case "Home":
+          e.preventDefault();
+          setCurrentSlide(0);
+          break;
+        case "End":
+          e.preventDefault();
+          setCurrentSlide(totalSlides - 1);
+          break;
+        case "n":
+        case "N":
+          e.preventDefault();
+          setShowNotes((v) => !v);
+          break;
+        case "t":
+        case "T":
+          e.preventDefault();
+          toggleTimer();
+          break;
+        case "r":
+        case "R":
+          e.preventDefault();
+          resetTimer();
+          break;
+        case "f":
+        case "F":
+          e.preventDefault();
+          toggleFullscreen();
+          break;
+        case "1":
+        case "2":
+        case "3":
+        case "4":
+        case "5":
+        case "6":
+          const target = parseInt(e.key, 10) - 1;
+          if (target >= 0 && target < totalSlides) {
+            setCurrentSlide(target);
+          }
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [nextSlide, prevSlide, totalSlides, toggleTimer, resetTimer]);
+
+  // Fullscreen toggle
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {});
+    } else {
+      document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {});
+    }
+  };
+
+  // Listen to fullscreen changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      className={`min-h-[calc(100vh-4rem)] flex flex-col bg-[#0b0813] text-white selection:bg-solana-purple selection:text-white ${
+        isFullscreen ? "fixed inset-0 z-50 p-4 md:p-6" : "px-3 py-4 sm:px-6 sm:py-6"
+      }`}
+    >
+      {/* TOP HEADER CONTROLS */}
+      <div className="max-w-7xl mx-auto w-full flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800/80">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-solana-purple/20 border border-solana-purple/40 text-solana-purple shadow-sm">
+            <GraduationCap className="h-5 w-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="font-display text-sm sm:text-base font-bold text-white tracking-tight">
+                Lattes<span className="text-solana-green">Chain</span>
+              </span>
+              <span className="rounded-full bg-solana-purple/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-solana-purple border border-solana-purple/30">
+                Pitch 5 Minutos
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-400">
+              Superteam Brasil Hackathon • Slide {currentSlide + 1} de {totalSlides}
+            </p>
+          </div>
+        </div>
+
+        {/* TIMER BAR & SHORTCUTS */}
+        <div className="flex items-center gap-2.5 sm:gap-4">
+          {/* STOPWATCH */}
+          <div className="flex items-center gap-2 rounded-xl bg-slate-900/90 border border-slate-800 px-3 py-1.5 shadow-inner">
+            <Clock className="h-3.5 w-3.5 text-solana-green animate-pulse" />
+            <span
+              className={`font-mono text-xs sm:text-sm font-bold tracking-wider ${
+                timerSeconds > 300 ? "text-rose-400" : timerSeconds > 240 ? "text-amber-400" : "text-slate-200"
+              }`}
+            >
+              {formatTime(timerSeconds)} <span className="text-slate-500 font-normal">/ 05:00</span>
+            </span>
+            <button
+              onClick={toggleTimer}
+              title={isTimerRunning ? "Pausar cronômetro (T)" : "Iniciar cronômetro (T)"}
+              className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            >
+              {isTimerRunning ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5 text-solana-green" />}
+            </button>
+            <button
+              onClick={resetTimer}
+              title="Zerar cronômetro (R)"
+              className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            >
+              <RotateCcw className="h-3.5 w-3.5" />
+            </button>
+          </div>
+
+          {/* TOGGLE SPEAKER NOTES */}
+          <button
+            onClick={() => setShowNotes(!showNotes)}
+            className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition-all ${
+              showNotes
+                ? "border-solana-purple/50 bg-solana-purple/20 text-solana-purple"
+                : "border-slate-800 bg-slate-900/60 text-slate-400 hover:text-white"
+            }`}
+            title="Atalho: tecla 'N'"
+          >
+            <FileText className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Notas do Orador</span>
+            <span className="text-[10px] opacity-60 font-mono">(N)</span>
+          </button>
+
+          {/* FULLSCREEN TOGGLE */}
+          <button
+            onClick={toggleFullscreen}
+            className="p-2 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
+            title="Alternar tela cheia (F)"
+          >
+            {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+          </button>
+        </div>
+      </div>
+
+      {/* PROGRESS TRACKER */}
+      <div className="max-w-7xl mx-auto w-full pt-2">
+        <div className="grid grid-cols-6 gap-1 sm:gap-2">
+          {SLIDES_DATA.map((s, idx) => (
+            <button
+              key={s.id}
+              onClick={() => goToSlide(idx)}
+              className={`group flex flex-col gap-1 text-left transition-all ${
+                idx === currentSlide ? "opacity-100" : "opacity-40 hover:opacity-80"
+              }`}
+            >
+              <div
+                className={`h-1.5 w-full rounded-full transition-all duration-300 ${
+                  idx === currentSlide
+                    ? "bg-gradient-to-r from-solana-purple to-solana-green shadow-sm shadow-solana-purple/50"
+                    : idx < currentSlide
+                    ? "bg-solana-purple/70"
+                    : "bg-slate-800"
+                }`}
+              />
+              <span className="text-[9px] sm:text-[10px] font-medium text-slate-300 truncate hidden sm:block">
+                {idx + 1}. {s.category}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* MAIN SLIDE VIEWPORT */}
+      <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col py-4">
+        <div className="relative flex-1 w-full min-h-[440px] rounded-3xl border border-slate-800/90 bg-gradient-to-b from-[#140e26]/80 via-[#0e0a1b]/95 to-[#0b0813] shadow-2xl shadow-solana-purple/10 overflow-hidden flex flex-col justify-between p-6 sm:p-10">
+          {/* SLIDE BACKGROUND GLOW DECORATIONS */}
+          <div className="absolute top-0 right-0 -mr-20 -mt-20 h-72 w-72 rounded-full bg-solana-purple/15 blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 -ml-20 -mb-20 h-72 w-72 rounded-full bg-solana-green/10 blur-3xl pointer-events-none" />
+
+          {/* SLIDE TOP META */}
+          <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-solana-purple/40 bg-solana-purple/10 px-3 py-1 text-xs font-semibold text-solana-purpleSoft">
+                <Sparkles className="h-3 w-3 text-solana-green" />
+                {slide.badge}
+              </span>
+              <span className="rounded-full bg-slate-800/80 px-2.5 py-1 text-xs font-mono text-slate-300 border border-slate-700/60">
+                {slide.timeRange}
+              </span>
+            </div>
+            <span className="text-xs text-slate-400 font-mono">
+              Use as setas <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700">←</kbd>{" "}
+              <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700">→</kbd> ou clique nos botões
+            </span>
+          </div>
+
+          {/* SLIDE DYNAMIC CONTENT */}
+          <div className="relative z-10 my-auto py-4">
+            {/* SLIDE 0: CAPA / ABERTURA */}
+            {currentSlide === 0 && (
+              <div className="space-y-6 max-w-4xl">
+                <div className="space-y-2">
+                  <span className="text-xs font-bold uppercase tracking-widest text-solana-green">
+                    Solana Attestation Service • Token-2022 Soulbound • W3C VC
+                  </span>
+                  <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-none">
+                    Lattes<span className="text-solana-green">Chain</span>
+                  </h1>
+                  <p className="text-lg sm:text-2xl font-semibold text-slate-200">
+                    O Passaporte Acadêmico Global Descentralizado e Soberano
+                  </p>
+                  <p className="text-sm sm:text-base text-slate-400 max-w-2xl leading-relaxed">
+                    Transformando diplomas, históricos escolares e horas complementares em atestações imutáveis,
+                    livres de fraude e verificáveis em menos de 1 segundo em qualquer país do mundo.
+                  </p>
+                </div>
+
+                {/* 3 PILARES SUMMARY */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4">
+                  <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 space-y-1.5">
+                    <div className="flex items-center gap-2 text-solana-purpleSoft font-bold text-sm">
+                      <GraduationCap className="h-4 w-4 text-solana-purple" />
+                      1. Aluno Soberano
+                    </div>
+                    <p className="text-xs text-slate-300">
+                      O histórico pertence à carteira do aluno. Compartilhável via QR Code ou link em 1 clique.
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 space-y-1.5">
+                    <div className="flex items-center gap-2 text-solana-green font-bold text-sm">
+                      <Building2 className="h-4 w-4 text-solana-green" />
+                      2. IES Sem Burocracia
+                    </div>
+                    <p className="text-xs text-slate-300">
+                      Emissão assinada no SAS em 2s. Elimina 80% do trabalho manual das secretarias acadêmicas.
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 space-y-1.5">
+                    <div className="flex items-center gap-2 text-blue-400 font-bold text-sm">
+                      <ShieldCheck className="h-4 w-4 text-blue-400" />
+                      3. Validação RH + IA
+                    </div>
+                    <p className="text-xs text-slate-300">
+                      Checagem instantânea on-chain em &lt;400ms e equivalência curricular semântica por IA.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3 pt-2">
+                  <button
+                    onClick={nextSlide}
+                    className="inline-flex items-center gap-2 rounded-full bg-solana-purple px-6 py-3 text-sm font-bold text-white shadow-lg shadow-solana-purple/30 hover:bg-solana-purpleDeep hover:scale-105 transition-all"
+                  >
+                    Iniciar Apresentação (5 Min)
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                  <Link
+                    href="/validator"
+                    className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/80 px-5 py-3 text-sm font-semibold text-slate-300 hover:text-white hover:border-slate-500 transition-all"
+                  >
+                    Abrir Validador Ao Vivo
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </div>
+            )}
+
+            {/* SLIDE 1: O PROBLEMA */}
+            {currentSlide === 1 && (
+              <div className="space-y-6 max-w-5xl">
+                <div>
+                  <h2 className="font-display text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+                    {slide.title}
+                  </h2>
+                  <p className="text-sm sm:text-lg text-slate-300 mt-1">{slide.subtitle}</p>
+                </div>
+
+                {/* STATS IMPACTANTES */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="rounded-2xl border border-rose-500/30 bg-rose-950/20 p-5 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold uppercase tracking-wider text-rose-400">Dado Global UNESCO</span>
+                      <AlertTriangle className="h-5 w-5 text-rose-400" />
+                    </div>
+                    <div className="font-display text-3xl sm:text-4xl font-black text-white">6 Milhões +</div>
+                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                      De estudantes transfronteiriços travados por falta de padronização, lentidão e custos consulares
+                      na validação de qualificações acadêmicas.
+                    </p>
+                    <span className="text-[10px] text-slate-400 italic">Fonte: UNESCO Global Convention on Recognition</span>
+                  </div>
+
+                  <div className="rounded-2xl border border-amber-500/30 bg-amber-950/20 p-5 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold uppercase tracking-wider text-amber-400">HireRight Benchmark</span>
+                      <TrendingUp className="h-5 w-5 text-amber-400" />
+                    </div>
+                    <div className="font-display text-3xl sm:text-4xl font-black text-white">#1 Em Inconsistência</div>
+                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                      Adulterações e discrepâncias em histórico educacional lideram o ranking de fraudes detectadas em
+                      processos seletivos corporativos no mundo todo.
+                    </p>
+                    <span className="text-[10px] text-slate-400 italic">Fonte: HireRight Global Screening Benchmark</span>
+                  </div>
+                </div>
+
+                {/* AS 3 VÍTIMAS */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-3.5 space-y-1">
+                    <span className="text-xs font-bold text-solana-purpleSoft">1. Estudantes</span>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      Perdem prazos de bolsas de estudo, intercâmbios e vagas no exterior por semanas de espera burocrática.
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-3.5 space-y-1">
+                    <span className="text-xs font-bold text-solana-purpleSoft">2. Secretarias de IES</span>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      Gargalo crônico respondendo e-mails e telefonemas de terceiros para confirmar autenticidade de papéis.
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-3.5 space-y-1">
+                    <span className="text-xs font-bold text-solana-purpleSoft">3. RHs e Empresas</span>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      Gastam de 5 a 15 dias em background check educacional sem garantia real de integridade documental.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* SLIDE 2: A SOLUÇÃO */}
+            {currentSlide === 2 && (
+              <div className="space-y-6 max-w-5xl">
+                <div>
+                  <h2 className="font-display text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+                    {slide.title}
+                  </h2>
+                  <p className="text-sm sm:text-lg text-slate-300 mt-1">{slide.subtitle}</p>
+                </div>
+
+                {/* 4 ETAPAS DA SOLUÇÃO */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="rounded-2xl border border-solana-purple/30 bg-slate-900/80 p-5 space-y-2 relative overflow-hidden">
+                    <div className="h-8 w-8 rounded-lg bg-solana-purple/20 text-solana-purple flex items-center justify-center font-bold text-sm">
+                      1
+                    </div>
+                    <h3 className="font-bold text-white text-base">Emissão Oficial</h3>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      A faculdade ancora a credencial diretamente no protocolo aberto via assinatura digital, criando uma
+                      prova matemática na Solana.
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-solana-purple/30 bg-slate-900/80 p-5 space-y-2 relative overflow-hidden">
+                    <div className="h-8 w-8 rounded-lg bg-solana-purple/20 text-solana-purple flex items-center justify-center font-bold text-sm">
+                      2
+                    </div>
+                    <h3 className="font-bold text-white text-base">Posse Soberana</h3>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      A credencial vai direto para a carteira digital do aluno. Não fica presa no servidor de faculdades
+                      que podem fechar.
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-solana-purple/30 bg-slate-900/80 p-5 space-y-2 relative overflow-hidden">
+                    <div className="h-8 w-8 rounded-lg bg-solana-purple/20 text-solana-purple flex items-center justify-center font-bold text-sm">
+                      3
+                    </div>
+                    <h3 className="font-bold text-white text-base">Partilha Fácil</h3>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      O aluno compartilha um link público seguro ou QR Code no currículo, LinkedIn ou candidatura de
+                      emprego.
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-solana-green/40 bg-slate-900/80 p-5 space-y-2 relative overflow-hidden">
+                    <div className="h-8 w-8 rounded-lg bg-solana-green/20 text-solana-green flex items-center justify-center font-bold text-sm">
+                      4
+                    </div>
+                    <h3 className="font-bold text-white text-base">Auditoria &lt;1s</h3>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      Qualquer recrutador ou universidade no mundo confere a autenticidade on-chain instantaneamente sem
+                      intermediários.
+                    </p>
+                  </div>
+                </div>
+
+                {/* PADRÃO W3C VC CALLOUT */}
+                <div className="rounded-2xl border border-blue-500/30 bg-blue-950/20 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 text-blue-400 font-bold text-sm">
+                      <Lock className="h-4 w-4" />
+                      Padrão Internacional: W3C Verifiable Credentials Data Model v2.0
+                    </div>
+                    <p className="text-xs text-slate-300">
+                      Interoperabilidade global comprovada matematicamente por criptografia assimétrica de curva elíptica ed25519.
+                    </p>
+                  </div>
+                  <span className="shrink-0 text-xs font-mono bg-blue-900/40 text-blue-300 border border-blue-500/30 rounded-lg px-3 py-1.5">
+                    w3.org/TR/vc-data-model-2.0
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* SLIDE 3: POR QUE SOLANA? */}
+            {currentSlide === 3 && (
+              <div className="space-y-6 max-w-5xl">
+                <div>
+                  <h2 className="font-display text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+                    {slide.title}
+                  </h2>
+                  <p className="text-sm sm:text-lg text-slate-300 mt-1">{slide.subtitle}</p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="rounded-2xl border border-solana-purple/40 bg-slate-900/70 p-4 space-y-2">
+                    <div className="flex items-center gap-2 text-solana-purpleSoft font-bold text-sm">
+                      <Layers className="h-4 w-4 text-solana-purple" />
+                      1. Solana Attestation Service (SAS)
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      Padrão oficial da rede para atestações verificáveis on-chain. Interoperabilidade imediata com
+                      Civic e Solana ID para identidade unificada.
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-solana-green/40 bg-slate-900/70 p-4 space-y-2">
+                    <div className="flex items-center gap-2 text-solana-green font-bold text-sm">
+                      <Lock className="h-4 w-4 text-solana-green" />
+                      2. Token-2022 NonTransferable
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      Soulbound Token nativo ao nível de protocolo. O token cola na carteira do aluno; nenhuma transação
+                      consegue vendê-lo ou transferi-lo.
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-amber-500/40 bg-slate-900/70 p-4 space-y-2">
+                    <div className="flex items-center gap-2 text-amber-300 font-bold text-sm">
+                      <AlertTriangle className="h-4 w-4 text-amber-400" />
+                      3. PermanentDelegate (Revogação)
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      Em caso de fraude detectada ou anulação judicial, a universidade revoga o título on-chain sem
+                      depender de autorização do aluno.
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-emerald-500/40 bg-slate-900/70 p-4 space-y-2">
+                    <div className="flex items-center gap-2 text-emerald-300 font-bold text-sm">
+                      <TrendingUp className="h-4 w-4 text-emerald-400" />
+                      4. Custo Sub-Centavo (&lt; R$ 0,01)
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      Emitir centenas de milhares de disciplinas custa frações de centavo de real. Em Ethereum custaria
+                      entre US$ 5 e US$ 50 por transação.
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-indigo-500/40 bg-slate-900/70 p-4 space-y-2">
+                    <div className="flex items-center gap-2 text-indigo-300 font-bold text-sm">
+                      <ShieldCheck className="h-4 w-4 text-indigo-400" />
+                      5. LGPD & GDPR por Design
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      Zero dados sensíveis (CPF, nome) gravados on-chain. Ancoramos apenas o hash SHA-256 do documento
+                      canônico com assinatura ed25519.
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-pink-500/40 bg-slate-900/70 p-4 space-y-2">
+                    <div className="flex items-center gap-2 text-pink-300 font-bold text-sm">
+                      <Cpu className="h-4 w-4 text-pink-400" />
+                      6. Zero Cripto Onboarding
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      Nem faculdades nem alunos compram cripto: nosso relayer atua como Fee Payer corporativo,
+                      absorvendo as micro-taxas gasless.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* SLIDE 4: NA PRÁTICA (DEMO & IA) */}
+            {currentSlide === 4 && (
+              <div className="space-y-6 max-w-5xl">
+                <div>
+                  <h2 className="font-display text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+                    {slide.title}
+                  </h2>
+                  <p className="text-sm sm:text-lg text-slate-300 mt-1">{slide.subtitle}</p>
+                </div>
+
+                {/* 4 TELAS EM AÇÃO */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 space-y-2 flex flex-col justify-between">
+                    <div className="space-y-1.5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-solana-purple">
+                        Secretaria IES
+                      </span>
+                      <h4 className="font-bold text-sm text-white">1. Emissão On-Chain</h4>
+                      <p className="text-xs text-slate-300">
+                        Cadastro de notas, ementas e Portaria MEC com ancoragem assinada no SAS em 2 segundos.
+                      </p>
+                    </div>
+                    <Link
+                      href="/university"
+                      target="_blank"
+                      className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800/80 py-1.5 text-xs font-semibold text-slate-200 hover:text-white hover:bg-slate-700 transition-all"
+                    >
+                      Ver Portal IES <ExternalLink className="h-3 w-3" />
+                    </Link>
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 space-y-2 flex flex-col justify-between">
+                    <div className="space-y-1.5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-solana-green">
+                        Estudante
+                      </span>
+                      <h4 className="font-bold text-sm text-white">2. Meu Passaporte</h4>
+                      <p className="text-xs text-slate-300">
+                        Visualização de credenciais, progresso de horas complementares e QR Code de apresentação pública.
+                      </p>
+                    </div>
+                    <Link
+                      href="/student"
+                      target="_blank"
+                      className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800/80 py-1.5 text-xs font-semibold text-slate-200 hover:text-white hover:bg-slate-700 transition-all"
+                    >
+                      Ver Passaporte <ExternalLink className="h-3 w-3" />
+                    </Link>
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 space-y-2 flex flex-col justify-between">
+                    <div className="space-y-1.5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400">
+                        Empresa / RH
+                      </span>
+                      <h4 className="font-bold text-sm text-white">3. Validador Instantâneo</h4>
+                      <p className="text-xs text-slate-300">
+                        Upload de PDF (hash calculado localmente no browser) ou consulta por hash em menos de 400ms.
+                      </p>
+                    </div>
+                    <Link
+                      href="/validator"
+                      target="_blank"
+                      className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-blue-500/40 bg-blue-900/30 py-1.5 text-xs font-semibold text-blue-300 hover:bg-blue-800/50 transition-all"
+                    >
+                      Test Drive 1 Clique <ExternalLink className="h-3 w-3" />
+                    </Link>
+                  </div>
+
+                  <div className="rounded-2xl border border-indigo-500/40 bg-indigo-950/20 p-4 space-y-2 flex flex-col justify-between">
+                    <div className="space-y-1.5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-400">
+                        Gemini 1.5 Pro
+                      </span>
+                      <h4 className="font-bold text-sm text-white">4. Camada de IA</h4>
+                      <p className="text-xs text-slate-300">
+                        Gera Trust Report executivo e calcula equivalência curricular semântica entre ementas diferentes.
+                      </p>
+                    </div>
+                    <Link
+                      href="/validator"
+                      target="_blank"
+                      className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-indigo-500/40 bg-indigo-900/30 py-1.5 text-xs font-semibold text-indigo-300 hover:bg-indigo-800/50 transition-all"
+                    >
+                      Testar Equivalência <ExternalLink className="h-3 w-3" />
+                    </Link>
+                  </div>
+                </div>
+
+                {/* PROTOTYPE LIVE CALLOUT */}
+                <div className="rounded-2xl border border-solana-green/40 bg-solana-green/10 p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-solana-green/20 text-solana-green flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-white text-sm">Protótipo 100% Funcional e Auditado</h4>
+                      <p className="text-xs text-slate-300">
+                        Contratos Anchor, scripts Solana SAS em Python, backend em Go e 4 presets de teste disponíveis no /validator.
+                      </p>
+                    </div>
+                  </div>
+                  <Link
+                    href="/validator"
+                    className="inline-flex items-center gap-2 rounded-xl bg-solana-green px-5 py-2.5 text-xs font-bold text-navy-900 hover:bg-emerald-300 transition-all shadow-md shrink-0"
+                  >
+                    Abrir Simulador On-Chain
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </div>
+            )}
+
+            {/* SLIDE 5: TIME E PRÓXIMOS PASSOS */}
+            {currentSlide === 5 && (
+              <div className="space-y-6 max-w-5xl">
+                <div>
+                  <h2 className="font-display text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+                    {slide.title}
+                  </h2>
+                  <p className="text-sm sm:text-lg text-slate-300 mt-1">{slide.subtitle}</p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* TIME & STACK */}
+                  <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5 space-y-4">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                      <span className="text-xs font-bold uppercase tracking-wider text-solana-purpleSoft">
+                        Equipe de Engenharia • Jovian Tech
+                      </span>
+                      <Users className="h-4 w-4 text-solana-purple" />
+                    </div>
+
+                    <div className="space-y-3">
+                      <div>
+                        <div className="font-bold text-white text-sm">Alex Miqueias • Lead Architect</div>
+                        <p className="text-xs text-slate-300">
+                          Arquitetura Web3, Smart Contracts Solana Token-2022/SAS e Governança On-Chain.
+                        </p>
+                      </div>
+                      <div>
+                        <div className="font-bold text-white text-sm">Rogerio Alencar Filho • Software Engineer</div>
+                        <p className="text-xs text-slate-300">
+                          Engenharia de Dados, Backend Go/Python, DevSecOps e Integrações Corporativas.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="rounded-xl border border-slate-800 bg-slate-950 p-3 space-y-1.5">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-solana-green">
+                        Stack MVP Custo Zero
+                      </span>
+                      <p className="text-xs text-slate-400">
+                        Go (Relayer ultraleve) • Python + Gemini AI • Supabase (Postgres RLS) • Next.js 14 • Solana Devnet/Mainnet
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* ROADMAP EM 3 FASES */}
+                  <div className="rounded-2xl border border-solana-purple/30 bg-slate-900/70 p-5 space-y-4">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                      <span className="text-xs font-bold uppercase tracking-wider text-solana-green">
+                        Roadmap de Execução & GTM
+                      </span>
+                      <TrendingUp className="h-4 w-4 text-solana-green" />
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="flex items-start gap-3">
+                        <span className="h-6 w-6 rounded-full bg-solana-purple/20 text-solana-purpleSoft flex items-center justify-center font-bold text-xs shrink-0">
+                          1
+                        </span>
+                        <div>
+                          <div className="font-bold text-white text-xs sm:text-sm">Fase 1: Piloto Beachhead</div>
+                          <p className="text-xs text-slate-300">
+                            Emissão de horas complementares e certificados de extensão com Centros Acadêmicos (sem trava regulatória).
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3">
+                        <span className="h-6 w-6 rounded-full bg-solana-purple/20 text-solana-purpleSoft flex items-center justify-center font-bold text-xs shrink-0">
+                          2
+                        </span>
+                        <div>
+                          <div className="font-bold text-white text-xs sm:text-sm">Fase 2: Expansão Internacional</div>
+                          <p className="text-xs text-slate-300">
+                            Calibração da IA para compatibilidade com o Processo de Bolonha (ECTS - Europa) e faculdades dos EUA.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3">
+                        <span className="h-6 w-6 rounded-full bg-solana-green/20 text-solana-green flex items-center justify-center font-bold text-xs shrink-0">
+                          3
+                        </span>
+                        <div>
+                          <div className="font-bold text-white text-xs sm:text-sm">Fase 3: Mainnet & ERPs Legados</div>
+                          <p className="text-xs text-slate-300">
+                            State Compression na Mainnet e integração via API REST v1 para ERPs (TOTVS RM, Sophia, ATS Gupy).
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* SLIDE FOOTER NAVIGATION */}
+          <div className="relative z-10 pt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={prevSlide}
+                disabled={currentSlide === 0}
+                className="inline-flex items-center gap-1 rounded-xl border border-slate-800 bg-slate-900/80 px-4 py-2 text-xs font-semibold text-slate-200 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition-all"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Anterior
+              </button>
+              <button
+                onClick={nextSlide}
+                disabled={currentSlide === totalSlides - 1}
+                className="inline-flex items-center gap-1 rounded-xl bg-solana-purple px-4 py-2 text-xs font-bold text-white shadow-md hover:bg-solana-purpleDeep disabled:opacity-30 disabled:pointer-events-none transition-all"
+              >
+                Próximo
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2 text-xs text-slate-400">
+              <span>{slide.timeRange}</span>
+              <span>•</span>
+              <span>Slide {currentSlide + 1} de {totalSlides}</span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Link
+                href="/validator"
+                className="text-xs text-solana-green hover:underline flex items-center gap-1"
+              >
+                Testar Validador Ao Vivo <ExternalLink className="h-3 w-3" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* SPEAKER NOTES DRAWER (RECOLHÍVEL COM TECLA N) */}
+      {showNotes && (
+        <div className="max-w-7xl mx-auto w-full mt-2 rounded-2xl border border-solana-purple/30 bg-[#120c22]/95 backdrop-blur-md p-4 sm:p-5 shadow-xl">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-purple-900/40 pb-2.5 mb-3">
+            <div className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-solana-purple" />
+              <span className="font-bold text-xs sm:text-sm text-white">
+                Notas do Orador & Script de Fala Guiada — Slide {currentSlide + 1}: {slide.category}
+              </span>
+            </div>
+            <div className="flex items-center gap-3 text-xs text-slate-400">
+              <span className="font-mono text-solana-green font-semibold">Meta de Tempo: {slide.timeRange}</span>
+              <button
+                onClick={() => setShowNotes(false)}
+                className="text-slate-400 hover:text-white text-xs underline"
+              >
+                Ocultar (N)
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 text-xs">
+            {/* SCRIPT DE FALA FALADA (PALAVRA POR PALAVRA) */}
+            <div className="lg:col-span-2 space-y-2 bg-slate-950/60 rounded-xl p-3.5 border border-slate-800">
+              <div className="flex items-center justify-between text-slate-300 font-semibold">
+                <span className="text-solana-purpleSoft">🎙️ O que falar (Script do Vídeo):</span>
+                <span className="text-[10px] text-slate-500">~60 segundos de fala</span>
+              </div>
+              <p className="text-slate-200 leading-relaxed text-xs sm:text-sm font-sans italic">
+                &ldquo;{slide.speakerScript}&rdquo;
+              </p>
+            </div>
+
+            {/* OBJETIVOS E FONTES CONSULTÁVEIS */}
+            <div className="space-y-3">
+              <div className="space-y-1 bg-slate-950/60 rounded-xl p-3 border border-slate-800">
+                <span className="font-semibold text-amber-300">🎯 Ponto-Chave para a Banca:</span>
+                <p className="text-slate-300 leading-normal">{slide.keyObjective}</p>
+              </div>
+
+              <div className="space-y-1.5 bg-slate-950/60 rounded-xl p-3 border border-slate-800">
+                <span className="font-semibold text-solana-green">📚 Fontes Consultáveis Citadas:</span>
+                <div className="space-y-1">
+                  {slide.citations.map((c, i) => (
+                    <div key={i} className="flex flex-col">
+                      <a
+                        href={c.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-solana-purpleSoft hover:underline flex items-center gap-1 font-medium"
+                      >
+                        {c.name} <ExternalLink className="h-2.5 w-2.5" />
+                      </a>
+                      <span className="text-[10px] text-slate-400">{c.note}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="text-[11px] text-slate-400 italic bg-purple-950/20 p-2 rounded-lg border border-purple-900/30">
+                💡 <strong>Dica de Oratória:</strong> {slide.deliveryTip}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

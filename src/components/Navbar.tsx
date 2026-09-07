@@ -14,6 +14,7 @@ import {
   Activity,
   Info,
   Tag,
+  Presentation,
   Palette,
 } from "lucide-react";
 import { useSession } from "@/lib/useSession";
@@ -40,6 +41,7 @@ export function Navbar() {
     { href: "/validator", label: dict.nav.validator, icon: ShieldCheck },
     { href: "/student", label: dict.nav.student, icon: UserCheck },
     { href: "/university", label: dict.nav.university, icon: Building2 },
+    { href: "/pitch", label: (dict.nav as any).pitch || "Pitch", icon: Presentation },
     { href: "/sobre", label: dict.nav.about, icon: Info },
     { href: "/precos", label: dict.nav.pricing, icon: Tag },
   ];
