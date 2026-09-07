@@ -24,12 +24,17 @@ import {
   AlertTriangle,
   Layers,
   FileText,
+  MapPin,
+  Mail,
+  UserPlus,
+  Send,
+  Check,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function UniversityPortal() {
   const { dict } = useLanguage();
-  const [activeTab, setActiveTab] = useState<"REQUESTS" | "DIRECT_ISSUE" | "BATCH_CSV" | "DIRECTORY">("REQUESTS");
+  const [activeTab, setActiveTab] = useState<"REQUESTS" | "DIRECT_ISSUE" | "BATCH_CSV" | "DIRECTORY" | "CAMPUSES">("REQUESTS");
 
   // Estados da Fila de Solicitações de Alunos
   const [requests, setRequests] = useState<any[]>([]);
@@ -85,6 +90,28 @@ export default function UniversityPortal() {
   const [batchProcessing, setBatchProcessing] = useState(false);
   const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0 });
 
+  // Estados de Campus
+  const [campuses, setCampuses] = useState<any[]>([]);
+  const [loadingCampuses, setLoadingCampuses] = useState(false);
+  const [newCampusName, setNewCampusName] = useState("");
+  const [newCampusCode, setNewCampusCode] = useState("");
+  const [newCampusCity, setNewCampusCity] = useState("");
+  const [newCampusState, setNewCampusState] = useState("");
+  const [savingCampus, setSavingCampus] = useState(false);
+  const [selectedCampusFilter, setSelectedCampusFilter] = useState<string>("ALL");
+
+  // Estados do Modal de Matrícula de Estudante (Multi-Tenant)
+  const [showEnrollModal, setShowEnrollModal] = useState(false);
+  const [enrollName, setEnrollName] = useState("");
+  const [enrollCpf, setEnrollCpf] = useState("");
+  const [enrollEmail, setEnrollEmail] = useState("");
+  const [enrollRegNum, setEnrollRegNum] = useState("");
+  const [enrollCourse, setEnrollCourse] = useState("");
+  const [enrollCampusId, setEnrollCampusId] = useState("");
+  const [enrollSendEmail, setEnrollSendEmail] = useState(true);
+  const [enrolling, setEnrolling] = useState(false);
+  const [enrollFeedback, setEnrollFeedback] = useState<string | null>(null);
+
   // Carrega Solicitações
   const loadRequests = async () => {
     setLoadingRequests(true);
@@ -101,14 +128,36 @@ export default function UniversityPortal() {
     }
   };
 
-  // Carrega Diretório de Alunos
+  // Carrega Campuses da IES
+  const loadCampuses = async () => {
+    setLoadingCampuses(true);
+    try {
+      const res = await fetch("/api/institution/campuses");
+      if (res.ok) {
+        const data = await res.json();
+        setCampuses(data.campuses || []);
+      }
+    } catch (err) {
+      console.error("Erro ao carregar campus:", err);
+    } finally {
+      setLoadingCampuses(false);
+    }
+  };
+
+  // Carrega Estudantes vinculados à IES (Multi-Tenant)
   const loadStudents = async () => {
     setLoadingStudents(true);
     try {
-      const res = await fetch("/api/directory/students");
+      const res = await fetch("/api/institution/students");
       if (res.ok) {
         const data = await res.json();
         setStudents(data.students || []);
+      } else {
+        const fallbackRes = await fetch("/api/directory/students");
+        if (fallbackRes.ok) {
+          const fb = await fallbackRes.json();
+          setStudents(fb.students || []);
+        }
       }
     } catch (err) {
       console.error("Erro ao carregar diretório de estudantes:", err);
@@ -117,13 +166,99 @@ export default function UniversityPortal() {
     }
   };
 
+  // Criação de Campus pela IES
+  const handleCreateCampus = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCampusName.trim()) return;
+    setSavingCampus(true);
+    try {
+      const res = await fetch("/api/institution/campuses", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: newCampusName.trim(),
+          code: newCampusCode.trim(),
+          city: newCampusCity.trim(),
+          state: newCampusState.trim(),
+        }),
+      });
+      if (res.ok) {
+        setNewCampusName("");
+        setNewCampusCode("");
+        setNewCampusCity("");
+        setNewCampusState("");
+        loadCampuses();
+      } else {
+        const err = await res.json();
+        alert("Erro ao criar campus: " + (err.error || "Tente novamente."));
+      }
+    } catch (err: any) {
+      alert("Falha de conexão: " + err.message);
+    } finally {
+      setSavingCampus(false);
+    }
+  };
+
+  // Matrícula de Estudante com Disparo de E-mail
+  const handleEnrollStudent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!enrollName.trim() || !enrollCpf.trim() || !enrollEmail.trim() || !enrollRegNum.trim() || !enrollCourse.trim()) {
+      alert("Preencha todos os campos obrigatórios.");
+      return;
+    }
+    setEnrolling(true);
+    setEnrollFeedback(null);
+    try {
+      const res = await fetch("/api/institution/students", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          full_name: enrollName.trim(),
+          cpf: enrollCpf.trim(),
+          email: enrollEmail.trim(),
+          registration_number: enrollRegNum.trim(),
+          course_name: enrollCourse.trim(),
+          campus_id: enrollCampusId || null,
+          send_email: enrollSendEmail,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setEnrollFeedback(data.message || "Estudante matriculado com sucesso!");
+        loadStudents();
+        setTimeout(() => {
+          setShowEnrollModal(false);
+          setEnrollName("");
+          setEnrollCpf("");
+          setEnrollEmail("");
+          setEnrollRegNum("");
+          setEnrollCourse("");
+          setEnrollCampusId("");
+          setEnrollFeedback(null);
+        }, 1500);
+      } else {
+        alert("Erro ao matricular estudante: " + (data.error || "Tente novamente."));
+      }
+    } catch (err: any) {
+      alert("Erro de conexão: " + err.message);
+    } finally {
+      setEnrolling(false);
+    }
+  };
+
   useEffect(() => {
     loadRequests();
+    loadCampuses();
   }, []);
 
   useEffect(() => {
-    if (activeTab === "DIRECTORY") loadStudents();
+    if (activeTab === "DIRECTORY") {
+      loadStudents();
+      loadCampuses();
+    }
     if (activeTab === "REQUESTS") loadRequests();
+    if (activeTab === "CAMPUSES") loadCampuses();
   }, [activeTab]);
 
   // Ação de Revisão de Solicitação de Aluno (Aprovação ou Rejeição)
@@ -483,6 +618,23 @@ export default function UniversityPortal() {
         >
           <UserCheck className="h-4 w-4" />
           {dict.university.tabDirectory}
+        </button>
+
+        <button
+          onClick={() => setActiveTab("CAMPUSES")}
+          className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all border ${
+            activeTab === "CAMPUSES"
+              ? "bg-solana-purple text-white border-solana-purple shadow-md shadow-solana-purple/20"
+              : "bg-navy-900/60 text-slate-300 border-slate-800 hover:text-white"
+          }`}
+        >
+          <MapPin className="h-4 w-4" />
+          Polos & Campus
+          {campuses.length > 0 && (
+            <span className="rounded-full bg-navy-900 text-solana-purple px-2 py-0.5 text-[10px] font-black">
+              {campuses.length}
+            </span>
+          )}
         </button>
       </div>
 
@@ -960,22 +1112,44 @@ export default function UniversityPortal() {
       )}
 
       {/* ABA 4: DIRETÓRIO DE ALUNOS MATRICULADOS */}
+      {/* ABA 4: DIRETÓRIO DE ALUNOS MATRICULADOS */}
       {activeTab === "DIRECTORY" && (
         <div className="space-y-6 animate-in fade-in">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="relative w-full sm:w-96">
-              <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-500" />
-              <input
-                type="text"
-                placeholder={dict.university.studentSearchPlaceholder}
-                value={searchStudent}
-                onChange={(e) => setSearchStudent(e.target.value)}
-                className="w-full rounded-xl border border-slate-800 bg-navy-900/90 pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:border-solana-purple focus:outline-none"
-              />
+          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+            <div className="flex flex-1 flex-col sm:flex-row items-stretch sm:items-center gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-500" />
+                <input
+                  type="text"
+                  placeholder={dict.university.studentSearchPlaceholder}
+                  value={searchStudent}
+                  onChange={(e) => setSearchStudent(e.target.value)}
+                  className="w-full rounded-xl border border-slate-800 bg-navy-900/90 pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:border-solana-purple focus:outline-none"
+                />
+              </div>
+
+              {/* Filtro por Polo / Campus */}
+              <select
+                value={selectedCampusFilter}
+                onChange={(e) => setSelectedCampusFilter(e.target.value)}
+                className="rounded-xl border border-slate-800 bg-navy-900/90 px-3 py-2.5 text-xs text-slate-200 focus:border-solana-purple focus:outline-none"
+              >
+                <option value="ALL">Todos os Polos / Campus</option>
+                {campuses.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name} {c.city ? `(${c.city})` : ""}
+                  </option>
+                ))}
+              </select>
             </div>
-            <span className="text-xs text-slate-400 self-end sm:self-center">
-              {filteredStudents.length} estudantes cadastrados no protocolo
-            </span>
+
+            <button
+              onClick={() => setShowEnrollModal(true)}
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-solana-purple px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-solana-purple/20 hover:bg-solana-purpleDeep transition-all"
+            >
+              <UserPlus className="h-4 w-4" />
+              Matricular Aluno
+            </button>
           </div>
 
           {loadingStudents ? (
@@ -986,48 +1160,391 @@ export default function UniversityPortal() {
           ) : filteredStudents.length === 0 ? (
             <div className="rounded-3xl border border-dashed border-slate-800 p-12 text-center text-slate-400 space-y-2">
               <UserCheck className="h-8 w-8 text-slate-600 mx-auto" />
-              <p className="text-xs">Nenhum estudante encontrado com o filtro pesquisado.</p>
+              <p className="text-xs">Nenhum estudante matriculado encontrado com o filtro pesquisado.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {filteredStudents.map((stud) => (
-                <div
-                  key={stud.id}
-                  className="glass-panel rounded-2xl p-5 border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between"
-                >
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-white text-sm">{stud.full_name}</span>
-                      <span className="text-[11px] font-mono text-slate-400">CPF: {stud.cpf || "---"}</span>
-                    </div>
-                    <p className="text-xs text-slate-400 truncate">{stud.email}</p>
-                    <div className="font-mono text-[10px] text-slate-500 truncate">
-                      Wallet: {stud.solana_wallet_custodial}
-                    </div>
-                    <div className="flex items-center gap-3 pt-2 text-xs">
-                      <span className="text-solana-purple font-bold">
-                        {stud.total_hours}h atestadas
-                      </span>
-                      <span className="text-slate-400">•</span>
-                      <span className="text-slate-300">
-                        {stud.total_records} documentos emitidos
-                      </span>
-                    </div>
-                  </div>
+              {filteredStudents
+                .filter((stud) =>
+                  selectedCampusFilter === "ALL" ? true : stud.campus?.id === selectedCampusFilter
+                )
+                .map((stud) => (
+                  <div
+                    key={stud.enrollment_id || stud.student_id || stud.id}
+                    className="glass-panel rounded-2xl p-5 border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between"
+                  >
+                    <div className="space-y-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <span className="font-bold text-white text-sm block">{stud.full_name}</span>
+                          <span className="text-[11px] text-slate-400 font-medium">
+                            {stud.course_name || "Curso Geral"} • Matrícula:{" "}
+                            <strong className="text-slate-200">{stud.registration_number || "S/N"}</strong>
+                          </span>
+                        </div>
+                        <span
+                          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
+                            stud.status === "ACTIVE"
+                              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
+                              : "bg-slate-800 text-slate-400 border border-slate-700"
+                          }`}
+                        >
+                          {stud.status === "ACTIVE" ? "Matrícula Ativa" : stud.status || "Ativo"}
+                        </span>
+                      </div>
 
-                  <div className="pt-4 mt-3 border-t border-slate-800 flex items-center justify-end">
-                    <button
-                      onClick={() => setSelectedStudentForHistory(stud)}
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-navy-800/80 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700"
-                    >
-                      <Eye className="h-3.5 w-3.5 text-solana-purple" />
-                      {dict.university.viewHistory}
-                    </button>
+                      <div className="flex items-center gap-2 pt-1">
+                        <span className="inline-flex items-center gap-1 rounded-lg bg-navy-800 px-2 py-0.5 text-[10px] font-semibold text-sky-300">
+                          <MapPin className="h-3 w-3 text-sky-400" />
+                          {stud.campus?.name || "Campus Geral"}
+                        </span>
+                        <span className="text-[11px] font-mono text-slate-400">
+                          CPF: {stud.cpf || "---"}
+                        </span>
+                      </div>
+
+                      <p className="text-xs text-slate-400 truncate">{stud.email}</p>
+                      {stud.wallet && (
+                        <div className="font-mono text-[10px] text-slate-500 truncate">
+                          Wallet: {stud.wallet}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="pt-4 mt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+                      <button
+                        onClick={async () => {
+                          if (!stud.email) return alert("Estudante sem e-mail cadastrado.");
+                          try {
+                            const res = await fetch("/api/institution/students", {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({
+                                full_name: stud.full_name,
+                                cpf: stud.cpf || "00000000000",
+                                email: stud.email,
+                                registration_number: stud.registration_number || "MATR",
+                                course_name: stud.course_name || "Geral",
+                                campus_id: stud.campus?.id || null,
+                                send_email: true,
+                              }),
+                            });
+                            if (res.ok) alert(`E-mail de acesso reenviado para ${stud.email}!`);
+                            else alert("Erro ao reenviar e-mail.");
+                          } catch (e: any) {
+                            alert("Falha de conexão: " + e.message);
+                          }
+                        }}
+                        className="inline-flex items-center gap-1 text-[11px] text-slate-400 hover:text-white transition-colors"
+                        title="Reenviar e-mail de acesso ao passaporte"
+                      >
+                        <Mail className="h-3.5 w-3.5 text-solana-purple" />
+                        Reenviar Acesso
+                      </button>
+
+                      <button
+                        onClick={() => setSelectedStudentForHistory(stud)}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-navy-800/80 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700 transition-all"
+                      >
+                        <Eye className="h-3.5 w-3.5 text-solana-purple" />
+                        {dict.university.viewHistory}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* ABA 5: GESTÃO DE POLOS & CAMPUS */}
+      {activeTab === "CAMPUSES" && (
+        <div className="space-y-6 animate-in fade-in">
+          {/* FORMULÁRIO DE CADASTRO DE NOVO CAMPUS */}
+          <div className="glass-panel rounded-2xl p-6 border-slate-800 space-y-4">
+            <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+              <MapPin className="h-5 w-5 text-solana-purple" />
+              <div>
+                <h3 className="font-bold text-white text-base">Cadastrar Novo Polo ou Campus</h3>
+                <p className="text-xs text-slate-400">
+                  Gerencie as unidades físicas ou polos EaD da sua instituição de ensino para vinculação de alunos e turmas.
+                </p>
+              </div>
+            </div>
+
+            <form onSubmit={handleCreateCampus} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                  Nome do Campus / Polo *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Ex: Campus Central"
+                  value={newCampusName}
+                  onChange={(e) => setNewCampusName(e.target.value)}
+                  className="w-full rounded-xl border border-slate-800 bg-navy-900/90 px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-solana-purple focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                  Código e-MEC / Sigla
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ex: POLO-01 / MEC-8492"
+                  value={newCampusCode}
+                  onChange={(e) => setNewCampusCode(e.target.value)}
+                  className="w-full rounded-xl border border-slate-800 bg-navy-900/90 px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-solana-purple focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-400 mb-1">Cidade</label>
+                <input
+                  type="text"
+                  placeholder="Ex: Montes Claros"
+                  value={newCampusCity}
+                  onChange={(e) => setNewCampusCity(e.target.value)}
+                  className="w-full rounded-xl border border-slate-800 bg-navy-900/90 px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-solana-purple focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-400 mb-1">UF (Estado)</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    maxLength={2}
+                    placeholder="MG"
+                    value={newCampusState}
+                    onChange={(e) => setNewCampusState(e.target.value.toUpperCase())}
+                    className="w-20 rounded-xl border border-slate-800 bg-navy-900/90 px-3 py-2 text-xs text-white uppercase placeholder-slate-500 focus:border-solana-purple focus:outline-none"
+                  />
+                  <button
+                    type="submit"
+                    disabled={savingCampus || !newCampusName.trim()}
+                    className="flex-1 rounded-xl bg-solana-purple px-4 py-2 text-xs font-bold text-white shadow-md shadow-solana-purple/20 hover:bg-solana-purpleDeep transition-all disabled:opacity-50"
+                  >
+                    {savingCampus ? "Salvando..." : "Adicionar"}
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          {/* LISTAGEM DE CAMPUS CADASTRADOS */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              Polos e Unidades Cadastradas ({campuses.length})
+            </h4>
+
+            {loadingCampuses ? (
+              <div className="flex items-center justify-center gap-2 py-12 text-sm text-slate-400">
+                <RefreshCw className="h-5 w-5 animate-spin text-solana-purple" />
+                Carregando unidades...
+              </div>
+            ) : campuses.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-slate-800 p-8 text-center text-slate-400">
+                Nenhum campus ou polo cadastrado ainda. Use o formulário acima para registrar sua primeira unidade.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {campuses.map((c) => (
+                  <div
+                    key={c.id}
+                    className="glass-panel rounded-2xl p-4 border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between"
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-white text-sm">{c.name}</span>
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-[9px] font-bold ${
+                            c.is_active
+                              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
+                              : "bg-red-500/10 text-red-400 border border-red-500/30"
+                          }`}
+                        >
+                          {c.is_active ? "Ativo" : "Inativo"}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-400">
+                        {c.city ? `${c.city}${c.state ? ` - ${c.state}` : ""}` : "Unidade Central"}
+                      </p>
+                      {c.code && (
+                        <p className="text-[10px] font-mono text-slate-500">Código: {c.code}</p>
+                      )}
+                    </div>
+
+                    <div className="pt-3 mt-2 border-t border-slate-800 flex items-center justify-end">
+                      <button
+                        onClick={async () => {
+                          try {
+                            const res = await fetch("/api/institution/campuses", {
+                              method: "PUT",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ id: c.id, is_active: !c.is_active }),
+                            });
+                            if (res.ok) loadCampuses();
+                          } catch (e) {
+                            console.error(e);
+                          }
+                        }}
+                        className="text-[11px] text-slate-400 hover:text-white transition-colors"
+                      >
+                        {c.is_active ? "Desativar Polo" : "Ativar Polo"}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE MATRÍCULA DE ESTUDANTE (MULTI-TENANT) */}
+      {showEnrollModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="glass-panel rounded-3xl p-6 sm:p-8 max-w-lg w-full border-slate-700 space-y-4 animate-in zoom-in-95">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2">
+                <UserPlus className="h-5 w-5 text-solana-purple" />
+                <h3 className="font-display text-lg font-bold text-white">Matricular Estudante</h3>
+              </div>
+              <button
+                onClick={() => setShowEnrollModal(false)}
+                className="rounded-lg border border-slate-700 p-1.5 text-slate-400 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+
+            {enrollFeedback && (
+              <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs text-emerald-300">
+                {enrollFeedback}
+              </div>
+            )}
+
+            <form onSubmit={handleEnrollStudent} className="space-y-3">
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                  Nome Completo do Aluno *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Nome do estudante"
+                  value={enrollName}
+                  onChange={(e) => setEnrollName(e.target.value)}
+                  className="w-full rounded-xl border border-slate-800 bg-navy-900/90 px-3 py-2 text-xs text-white focus:border-solana-purple focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-400 mb-1">CPF *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="000.000.000-00"
+                    value={enrollCpf}
+                    onChange={(e) => setEnrollCpf(e.target.value)}
+                    className="w-full rounded-xl border border-slate-800 bg-navy-900/90 px-3 py-2 text-xs text-white focus:border-solana-purple focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                    E-mail do Estudante *
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="aluno@email.com"
+                    value={enrollEmail}
+                    onChange={(e) => setEnrollEmail(e.target.value)}
+                    className="w-full rounded-xl border border-slate-800 bg-navy-900/90 px-3 py-2 text-xs text-white focus:border-solana-purple focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                    Número de Matrícula *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ex: 202610984"
+                    value={enrollRegNum}
+                    onChange={(e) => setEnrollRegNum(e.target.value)}
+                    className="w-full rounded-xl border border-slate-800 bg-navy-900/90 px-3 py-2 text-xs text-white focus:border-solana-purple focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-400 mb-1">Curso *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ex: Engenharia de Software"
+                    value={enrollCourse}
+                    onChange={(e) => setEnrollCourse(e.target.value)}
+                    className="w-full rounded-xl border border-slate-800 bg-navy-900/90 px-3 py-2 text-xs text-white focus:border-solana-purple focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                  Polo / Campus de Alocação
+                </label>
+                <select
+                  value={enrollCampusId}
+                  onChange={(e) => setEnrollCampusId(e.target.value)}
+                  className="w-full rounded-xl border border-slate-800 bg-navy-900/90 px-3 py-2 text-xs text-white focus:border-solana-purple focus:outline-none"
+                >
+                  <option value="">Campus Geral / Sede</option>
+                  {campuses.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name} {c.city ? `(${c.city})` : ""}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex items-center gap-2 pt-2">
+                <input
+                  type="checkbox"
+                  id="sendEmailCheck"
+                  checked={enrollSendEmail}
+                  onChange={(e) => setEnrollSendEmail(e.target.checked)}
+                  className="rounded border-slate-700 bg-navy-900 text-solana-purple focus:ring-solana-purple"
+                />
+                <label htmlFor="sendEmailCheck" className="text-xs text-slate-300 select-none">
+                  Disparar e-mail de acesso e boas-vindas com instruções do passaporte
+                </label>
+              </div>
+
+              <div className="pt-3 flex items-center justify-end gap-2 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setShowEnrollModal(false)}
+                  className="rounded-xl border border-slate-700 px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={enrolling}
+                  className="rounded-xl bg-solana-purple px-5 py-2 text-xs font-bold text-white shadow-md shadow-solana-purple/20 hover:bg-solana-purpleDeep transition-all disabled:opacity-50"
+                >
+                  {enrolling ? "Matriculando..." : "Confirmar Matrícula"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 

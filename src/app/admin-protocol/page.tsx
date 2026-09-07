@@ -70,7 +70,9 @@ interface UserProfile {
   institution_name?: string;
   company_name?: string;
   phone?: string;
-  status: "PENDING" | "APPROVED" | "REJECTED";
+  status: "PENDING" | "APPROVED" | "REJECTED" | "SUSPENDED";
+  institution_id?: string;
+  campus_id?: string;
   approved_by?: string;
   approved_at?: string;
   rejected_reason?: string;
@@ -179,6 +181,32 @@ export default function AdminProtocolPage() {
   const [userSearchTerm, setUserSearchTerm] = useState("");
   const [reviewingId, setReviewingId] = useState<string | null>(null);
   const [userMsg, setUserMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  // Estados de Criação e Edição de Usuário pelo Admin
+  const [showCreateUserModal, setShowCreateUserModal] = useState(false);
+  const [createUserName, setCreateUserName] = useState("");
+  const [createUserEmail, setCreateUserEmail] = useState("");
+  const [createUserPassword, setCreateUserPassword] = useState("");
+  const [createUserRole, setCreateUserRole] = useState<"STUDENT" | "INSTITUTION" | "EMPLOYER" | "ADMIN">("STUDENT");
+  const [createUserInstId, setCreateUserInstId] = useState("");
+  const [createUserStatus, setCreateUserStatus] = useState("APPROVED");
+  const [creatingUser, setCreatingUser] = useState(false);
+
+  const [showEditUserModal, setShowEditUserModal] = useState(false);
+  const [editingUser, setEditingUser] = useState<UserProfile | null>(null);
+  const [editUserRole, setEditUserRole] = useState<"STUDENT" | "INSTITUTION" | "EMPLOYER" | "ADMIN">("STUDENT");
+  const [editUserStatus, setEditUserStatus] = useState<"PENDING" | "APPROVED" | "REJECTED" | "SUSPENDED">("APPROVED");
+  const [editUserInstId, setEditUserInstId] = useState("");
+  const [savingUserEdit, setSavingUserEdit] = useState(false);
+
+  // Estados de Gestão de Campus de IES pelo Admin
+  const [instCampuses, setInstCampuses] = useState<Record<string, any[]>>({});
+  const [selectedInstForCampus, setSelectedInstForCampus] = useState<DetailedInstitution | null>(null);
+  const [adminCampusName, setAdminCampusName] = useState("");
+  const [adminCampusCode, setAdminCampusCode] = useState("");
+  const [adminCampusCity, setAdminCampusCity] = useState("");
+  const [adminCampusState, setAdminCampusState] = useState("");
+  const [savingAdminCampus, setSavingAdminCampus] = useState(false);
 
   // 5. Aba Suporte / Saúde
   const [systemHealth, setSystemHealth] = useState<SystemHealth | null>(null);
@@ -365,6 +393,170 @@ export default function AdminProtocolPage() {
       setUserMsg({ type: "error", text: `Erro de conexão: ${err.message}` });
     } finally {
       setReviewingId(null);
+    }
+  };
+
+  // Suspender ou Reativar Usuário
+  const handleToggleSuspendUser = async (userId: string, currentStatus: string) => {
+    const nextStatus = currentStatus === "SUSPENDED" ? "APPROVED" : "SUSPENDED";
+    const label = nextStatus === "SUSPENDED" ? "suspender" : "reativar";
+    if (!confirm(`Deseja realmente ${label} este usuário no protocolo?`)) return;
+
+    try {
+      const res = await fetch("/api/admin/users/manage", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: userId, status: nextStatus }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setUserMsg({ type: "success", text: data.message });
+        fetchUsers();
+        setTimeout(() => setUserMsg(null), 4000);
+      } else {
+        alert(data.error || "Falha ao alterar status.");
+      }
+    } catch (e: any) {
+      alert("Falha de conexão: " + e.message);
+    }
+  };
+
+  // Criar Usuário pelo Admin
+  const handleCreateUserSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCreatingUser(true);
+    try {
+      const res = await fetch("/api/admin/users/manage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          full_name: createUserName.trim(),
+          email: createUserEmail.trim(),
+          password: createUserPassword.trim() || undefined,
+          role: createUserRole,
+          status: createUserStatus,
+          institution_id: createUserInstId || null,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setShowCreateUserModal(false);
+        setCreateUserName("");
+        setCreateUserEmail("");
+        setCreateUserPassword("");
+        setUserMsg({ type: "success", text: data.message });
+        fetchUsers();
+        setTimeout(() => setUserMsg(null), 5000);
+      } else {
+        alert(data.error || "Erro ao cadastrar usuário.");
+      }
+    } catch (e: any) {
+      alert("Falha de conexão: " + e.message);
+    } finally {
+      setCreatingUser(false);
+    }
+  };
+
+  // Salvar Edição de Usuário
+  const handleSaveUserEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingUser) return;
+    setSavingUserEdit(true);
+    try {
+      const res = await fetch("/api/admin/users/manage", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: editingUser.user_id,
+          role: editUserRole,
+          status: editUserStatus,
+          institution_id: editUserInstId || null,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setShowEditUserModal(false);
+        setEditingUser(null);
+        setUserMsg({ type: "success", text: data.message });
+        fetchUsers();
+        setTimeout(() => setUserMsg(null), 5000);
+      } else {
+        alert(data.error || "Erro ao atualizar.");
+      }
+    } catch (e: any) {
+      alert("Falha de conexão: " + e.message);
+    } finally {
+      setSavingUserEdit(false);
+    }
+  };
+
+  // Suspender ou Reativar IES
+  const handleToggleInstitutionActive = async (instId: string, currentActive: boolean) => {
+    const nextActive = !currentActive;
+    const label = nextActive ? "reativar" : "suspender";
+    if (!confirm(`Deseja realmente ${label} o credenciamento desta IES?`)) return;
+
+    try {
+      const res = await fetch("/api/admin/institutions/manage", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: instId, is_active: nextActive }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        fetchInstitutions();
+      } else {
+        alert(data.error || "Erro ao alterar credenciamento da IES.");
+      }
+    } catch (e: any) {
+      alert("Falha de conexão: " + e.message);
+    }
+  };
+
+  // Carregar Campus de uma IES para o Admin
+  const loadCampusesForInst = async (instId: string) => {
+    try {
+      const res = await fetch(`/api/institution/campuses?institution_id=${instId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setInstCampuses((prev) => ({ ...prev, [instId]: data.campuses || [] }));
+      }
+    } catch (e) {
+      console.error("Erro ao carregar campus da IES:", e);
+    }
+  };
+
+  // Criar Campus para IES pelo Admin
+  const handleCreateAdminCampusSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedInstForCampus || !adminCampusName.trim()) return;
+    setSavingAdminCampus(true);
+    try {
+      const res = await fetch("/api/institution/campuses", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          institution_id: selectedInstForCampus.id,
+          name: adminCampusName.trim(),
+          code: adminCampusCode.trim(),
+          city: adminCampusCity.trim(),
+          state: adminCampusState.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setAdminCampusName("");
+        setAdminCampusCode("");
+        setAdminCampusCity("");
+        setAdminCampusState("");
+        loadCampusesForInst(selectedInstForCampus.id);
+      } else {
+        alert(data.error || "Erro ao criar campus.");
+      }
+    } catch (e: any) {
+      alert("Falha de conexão: " + e.message);
+    } finally {
+      setSavingAdminCampus(false);
     }
   };
 
@@ -709,13 +901,37 @@ export default function AdminProtocolPage() {
                           <p className="text-xs text-slate-400 font-mono mt-0.5">CNPJ: {inst.cnpj}</p>
                         </div>
 
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <button
+                            onClick={() => {
+                              setSelectedInstForCampus(inst);
+                              loadCampusesForInst(inst.id);
+                            }}
+                            className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-cyan-300 border border-cyan-500/30 flex items-center gap-1.5 transition-all"
+                            title="Gerenciar polos e campus desta instituição"
+                          >
+                            <Building2 className="h-3.5 w-3.5" />
+                            Polos & Campus ({instCampuses[inst.id]?.length ?? "..."})
+                          </button>
+
                           <button
                             onClick={() => setSelectedInstForUsers(inst)}
                             className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-purple-300 border border-purple-500/30 flex items-center gap-1.5 transition-all"
                           >
                             <Users className="h-3.5 w-3.5" />
-                            Ver Usuários ({inst.users_count})
+                            Usuários ({inst.users_count})
+                          </button>
+
+                          <button
+                            onClick={() => handleToggleInstitutionActive(inst.id, inst.is_active)}
+                            className={`px-3 py-1.5 rounded-xl text-xs font-semibold border flex items-center gap-1.5 transition-all ${
+                              inst.is_active
+                                ? "bg-red-950/40 text-red-300 border-red-500/30 hover:bg-red-900/60"
+                                : "bg-emerald-950/40 text-emerald-300 border-emerald-500/30 hover:bg-emerald-900/60"
+                            }`}
+                            title={inst.is_active ? "Suspender credenciamento no protocolo" : "Reativar credenciamento"}
+                          >
+                            {inst.is_active ? "Suspender IES" : "Reativar IES"}
                           </button>
                         </div>
                       </div>
@@ -1231,13 +1447,20 @@ curl -X POST https://latteschain.vercel.app/api/v1/credentials/issue \\
       {/* ======================================================== */}
       {activeTab === "users" && (
         <div className="space-y-4 animate-in fade-in-50 duration-200">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
               <UserCheck className="h-4 w-4 text-cyan-400" />
-              Fila de Triagem e Auditoria de Cadastros
+              Gestão de Usuários, Atribuições & Governança
             </h3>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={() => setShowCreateUserModal(true)}
+                className="px-3 py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-navy-950 font-bold text-xs shadow-sm flex items-center gap-1.5 transition-all"
+              >
+                <PlusCircle className="h-3.5 w-3.5" /> Criar Novo Usuário
+              </button>
+
               <div className="relative">
                 <Search className="h-3.5 w-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
@@ -1245,7 +1468,7 @@ curl -X POST https://latteschain.vercel.app/api/v1/credentials/issue \\
                   value={userSearchTerm}
                   onChange={(e) => setUserSearchTerm(e.target.value)}
                   placeholder="Filtrar por nome, email, CPF..."
-                  className="bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:border-cyan-500 outline-none w-56"
+                  className="bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:border-cyan-500 outline-none w-52"
                 />
               </div>
 
@@ -1256,6 +1479,7 @@ curl -X POST https://latteschain.vercel.app/api/v1/credentials/issue \\
               >
                 <option value="PENDING">Pendentes</option>
                 <option value="APPROVED">Aprovados</option>
+                <option value="SUSPENDED">Suspensos</option>
                 <option value="REJECTED">Reprovados</option>
                 <option value="ALL">Todos os Registros</option>
               </select>
@@ -1263,6 +1487,7 @@ curl -X POST https://latteschain.vercel.app/api/v1/credentials/issue \\
               <button
                 onClick={fetchUsers}
                 className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all"
+                title="Atualizar lista"
               >
                 <RefreshCw className={`h-3.5 w-3.5 ${fetchingUsers ? "animate-spin" : ""}`} />
               </button>
@@ -1288,7 +1513,7 @@ curl -X POST https://latteschain.vercel.app/api/v1/credentials/issue \\
 
           {fetchingUsers ? (
             <div className="glass-panel p-10 text-center text-xs text-slate-400 rounded-2xl">
-              Carregando fila de cadastros...
+              Carregando fila de usuários...
             </div>
           ) : filteredUsers.length === 0 ? (
             <div className="glass-panel p-10 text-center text-xs text-slate-400 rounded-2xl">
@@ -1313,10 +1538,12 @@ curl -X POST https://latteschain.vercel.app/api/v1/credentials/issue \\
                             ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
                             : u.status === "PENDING"
                             ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                            : u.status === "SUSPENDED"
+                            ? "bg-purple-950/40 text-purple-300 border-purple-500/40"
                             : "bg-red-500/10 text-red-400 border-red-500/30"
                         }`}
                       >
-                        {u.status}
+                        {u.status === "SUSPENDED" ? "SUSPENSO" : u.status}
                       </span>
                     </div>
 
@@ -1336,25 +1563,53 @@ curl -X POST https://latteschain.vercel.app/api/v1/credentials/issue \\
                     )}
                   </div>
 
-                  {u.status === "PENDING" && (
-                    <div className="flex items-center gap-2 shrink-0">
-                      <button
-                        onClick={() => handleReviewUser(u.user_id, "APPROVE")}
-                        disabled={reviewingId === u.user_id}
-                        className="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold hover:bg-emerald-500/30 transition-all flex items-center gap-1"
-                      >
-                        <Check className="h-3.5 w-3.5" /> Aprovar
-                      </button>
+                  <div className="flex flex-wrap items-center gap-2 shrink-0">
+                    {u.status === "PENDING" ? (
+                      <>
+                        <button
+                          onClick={() => handleReviewUser(u.user_id, "APPROVE")}
+                          disabled={reviewingId === u.user_id}
+                          className="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold hover:bg-emerald-500/30 transition-all flex items-center gap-1"
+                        >
+                          <Check className="h-3.5 w-3.5" /> Aprovar
+                        </button>
 
-                      <button
-                        onClick={() => handleReviewUser(u.user_id, "REJECT")}
-                        disabled={reviewingId === u.user_id}
-                        className="px-3 py-1.5 rounded-xl bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-semibold hover:bg-red-500/30 transition-all flex items-center gap-1"
-                      >
-                        <X className="h-3.5 w-3.5" /> Reprovar
-                      </button>
-                    </div>
-                  )}
+                        <button
+                          onClick={() => handleReviewUser(u.user_id, "REJECT")}
+                          disabled={reviewingId === u.user_id}
+                          className="px-3 py-1.5 rounded-xl bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-semibold hover:bg-red-500/30 transition-all flex items-center gap-1"
+                        >
+                          <X className="h-3.5 w-3.5" /> Reprovar
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => {
+                            setEditingUser(u);
+                            setEditUserRole(u.role);
+                            setEditUserStatus(u.status);
+                            setEditUserInstId(u.institution_id || "");
+                            setShowEditUserModal(true);
+                          }}
+                          className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 border border-slate-700 transition-all"
+                        >
+                          Editar / Atribuir
+                        </button>
+
+                        <button
+                          onClick={() => handleToggleSuspendUser(u.user_id, u.status)}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
+                            u.status === "SUSPENDED"
+                              ? "bg-emerald-950/40 text-emerald-300 border-emerald-500/30 hover:bg-emerald-900/60"
+                              : "bg-red-950/40 text-red-400 border-red-500/30 hover:bg-red-900/60"
+                          }`}
+                        >
+                          {u.status === "SUSPENDED" ? "Reativar Usuário" : "Suspender"}
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -1482,6 +1737,310 @@ curl -X POST https://latteschain.vercel.app/api/v1/credentials/issue \\
           </div>
         </div>
       )}
+
+      {/* MODAL 1: CRIAR NOVO USUÁRIO (ADMIN DIRECT) */}
+      {showCreateUserModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="glass-panel max-w-lg w-full rounded-2xl p-6 border-slate-700 space-y-4 animate-in zoom-in-95">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <PlusCircle className="h-4 w-4 text-cyan-400" />
+                Criar Novo Usuário no Protocolo
+              </h3>
+              <button
+                onClick={() => setShowCreateUserModal(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateUserSubmit} className="space-y-3">
+              <div>
+                <label className="text-[11px] font-semibold text-slate-300 block mb-1">Nome Completo *</label>
+                <input
+                  type="text"
+                  required
+                  value={createUserName}
+                  onChange={(e) => setCreateUserName(e.target.value)}
+                  placeholder="Nome do usuário"
+                  className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-cyan-400 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-semibold text-slate-300 block mb-1">E-mail de Login *</label>
+                <input
+                  type="email"
+                  required
+                  value={createUserEmail}
+                  onChange={(e) => setCreateUserEmail(e.target.value)}
+                  placeholder="email@dominio.com"
+                  className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-cyan-400 outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[11px] font-semibold text-slate-300 block mb-1">Senha Provisória</label>
+                  <input
+                    type="password"
+                    value={createUserPassword}
+                    onChange={(e) => setCreateUserPassword(e.target.value)}
+                    placeholder="Mudar@123456 (default)"
+                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-cyan-400 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-semibold text-slate-300 block mb-1">Perfil (Role) *</label>
+                  <select
+                    value={createUserRole}
+                    onChange={(e) => setCreateUserRole(e.target.value as any)}
+                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-cyan-400 outline-none"
+                  >
+                    <option value="STUDENT">Estudante</option>
+                    <option value="INSTITUTION">Instituição (IES)</option>
+                    <option value="EMPLOYER">Empresa / RH</option>
+                    <option value="ADMIN">Administrador Geral</option>
+                  </select>
+                </div>
+              </div>
+
+              {createUserRole === "INSTITUTION" && (
+                <div>
+                  <label className="text-[11px] font-semibold text-slate-300 block mb-1">
+                    Vincular à Instituição de Ensino
+                  </label>
+                  <select
+                    value={createUserInstId}
+                    onChange={(e) => setCreateUserInstId(e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-cyan-400 outline-none"
+                  >
+                    <option value="">Selecione uma IES</option>
+                    {institutions.map((i) => (
+                      <option key={i.id} value={i.id}>
+                        {i.name} ({i.cnpj})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              <div>
+                <label className="text-[11px] font-semibold text-slate-300 block mb-1">Status Inicial</label>
+                <select
+                  value={createUserStatus}
+                  onChange={(e) => setCreateUserStatus(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-cyan-400 outline-none"
+                >
+                  <option value="APPROVED">Aprovado e Ativo</option>
+                  <option value="PENDING">Pendente de Triagem</option>
+                  <option value="SUSPENDED">Suspenso</option>
+                </select>
+              </div>
+
+              <div className="pt-3 flex justify-end gap-2 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setShowCreateUserModal(false)}
+                  className="px-4 py-2 bg-slate-800 text-xs font-semibold text-slate-300 hover:text-white rounded-xl"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={creatingUser}
+                  className="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-navy-950 font-bold text-xs rounded-xl transition-all disabled:opacity-50"
+                >
+                  {creatingUser ? "Criando..." : "Salvar Usuário"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 2: EDITAR / ATRIBUIR USUÁRIO */}
+      {showEditUserModal && editingUser && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="glass-panel max-w-lg w-full rounded-2xl p-6 border-slate-700 space-y-4 animate-in zoom-in-95">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div>
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  Editar & Atribuir: {editingUser.full_name}
+                </h3>
+                <p className="text-xs text-slate-400">{editingUser.email}</p>
+              </div>
+              <button
+                onClick={() => setShowEditUserModal(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveUserEditSubmit} className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[11px] font-semibold text-slate-300 block mb-1">Papel (Role)</label>
+                  <select
+                    value={editUserRole}
+                    onChange={(e) => setEditUserRole(e.target.value as any)}
+                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-cyan-400 outline-none"
+                  >
+                    <option value="STUDENT">Estudante</option>
+                    <option value="INSTITUTION">Instituição (IES)</option>
+                    <option value="EMPLOYER">Empresa / RH</option>
+                    <option value="ADMIN">Administrador</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-semibold text-slate-300 block mb-1">Status de Acesso</label>
+                  <select
+                    value={editUserStatus}
+                    onChange={(e) => setEditUserStatus(e.target.value as any)}
+                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-cyan-400 outline-none"
+                  >
+                    <option value="APPROVED">Aprovado</option>
+                    <option value="SUSPENDED">Suspenso</option>
+                    <option value="PENDING">Pendente</option>
+                    <option value="REJECTED">Reprovado</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[11px] font-semibold text-slate-300 block mb-1">
+                  Atribuição de Instituição (IES)
+                </label>
+                <select
+                  value={editUserInstId}
+                  onChange={(e) => setEditUserInstId(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-cyan-400 outline-none"
+                >
+                  <option value="">Nenhuma / Não atribuído</option>
+                  {institutions.map((i) => (
+                    <option key={i.id} value={i.id}>
+                      {i.name} ({i.cnpj})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="pt-3 flex justify-end gap-2 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setShowEditUserModal(false)}
+                  className="px-4 py-2 bg-slate-800 text-xs font-semibold text-slate-300 hover:text-white rounded-xl"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingUserEdit}
+                  className="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-navy-950 font-bold text-xs rounded-xl transition-all disabled:opacity-50"
+                >
+                  {savingUserEdit ? "Salvando..." : "Salvar Alterações"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 3: GESTÃO DE POLOS & CAMPUS DE UMA IES PELO ADMIN */}
+      {selectedInstForCampus && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="glass-panel max-w-2xl w-full rounded-2xl p-6 border-slate-700 space-y-4 max-h-[85vh] overflow-y-auto animate-in zoom-in-95">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div>
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Building2 className="h-4 w-4 text-cyan-400" />
+                  Polos & Campus: {selectedInstForCampus.name}
+                </h3>
+                <p className="text-xs text-slate-400">CNPJ: {selectedInstForCampus.cnpj}</p>
+              </div>
+              <button
+                onClick={() => setSelectedInstForCampus(null)}
+                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* FORMULÁRIO DE NOVO CAMPUS */}
+            <form onSubmit={handleCreateAdminCampusSubmit} className="grid grid-cols-1 sm:grid-cols-4 gap-2 border border-slate-800 p-3 rounded-xl bg-navy-900/60">
+              <div className="sm:col-span-2">
+                <input
+                  type="text"
+                  required
+                  placeholder="Nome do Polo / Campus *"
+                  value={adminCampusName}
+                  onChange={(e) => setAdminCampusName(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none"
+                />
+              </div>
+              <div>
+                <input
+                  type="text"
+                  placeholder="Cidade"
+                  value={adminCampusCity}
+                  onChange={(e) => setAdminCampusCity(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none"
+                />
+              </div>
+              <div className="flex gap-1.5">
+                <input
+                  type="text"
+                  maxLength={2}
+                  placeholder="UF"
+                  value={adminCampusState}
+                  onChange={(e) => setAdminCampusState(e.target.value.toUpperCase())}
+                  className="w-12 bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-white uppercase outline-none"
+                />
+                <button
+                  type="submit"
+                  disabled={savingAdminCampus}
+                  className="flex-1 bg-cyan-600 hover:bg-cyan-500 text-navy-950 font-bold text-xs rounded-lg transition-all"
+                >
+                  Adicionar
+                </button>
+              </div>
+            </form>
+
+            {/* LISTAGEM DE CAMPUS */}
+            <div className="space-y-2">
+              <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                Unidades Cadastradas ({(instCampuses[selectedInstForCampus.id] || []).length})
+              </h4>
+              {(instCampuses[selectedInstForCampus.id] || []).length === 0 ? (
+                <p className="text-xs text-slate-500 text-center py-4">
+                  Nenhum campus ou polo cadastrado para esta instituição ainda.
+                </p>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {(instCampuses[selectedInstForCampus.id] || []).map((c: any) => (
+                    <div key={c.id} className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between">
+                      <div>
+                        <span className="font-bold text-white text-xs block">{c.name}</span>
+                        <span className="text-[10px] text-slate-400">
+                          {c.city ? `${c.city}${c.state ? `/${c.state}` : ""}` : "Geral"} {c.code ? `• Cód: ${c.code}` : ""}
+                        </span>
+                      </div>
+                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${c.is_active ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"}`}>
+                        {c.is_active ? "Ativo" : "Inativo"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+

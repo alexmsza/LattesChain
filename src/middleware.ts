@@ -77,12 +77,17 @@ export async function middleware(request: NextRequest) {
       url.pathname = "/login";
       url.search = "?pending=1";
       if (status === "REJECTED") url.search = "?rejected=1";
+      if (status === "SUSPENDED") url.search = "?suspended=1";
       return NextResponse.redirect(url);
     }
 
     if (!role || !guard.roles.includes(role)) {
       const url = request.nextUrl.clone();
-      url.pathname = "/";
+      // Redireciona para o portal correspondente ao perfil do usuário
+      if (role === "STUDENT") url.pathname = "/student";
+      else if (role === "INSTITUTION") url.pathname = "/university";
+      else if (role === "EMPLOYER") url.pathname = "/validator";
+      else url.pathname = "/";
       url.search = "";
       return NextResponse.redirect(url);
     }

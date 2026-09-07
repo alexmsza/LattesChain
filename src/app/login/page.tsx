@@ -32,6 +32,7 @@ function LoginForm() {
   const nextParam = searchParams.get("next"); // p/ onde voltar após login (guards)
   const pendingParam = searchParams.get("pending") === "1";
   const rejectedParam = searchParams.get("rejected") === "1";
+  const suspendedParam = searchParams.get("suspended") === "1";
 
   const { dict } = useLanguage();
   const t = dict.auth.login;
@@ -75,7 +76,9 @@ function LoginForm() {
 
       if (!userStatus || userStatus !== "APPROVED") {
         await supabase.auth.signOut();
-        if (userStatus === "REJECTED") {
+        if (userStatus === "SUSPENDED") {
+          setError("Acesso suspenso. Sua conta foi temporariamente desativada pela governança.");
+        } else if (userStatus === "REJECTED") {
           setError(t.rejectedMsg);
         } else {
           setPendingMsg(t.pendingMsg);
@@ -109,6 +112,12 @@ function LoginForm() {
           </p>
         </div>
 
+        {suspendedParam && !error && !pendingMsg && (
+          <div className="mb-4 flex items-start gap-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+            <span>Acesso suspenso. Sua conta foi temporariamente desativada pela administração.</span>
+          </div>
+        )}
         {rejectedParam && !error && !pendingMsg && (
           <div className="mb-4 flex items-start gap-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />

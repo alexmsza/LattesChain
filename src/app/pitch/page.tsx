@@ -25,26 +25,131 @@ import {
   Cpu,
   ArrowRight,
   TrendingUp,
+  Video,
+  Tv,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { SLIDES_DATA, TEAM_MEMBERS, SlideData } from "./slides-data";
 
 export default function PitchDeckPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [showNotes, setShowNotes] = useState(true);
+  const [showNotes, setShowNotes] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isRecordingMode, setIsRecordingMode] = useState(false);
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [speakerWindowOpened, setSpeakerWindowOpened] = useState(false);
+  
   const containerRef = useRef<HTMLDivElement>(null);
+  const broadcastChannelRef = useRef<BroadcastChannel | null>(null);
 
   const totalSlides = SLIDES_DATA.length;
   const slide = SLIDES_DATA[currentSlide];
+
+  // BroadcastChannel setup para comunicação bidirecional com a janela do orador
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    let channel: BroadcastChannel | null = null;
+    try {
+      channel = new BroadcastChannel("lattes_pitch_sync");
+      broadcastChannelRef.current = channel;
+
+      channel.onmessage = (event) => {
+        const { type, payload } = event.data || {};
+        if (type === "SYNC_SLIDE" && typeof payload?.slideIndex === "number") {
+          setCurrentSlide(payload.slideIndex);
+        } else if (type === "SYNC_TIMER") {
+          if (typeof payload?.seconds === "number") setTimerSeconds(payload.seconds);
+          if (typeof payload?.isRunning === "boolean") setIsTimerRunning(payload.isRunning);
+        } else if (type === "REQUEST_STATE") {
+          // Quando a janela de orador abrir, responde o estado corrente
+          channel?.postMessage({
+            type: "SYNC_SLIDE",
+            payload: { slideIndex: currentSlide },
+          });
+          channel?.postMessage({
+            type: "SYNC_TIMER",
+            payload: { seconds: timerSeconds, isRunning: isTimerRunning },
+          });
+        }
+      };
+    } catch {
+      // Fallback para ambientes sem suporte a BroadcastChannel
+    }
+
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === "lattes_pitch_current_slide" && e.newValue) {
+        const idx = parseInt(e.newValue, 10);
+        if (!isNaN(idx) && idx >= 0 && idx < totalSlides) {
+          setCurrentSlide(idx);
+        }
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+
+    return () => {
+      if (channel) channel.close();
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, [totalSlides, currentSlide, timerSeconds, isTimerRunning]);
+
+  // Função para abrir notas do orador em janela independente pop-out
+  const openSpeakerWindow = useCallback(() => {
+    setShowNotes(false); // Oculta notas locais para deixar tela limpa para gravação
+    setSpeakerWindowOpened(true);
+    
+    const width = 1120;
+    const height = 820;
+    const left = typeof window !== "undefined" ? window.screenX + 60 : 100;
+    const top = typeof window !== "undefined" ? window.screenY + 60 : 100;
+
+    const popup = window.open(
+      "/pitch/speaker",
+      "LattesPitchSpeakerNotes",
+      `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,location=no,status=no,resizable=yes,scrollbars=yes`
+    );
+    if (popup) {
+      popup.focus();
+    }
+  }, []);
+
+  // Notificar outros ouvintes quando o slide mudar
+  const broadcastSlide = useCallback((idx: number) => {
+    try {
+      broadcastChannelRef.current?.postMessage({
+        type: "SYNC_SLIDE",
+        payload: { slideIndex: idx },
+      });
+      localStorage.setItem("lattes_pitch_current_slide", idx.toString());
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  // Notificar cronômetro
+  const broadcastTimer = useCallback((sec: number, running: boolean) => {
+    try {
+      broadcastChannelRef.current?.postMessage({
+        type: "SYNC_TIMER",
+        payload: { seconds: sec, isRunning: running },
+      });
+    } catch {
+      // ignore
+    }
+  }, []);
 
   // Timer interval
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     if (isTimerRunning) {
       interval = setInterval(() => {
-        setTimerSeconds((prev) => prev + 1);
+        setTimerSeconds((prev) => {
+          const nextVal = prev + 1;
+          broadcastTimer(nextVal, true);
+          return nextVal;
+        });
       }, 1000);
     } else if (interval) {
       clearInterval(interval);
@@ -52,16 +157,21 @@ export default function PitchDeckPage() {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isTimerRunning]);
+  }, [isTimerRunning, broadcastTimer]);
 
   const toggleTimer = useCallback(() => {
-    setIsTimerRunning((prev) => !prev);
-  }, []);
+    setIsTimerRunning((prev) => {
+      const next = !prev;
+      broadcastTimer(timerSeconds, next);
+      return next;
+    });
+  }, [timerSeconds, broadcastTimer]);
 
   const resetTimer = useCallback(() => {
     setIsTimerRunning(false);
     setTimerSeconds(0);
-  }, []);
+    broadcastTimer(0, false);
+  }, [broadcastTimer]);
 
   const formatTime = (totalSec: number) => {
     const mins = Math.floor(totalSec / 60);
@@ -70,18 +180,36 @@ export default function PitchDeckPage() {
   };
 
   const nextSlide = useCallback(() => {
-    setCurrentSlide((prev) => Math.min(prev + 1, totalSlides - 1));
-  }, [totalSlides]);
+    setCurrentSlide((prev) => {
+      const next = Math.min(prev + 1, totalSlides - 1);
+      broadcastSlide(next);
+      return next;
+    });
+  }, [totalSlides, broadcastSlide]);
 
   const prevSlide = useCallback(() => {
-    setCurrentSlide((prev) => Math.max(prev - 1, 0));
-  }, []);
+    setCurrentSlide((prev) => {
+      const next = Math.max(prev - 1, 0);
+      broadcastSlide(next);
+      return next;
+    });
+  }, [broadcastSlide]);
 
-  const goToSlide = (idx: number) => {
+  const goToSlide = useCallback((idx: number) => {
     if (idx >= 0 && idx < totalSlides) {
       setCurrentSlide(idx);
+      broadcastSlide(idx);
     }
-  };
+  }, [totalSlides, broadcastSlide]);
+
+  // Alternar modo de gravação 100% limpo
+  const toggleRecordingMode = useCallback(() => {
+    setIsRecordingMode((prev) => {
+      const next = !prev;
+      if (next) setShowNotes(false);
+      return next;
+    });
+  }, []);
 
   // Keyboard navigation
   useEffect(() => {
@@ -105,16 +233,26 @@ export default function PitchDeckPage() {
           break;
         case "Home":
           e.preventDefault();
-          setCurrentSlide(0);
+          goToSlide(0);
           break;
         case "End":
           e.preventDefault();
-          setCurrentSlide(totalSlides - 1);
+          goToSlide(totalSlides - 1);
           break;
         case "n":
         case "N":
           e.preventDefault();
           setShowNotes((v) => !v);
+          break;
+        case "o":
+        case "O":
+          e.preventDefault();
+          openSpeakerWindow();
+          break;
+        case "g":
+        case "G":
+          e.preventDefault();
+          toggleRecordingMode();
           break;
         case "t":
         case "T":
@@ -139,7 +277,7 @@ export default function PitchDeckPage() {
         case "6":
           const target = parseInt(e.key, 10) - 1;
           if (target >= 0 && target < totalSlides) {
-            setCurrentSlide(target);
+            goToSlide(target);
           }
           break;
         default:
@@ -149,7 +287,7 @@ export default function PitchDeckPage() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [nextSlide, prevSlide, totalSlides, toggleTimer, resetTimer]);
+  }, [nextSlide, prevSlide, totalSlides, toggleTimer, resetTimer, openSpeakerWindow, toggleRecordingMode, goToSlide]);
 
   // Fullscreen toggle
   const toggleFullscreen = () => {
@@ -172,112 +310,179 @@ export default function PitchDeckPage() {
   return (
     <div
       ref={containerRef}
-      className={`min-h-[calc(100vh-4rem)] flex flex-col bg-[#0b0813] text-white selection:bg-solana-purple selection:text-white ${
-        isFullscreen ? "fixed inset-0 z-50 p-4 md:p-6" : "px-3 py-4 sm:px-6 sm:py-6"
+      className={`min-h-[calc(100vh-4rem)] flex flex-col bg-[#0b0813] text-white selection:bg-solana-purple selection:text-white transition-all duration-300 ${
+        isFullscreen
+          ? "fixed inset-0 z-50 p-3 md:p-6"
+          : isRecordingMode
+          ? "px-2 py-2 sm:px-4 sm:py-3"
+          : "px-3 py-4 sm:px-6 sm:py-6"
       }`}
     >
-      {/* TOP HEADER CONTROLS */}
-      <div className="max-w-7xl mx-auto w-full flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800/80">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-solana-purple/20 border border-solana-purple/40 text-solana-purple shadow-sm">
-            <GraduationCap className="h-5 w-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-display text-sm sm:text-base font-bold text-white tracking-tight">
-                Lattes<span className="text-solana-green">Chain</span>
-              </span>
-              <span className="rounded-full bg-solana-purple/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-solana-purple border border-solana-purple/30">
-                Pitch 5 Minutos
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-400">
-              Superteam Brasil Hackathon • Slide {currentSlide + 1} de {totalSlides}
-            </p>
-          </div>
-        </div>
-
-        {/* TIMER BAR & SHORTCUTS */}
-        <div className="flex items-center gap-2.5 sm:gap-4">
-          {/* STOPWATCH */}
-          <div className="flex items-center gap-2 rounded-xl bg-slate-900/90 border border-slate-800 px-3 py-1.5 shadow-inner">
-            <Clock className="h-3.5 w-3.5 text-solana-green animate-pulse" />
-            <span
-              className={`font-mono text-xs sm:text-sm font-bold tracking-wider ${
-                timerSeconds > 300 ? "text-rose-400" : timerSeconds > 240 ? "text-amber-400" : "text-slate-200"
-              }`}
-            >
-              {formatTime(timerSeconds)} <span className="text-slate-500 font-normal">/ 05:00</span>
+      {/* SE ESTIVER NO MODO GRAVAÇÃO: BARRA DISCRETA DE STATUS */}
+      {isRecordingMode ? (
+        <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-2 py-1 px-3 mb-2 rounded-xl bg-slate-900/60 border border-rose-500/30 text-xs">
+          <div className="flex items-center gap-2">
+            <span className="flex h-2.5 w-2.5 rounded-full bg-rose-500 animate-ping" />
+            <span className="font-semibold text-rose-300 text-[11px] sm:text-xs">
+              Modo Gravação Ativo (Tela Limpa 16:9)
             </span>
-            <button
-              onClick={toggleTimer}
-              title={isTimerRunning ? "Pausar cronômetro (T)" : "Iniciar cronômetro (T)"}
-              className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-            >
-              {isTimerRunning ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5 text-solana-green" />}
-            </button>
-            <button
-              onClick={resetTimer}
-              title="Zerar cronômetro (R)"
-              className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-            >
-              <RotateCcw className="h-3.5 w-3.5" />
-            </button>
+            <span className="text-[10px] text-slate-400 font-mono hidden sm:inline">
+              Notas sincronizadas em outra janela
+            </span>
           </div>
 
-          {/* TOGGLE SPEAKER NOTES */}
-          <button
-            onClick={() => setShowNotes(!showNotes)}
-            className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition-all ${
-              showNotes
-                ? "border-solana-purple/50 bg-solana-purple/20 text-solana-purple"
-                : "border-slate-800 bg-slate-900/60 text-slate-400 hover:text-white"
-            }`}
-            title="Atalho: tecla 'N'"
-          >
-            <FileText className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Notas do Orador</span>
-            <span className="text-[10px] opacity-60 font-mono">(N)</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 font-mono text-[11px] text-slate-300 bg-slate-950/80 px-2 py-0.5 rounded-md border border-slate-800">
+              <Clock className="h-3 w-3 text-solana-green" />
+              <span>{formatTime(timerSeconds)}</span>
+            </div>
 
-          {/* FULLSCREEN TOGGLE */}
-          <button
-            onClick={toggleFullscreen}
-            className="p-2 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
-            title="Alternar tela cheia (F)"
-          >
-            {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-          </button>
-        </div>
-      </div>
-
-      {/* PROGRESS TRACKER */}
-      <div className="max-w-7xl mx-auto w-full pt-2">
-        <div className="grid grid-cols-6 gap-1 sm:gap-2">
-          {SLIDES_DATA.map((s, idx) => (
             <button
-              key={s.id}
-              onClick={() => goToSlide(idx)}
-              className={`group flex flex-col gap-1 text-left transition-all ${
-                idx === currentSlide ? "opacity-100" : "opacity-40 hover:opacity-80"
-              }`}
+              onClick={openSpeakerWindow}
+              className="px-2 py-0.5 rounded-md bg-solana-purple/20 hover:bg-solana-purple/30 text-solana-purpleSoft text-[11px] border border-solana-purple/40 flex items-center gap-1 transition-colors"
+              title="Abrir teleprompter com notas em 2ª tela (O)"
             >
-              <div
-                className={`h-1.5 w-full rounded-full transition-all duration-300 ${
-                  idx === currentSlide
-                    ? "bg-gradient-to-r from-solana-purple to-solana-green shadow-sm shadow-solana-purple/50"
-                    : idx < currentSlide
-                    ? "bg-solana-purple/70"
-                    : "bg-slate-800"
-                }`}
-              />
-              <span className="text-[9px] sm:text-[10px] font-medium text-slate-300 truncate hidden sm:block">
-                {idx + 1}. {s.category}
-              </span>
+              <ExternalLink className="h-3 w-3" />
+              <span className="hidden sm:inline">Reabrir Notas (O)</span>
             </button>
-          ))}
+
+            <button
+              onClick={toggleRecordingMode}
+              className="px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] border border-slate-700 flex items-center gap-1 transition-colors"
+              title="Sair do modo gravação e restaurar painéis (G)"
+            >
+              <span>Restaurar Painéis (G)</span>
+            </button>
+          </div>
         </div>
-      </div>
+      ) : (
+        /* TOP HEADER CONTROLS (MODO NORMAL) */
+        <div className="max-w-7xl mx-auto w-full flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800/80">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-solana-purple/20 border border-solana-purple/40 text-solana-purple shadow-sm">
+              <GraduationCap className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-display text-sm sm:text-base font-bold text-white tracking-tight">
+                  Lattes<span className="text-solana-green">Chain</span>
+                </span>
+                <span className="rounded-full bg-solana-purple/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-solana-purple border border-solana-purple/30">
+                  Pitch 5 Minutos
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400">
+                Superteam Brasil Hackathon • Slide {currentSlide + 1} de {totalSlides}
+              </p>
+            </div>
+          </div>
+
+          {/* TIMER BAR & CONTROLES DE JANELA DUPLA / GRAVAÇÃO */}
+          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+            {/* STOPWATCH */}
+            <div className="flex items-center gap-2 rounded-xl bg-slate-900/90 border border-slate-800 px-3 py-1.5 shadow-inner">
+              <Clock className="h-3.5 w-3.5 text-solana-green animate-pulse" />
+              <span
+                className={`font-mono text-xs sm:text-sm font-bold tracking-wider ${
+                  timerSeconds > 300 ? "text-rose-400" : timerSeconds > 240 ? "text-amber-400" : "text-slate-200"
+                }`}
+              >
+                {formatTime(timerSeconds)} <span className="text-slate-500 font-normal">/ 05:00</span>
+              </span>
+              <button
+                onClick={toggleTimer}
+                title={isTimerRunning ? "Pausar cronômetro (T)" : "Iniciar cronômetro (T)"}
+                className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              >
+                {isTimerRunning ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5 text-solana-green" />}
+              </button>
+              <button
+                onClick={resetTimer}
+                title="Zerar cronômetro (R)"
+                className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+              </button>
+            </div>
+
+            {/* SEPARAR NOTAS EM OUTRA JANELA (POP-OUT / 2ª TELA) */}
+            <button
+              onClick={openSpeakerWindow}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-solana-green/40 bg-solana-green/10 hover:bg-solana-green/20 text-solana-green px-3 py-1.5 text-xs font-semibold shadow-sm transition-all"
+              title="Abre as notas do orador e teleprompter em uma janela separada para você gravar apenas os slides (Atalho: O)"
+            >
+              <Tv className="h-3.5 w-3.5" />
+              <span>Separar Notas (Janela Pop-out)</span>
+              <span className="text-[10px] opacity-70 font-mono">(O)</span>
+            </button>
+
+            {/* MODO GRAVAÇÃO LIMPO (OCULTA TUDO EXCETO SLIDE) */}
+            <button
+              onClick={toggleRecordingMode}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-rose-500/40 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 px-3 py-1.5 text-xs font-semibold shadow-sm transition-all"
+              title="Ativar visual limpo para gravação de vídeo/OBS (Atalho: G)"
+            >
+              <Video className="h-3.5 w-3.5 text-rose-400" />
+              <span className="hidden sm:inline">Modo Gravação</span>
+              <span className="text-[10px] opacity-70 font-mono">(G)</span>
+            </button>
+
+            {/* TOGGLE SPEAKER NOTES EMBUTIDA */}
+            <button
+              onClick={() => setShowNotes(!showNotes)}
+              className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition-all ${
+                showNotes
+                  ? "border-solana-purple/50 bg-solana-purple/20 text-solana-purple"
+                  : "border-slate-800 bg-slate-900/60 text-slate-400 hover:text-white"
+              }`}
+              title="Mostrar/Ocultar notas embutidas na página (Atalho: N)"
+            >
+              <FileText className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Notas Embutidas</span>
+              <span className="text-[10px] opacity-60 font-mono">(N)</span>
+            </button>
+
+            {/* FULLSCREEN TOGGLE */}
+            <button
+              onClick={toggleFullscreen}
+              className="p-2 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
+              title="Alternar tela cheia (F)"
+            >
+              {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* PROGRESS TRACKER (OCULTO EM MODO GRAVAÇÃO PARA LIMPEZA VISUAL) */}
+      {!isRecordingMode && (
+        <div className="max-w-7xl mx-auto w-full pt-2">
+          <div className="grid grid-cols-6 gap-1 sm:gap-2">
+            {SLIDES_DATA.map((s, idx) => (
+              <button
+                key={s.id}
+                onClick={() => goToSlide(idx)}
+                className={`group flex flex-col gap-1 text-left transition-all ${
+                  idx === currentSlide ? "opacity-100" : "opacity-40 hover:opacity-80"
+                }`}
+              >
+                <div
+                  className={`h-1.5 w-full rounded-full transition-all duration-300 ${
+                    idx === currentSlide
+                      ? "bg-gradient-to-r from-solana-purple to-solana-green shadow-sm shadow-solana-purple/50"
+                      : idx < currentSlide
+                      ? "bg-solana-purple/70"
+                      : "bg-slate-800"
+                  }`}
+                />
+                <span className="text-[9px] sm:text-[10px] font-medium text-slate-300 truncate hidden sm:block">
+                  {idx + 1}. {s.category}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* MAIN SLIDE VIEWPORT */}
       <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col py-4">
@@ -726,18 +931,16 @@ export default function PitchDeckPage() {
                     </div>
 
                     <div className="space-y-3">
-                      <div>
-                        <div className="font-bold text-white text-sm">Alex Miqueias • Lead Architect</div>
-                        <p className="text-xs text-slate-300">
-                          Arquitetura Web3, Smart Contracts Solana Token-2022/SAS e Governança On-Chain.
-                        </p>
-                      </div>
-                      <div>
-                        <div className="font-bold text-white text-sm">Rogerio Alencar Filho • Software Engineer</div>
-                        <p className="text-xs text-slate-300">
-                          Engenharia de Dados, Backend Go/Python, DevSecOps e Integrações Corporativas.
-                        </p>
-                      </div>
+                      {TEAM_MEMBERS.map((member, i) => (
+                        <div key={i}>
+                          <div className="font-bold text-white text-xs sm:text-sm">
+                            {member.name} • <span className="text-solana-purpleSoft">{member.role}</span>
+                          </div>
+                          <p className="text-[11px] sm:text-xs text-slate-300 leading-snug">
+                            {member.description}
+                          </p>
+                        </div>
+                      ))}
                     </div>
 
                     <div className="rounded-xl border border-slate-800 bg-slate-950 p-3 space-y-1.5">

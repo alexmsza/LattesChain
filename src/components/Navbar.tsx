@@ -36,24 +36,60 @@ export function Navbar() {
   const { language, setLanguage, dict } = useLanguage();
   const { theme, toggleTheme } = useTheme();
 
-  const baseNavItems = [
-    { href: "/", label: dict.nav.home, icon: GraduationCap },
-    { href: "/validator", label: dict.nav.validator, icon: ShieldCheck },
-    { href: "/student", label: dict.nav.student, icon: UserCheck },
-    { href: "/university", label: dict.nav.university, icon: Building2 },
-    { href: "/pitch", label: (dict.nav as any).pitch || "Pitch", icon: Presentation },
-    { href: "/sobre", label: dict.nav.about, icon: Info },
-    { href: "/precos", label: dict.nav.pricing, icon: Tag },
-  ];
+  // Itens de navegação condicionados ao perfil (RBAC)
+  const navItems = (() => {
+    if (!profile) {
+      return [
+        { href: "/", label: dict.nav.home, icon: GraduationCap },
+        { href: "/validator", label: dict.nav.validator, icon: ShieldCheck },
+        { href: "/pitch", label: (dict.nav as any).pitch || "Pitch", icon: Presentation },
+        { href: "/sobre", label: dict.nav.about, icon: Info },
+        { href: "/precos", label: dict.nav.pricing, icon: Tag },
+      ];
+    }
 
-  const navItems =
-    profile?.role === "ADMIN"
-      ? [
-          ...baseNavItems.slice(0, 4),
-          { href: "/admin-protocol", label: dict.nav.protocol, icon: Activity },
-          ...baseNavItems.slice(4),
-        ]
-      : baseNavItems;
+    if (profile.role === "STUDENT") {
+      return [
+        { href: "/", label: dict.nav.home, icon: GraduationCap },
+        { href: "/student", label: dict.nav.student, icon: UserCheck },
+        { href: "/validator", label: dict.nav.validator, icon: ShieldCheck },
+        { href: "/pitch", label: (dict.nav as any).pitch || "Pitch", icon: Presentation },
+        { href: "/sobre", label: dict.nav.about, icon: Info },
+      ];
+    }
+
+    if (profile.role === "INSTITUTION") {
+      return [
+        { href: "/", label: dict.nav.home, icon: GraduationCap },
+        { href: "/university", label: dict.nav.university, icon: Building2 },
+        { href: "/validator", label: dict.nav.validator, icon: ShieldCheck },
+        { href: "/pitch", label: (dict.nav as any).pitch || "Pitch", icon: Presentation },
+        { href: "/sobre", label: dict.nav.about, icon: Info },
+      ];
+    }
+
+    if (profile.role === "EMPLOYER") {
+      return [
+        { href: "/", label: dict.nav.home, icon: GraduationCap },
+        { href: "/validator", label: "Validador & RH", icon: ShieldCheck },
+        { href: "/precos", label: dict.nav.pricing, icon: Tag },
+        { href: "/pitch", label: (dict.nav as any).pitch || "Pitch", icon: Presentation },
+        { href: "/sobre", label: dict.nav.about, icon: Info },
+      ];
+    }
+
+    // ADMIN (Acesso irrestrito a todos os módulos)
+    return [
+      { href: "/", label: dict.nav.home, icon: GraduationCap },
+      { href: "/admin-protocol", label: dict.nav.protocol, icon: Activity },
+      { href: "/university", label: dict.nav.university, icon: Building2 },
+      { href: "/student", label: dict.nav.student, icon: UserCheck },
+      { href: "/validator", label: dict.nav.validator, icon: ShieldCheck },
+      { href: "/pitch", label: (dict.nav as any).pitch || "Pitch", icon: Presentation },
+      { href: "/sobre", label: dict.nav.about, icon: Info },
+      { href: "/precos", label: dict.nav.pricing, icon: Tag },
+    ];
+  })();
 
   const handleSignOut = async () => {
     await signOut();
@@ -190,24 +226,47 @@ export function Navbar() {
           {loading ? (
             <Loader2 className="h-4 w-4 animate-spin text-slate-400" />
           ) : session ? (
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              {/* BADGE CONTEXTUAL DO USUÁRIO / IES / CAMPUS / EMPRESA */}
               <Link
                 href={roleHome}
-                className="hidden sm:flex items-center gap-1.5 rounded-xl border border-slate-700 bg-navy-800/60 px-2.5 py-1.5 text-xs font-semibold text-slate-200 hover:border-solana-purple/40 hover:text-white"
-                title={profile?.email || session.user.email}
+                className="flex items-center gap-1.5 rounded-xl border border-slate-700 bg-navy-800/70 px-2.5 py-1.5 text-xs font-semibold text-slate-200 hover:border-solana-purple/40 hover:text-white transition-all shadow-sm"
+                title={`Perfil: ${profile?.role} | ${profile?.email || session.user.email}`}
               >
-                <UserCircle2
-                  className={`h-3.5 w-3.5 ${
-                    theme === "purple" ? "text-solana-purple" : "text-solana-green"
-                  }`}
-                />
-                <span className="max-w-[100px] truncate">
-                  {profile?.full_name?.split(" ")[0] || "Conta"}
-                </span>
+                {profile?.role === "ADMIN" ? (
+                  <div className="flex items-center gap-1 text-gold-400">
+                    <Activity className="h-3.5 w-3.5 text-gold-400" />
+                    <span className="font-bold text-[11px]">Admin Protocol</span>
+                  </div>
+                ) : profile?.role === "INSTITUTION" ? (
+                  <div className="flex items-center gap-1.5 max-w-[220px] truncate text-sky-300">
+                    <Building2 className="h-3.5 w-3.5 text-sky-400 shrink-0" />
+                    <span className="truncate text-[11px]">
+                      {profile.institution_name || "IES"}
+                      {profile.campus_name ? ` • Polo: ${profile.campus_name}` : " • Geral"}
+                    </span>
+                  </div>
+                ) : profile?.role === "EMPLOYER" ? (
+                  <div className="flex items-center gap-1.5 max-w-[180px] truncate text-amber-300">
+                    <ShieldCheck className="h-3.5 w-3.5 text-amber-400 shrink-0" />
+                    <span className="truncate text-[11px]">
+                      {profile.company_name || profile.full_name?.split(" ")[0] || "Empresa / RH"}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1.5 max-w-[160px] truncate text-emerald-300">
+                    <UserCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                    <span className="truncate text-[11px]">
+                      {profile?.full_name?.split(" ")[0] || "Estudante"}
+                    </span>
+                  </div>
+                )}
               </Link>
+
               <button
                 onClick={handleSignOut}
                 className="flex items-center gap-1 rounded-xl border border-slate-700 px-2.5 py-1.5 text-xs font-semibold text-slate-300 transition-colors hover:border-red-400/50 hover:text-red-300"
+                title="Encerrar sessão"
               >
                 <LogOut className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">{dict.nav.signOut}</span>
@@ -231,3 +290,4 @@ export function Navbar() {
     </header>
   );
 }
+

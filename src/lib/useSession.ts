@@ -13,11 +13,14 @@ export type UserProfile = {
   role: "STUDENT" | "INSTITUTION" | "EMPLOYER" | "ADMIN";
   full_name: string;
   email: string;
-  status: "PENDING" | "APPROVED" | "REJECTED";
+  status: "PENDING" | "APPROVED" | "REJECTED" | "SUSPENDED";
   cpf?: string | null;
   cnpj?: string | null;
   institution_name?: string | null;
   company_name?: string | null;
+  institution_id?: string | null;
+  campus_id?: string | null;
+  campus_name?: string | null;
 };
 
 let browserClient: ReturnType<typeof createBrowserClient> | null = null;
@@ -41,13 +44,27 @@ export function useSession() {
     const supabase = getSupabaseBrowser();
     const { data } = await supabase
       .from("user_profiles")
-      .select("user_id, role, full_name, email, status, cpf, cnpj, institution_name, company_name")
+      .select("user_id, role, full_name, email, status, cpf, cnpj, institution_name, company_name, institution_id, campus_id")
       .eq("user_id", userId)
       .maybeSingle();
 
     const { data: authData } = await supabase.auth.getUser();
     const userEmail = authData.user?.email?.toLowerCase() || data?.email?.toLowerCase() || "";
     const isJovian = userEmail.endsWith("@jovian.foo");
+
+    let campusName: string | null = null;
+    if (data?.campus_id) {
+      try {
+        const { data: c } = await supabase
+          .from("institution_campuses")
+          .select("name")
+          .eq("id", data.campus_id)
+          .maybeSingle();
+        if (c?.name) campusName = c.name;
+      } catch (e) {
+        console.warn("Campus fetch fallback:", e);
+      }
+    }
 
     if (isJovian) {
       setProfile({
@@ -60,9 +77,17 @@ export function useSession() {
         cnpj: data?.cnpj || null,
         institution_name: data?.institution_name || null,
         company_name: data?.company_name || null,
+        institution_id: data?.institution_id || null,
+        campus_id: data?.campus_id || null,
+        campus_name: campusName,
       });
+    } else if (data) {
+      setProfile({
+        ...data,
+        campus_name: campusName,
+      } as UserProfile);
     } else {
-      setProfile(data as UserProfile | null);
+      setProfile(null);
     }
   }, []);
 

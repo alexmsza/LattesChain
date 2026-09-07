@@ -101,9 +101,7 @@
 *(Slide 6 no app `/pitch`: Execução Focada & Escalabilidade Global)*
 
 > **Narrador**:  
-> "Quem está por trás do LattesChain?
-> 
-> Nosso time é composto por **Alex Miqueias** e **Rogério Alencar Filho**, incubado pela **Jovian Tech**, combinando especializações em Engenharia de Dados, Segurança de Infraestrutura (DevSecOps), Inteligência Artificial e Arquitetura Distribuída Solana.
+> Nosso time é composto por **Alex Miqueias**, **Rogério Alencar Filho** e **Caio Vila Nova**, incubado pela **Jovian Tech**, combinando especializações em Arquitetura Distribuída Solana, Engenharia de Dados, Segurança de Infraestrutura (DevSecOps) e Suporte a Aplicações, Automações e Fluxos de Dados.
 > 
 > Toda a nossa **stack do MVP é 100% open-source com custo zero de infraestrutura**: Go ultraleve, Python com IA, Supabase (PostgreSQL + RLS) e SDKs Solana.
 > 

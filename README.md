@@ -16,6 +16,8 @@
 ## 📑 Sumário Executivo de Documentação
 
 - 🎙️ **[Roteiro de Pitch (5 Minutos)](docs/PITCH_DECK.md)**: Minutagem, slides e script de fala guiada para gravação do vídeo de submissão.
+- 🖥️ **[Pitch Deck Interativo & Modo Gravação](doc/PITCH_SPEAKER_RECORDING_MODE.md)**: Apresentação em tela limpa 16:9 (`/pitch`) com Teleprompter e notas do orador desacopladas em 2ª janela (`/pitch/speaker`) via `BroadcastChannel`.
+- 🏢 **[Arquitetura Multi-Tenant & RBAC](doc/ARCHITECTURE_MULTITENANT_RBAC.md)**: Governança institucional, multi-campus, matriz de autorização e fluxos LGPD.
 - 🏛️ **[Arquitetura Tripartite & Modelo de Negócios](docs/12_tripartite_and_business_architecture.md)**: Ciclo Estudante ⇄ IES ⇄ RH, compliance de estágios, validade universal e produto Jovian Tech.
 - 📊 **[Plano de Negócios & GTM](docs/BUSINESS_PLAN.md)**: Modelagem B2B2C freemium, unit economics, personas e estratégia beachhead.
 - 💰 **[Modelo Financeiro & Custos de Infra](docs/17_financial_model_infrastructure_costs_and_pricing.md)**: Custos de Mainnet, cálculo de gás, margem de 94% e precificação de planos IES/RH.
@@ -121,6 +123,13 @@ graph LR
 - **Parser de XML do MEC**: Leitor automático de XMLs de diplomas digitais e documentação acadêmica com extração estruturada de dados.
 - **Entrada Manual de Contingência**: Permite preenchimento assistido caso o XML da instituição possua inconsistências ou campos fora do padrão.
 - **RVDD com QR Code**: Geração de Representação Visual do Diploma Digital com código de validação pública instantânea.
+
+### 3.10 Arquitetura Multi-Tenant, Polos & Campus e Governança RBAC
+- **Estudante Multi-Tenant (`student_enrollments`)**: O estudante pode pertencer a múltiplas IES e múltiplos polos/campus simultaneamente, mantendo seu passaporte criptográfico unificado na rede Solana.
+- **Gestão de Campus & Polos (`institution_campuses`)**: Instituições de ensino criam, administram e ativam/desativam polos físicos e EaD para alocação de matrículas e turmas. O Administrador possui visão panorâmica e controle agregador.
+- **Governança de Usuários & IES**: Painel para o Admin criar qualquer usuário, editar papéis/atribuições de IES/Campus, suspender imediatamente o acesso (`status = 'SUSPENDED'`) ou suspender o credenciamento de IES.
+- **Mensageria Transacional Legal (LGPD)**: Envio automatizado de convite com credenciais de acesso ao passaporte para o estudante matriculado pela IES, e disparo de notificações com token de consentimento unívoco para solicitações de compliance feitas por empresas de RH (Artigos 7º e 9º da LGPD).
+- **Topbar & RBAC Dinâmico**: Identificador visual no header (`Estudante`, `Empresa`, ou `IES • Polo: [Nome do Campus]`) com isolamento estrito de abas e rotas por perfil de acesso.
 
 ---
 
@@ -337,7 +346,9 @@ Consulte o documento completo: **[docs/14_solana_wallet_connection_and_security.
 
 ## 11. Autoria, Engenharia e Reconhecimentos
 
-- **Liderança Técnica & Desenvolvimento**: [Alex Miqueias](https://www.linkedin.com/in/alexmiqueias/) · [Instagram (@alexmsza)](https://www.instagram.com/alexmsza/)
+- **Liderança Técnica & Arquitetura Web3**: [Alex Miqueias](https://www.linkedin.com/in/alexmiqueias/) · [Instagram (@alexmsza)](https://www.instagram.com/alexmsza/)
+- **Engenharia de Software & DevSecOps**: Rogerio Alencar Filho
+- **Sistemas & Operações**: Caio Vila Nova (Application Support, Automation & Data Workflows)
 - **Empresa Parceira / Hub de Inovação**: [Jovian Tech](https://jovian.foo/) · [LinkedIn da Jovian](https://www.linkedin.com/company/jovian-tech-foo/)
 - **Ecossistema**: Desenvolvido com suporte e foco no **Hackathon Universitário Superteam Brasil**, alavancando **Solana Attestation Service (SAS)** e **Token-2022 Extensions**.
 

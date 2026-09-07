@@ -164,3 +164,68 @@ export function templateAccountRejected(p: { name: string; reason: string; signu
     `
   );
 }
+
+/** Convite / Acesso enviado ao estudante quando a IES o cadastra ou matricula. */
+export function templateStudentInvitation(p: {
+  studentName: string;
+  institutionName: string;
+  campusName?: string;
+  courseName: string;
+  registrationNumber: string;
+  accessUrl: string;
+}) {
+  return shell(
+    `Seu Passaporte Acadêmico no LattesChain — ${p.institutionName}`,
+    `
+    <p>Olá, <b>${p.studentName}</b>!</p>
+    <p>A instituição <b>${p.institutionName}</b>${p.campusName ? ` (Campus ${p.campusName})` : ""} registrou a sua matrícula no <b>LattesChain</b>, o protocolo soberano de credenciais acadêmicas na rede Solana.</p>
+    
+    <div style="background:#090f1d;border:1px solid #1e293b;border-radius:12px;padding:16px;margin:16px 0;">
+      <p style="margin:4px 0;font-size:13px;color:#94a3b8;">Curso: <strong style="color:#ffffff;">${p.courseName}</strong></p>
+      <p style="margin:4px 0;font-size:13px;color:#94a3b8;">Matrícula: <strong style="color:#14F195;">${p.registrationNumber}</strong></p>
+      <p style="margin:4px 0;font-size:13px;color:#94a3b8;">Instituição: <strong style="color:#ffffff;">${p.institutionName}</strong></p>
+    </div>
+
+    <p>Você pode acessar sua carteira acadêmica soberana, consultar suas matérias, horas complementares e gerar QR Codes e atestações públicas com validade jurídica:</p>
+    <div style="text-align:center;">${button(p.accessUrl, "Acessar Meu Passaporte Acadêmico")}</div>
+    <p style="font-size:12px;color:#64748b;">Suas credenciais são ancoradas diretamente na Solana Devnet e garantidas por tecnologia criptográfica Token-2022.</p>
+    `,
+    "Caso você já possua conta no LattesChain com outra instituição, este novo vínculo foi adicionado automaticamente ao seu perfil unificado."
+  );
+}
+
+/** Notificação de solicitação de compliance/visualização de dados enviada por RH/Empresa (LGPD Art. 7º/9º). */
+export function templateEmployerComplianceNotification(p: {
+  studentName: string;
+  employerName: string;
+  employerEmail: string;
+  purpose: string;
+  consentUrl: string;
+}) {
+  const purposeLabels: Record<string, string> = {
+    ESTAGIO: "Processo Seletivo de Estágio",
+    VAGA_CLT: "Contratação Efetiva (CLT)",
+    BACKGROUND_CHECK: "Validação Documental / Background Check",
+    POS_GRADUACAO: "Admissão em Pós-Graduação / Pesquisa",
+  };
+
+  const purposeStr = purposeLabels[p.purpose] || p.purpose;
+
+  return shell(
+    `Solicitação de Acesso Acadêmico — ${p.employerName}`,
+    `
+    <p>Olá, <b>${p.studentName}</b>!</p>
+    <p>A empresa <b>${p.employerName}</b> (${p.employerEmail}) solicitou acesso à visualização das suas credenciais acadêmicas verificadas no <b>LattesChain</b>.</p>
+    
+    <div style="background:#090f1d;border:1px solid #1e293b;border-radius:12px;padding:16px;margin:16px 0;">
+      <p style="margin:4px 0;font-size:13px;color:#94a3b8;">Finalidade Declarada: <strong style="color:#ffffff;">${purposeStr}</strong></p>
+      <p style="margin:4px 0;font-size:13px;color:#94a3b8;">Itens Solicitados: <strong style="color:#14F195;">Status de Matrícula, Histórico de Disciplinas e Horas MEC</strong></p>
+    </div>
+
+    <p style="font-size:13px;color:#cbd5e1;"><b>Em conformidade com a LGPD (Lei nº 13.709/2018)</b>, o compartilhamento dos seus dados só ocorre mediante sua autorização explícita e revogável. Nenhum dado sensível é revelado sem seu consentimento.</p>
+    <div style="text-align:center;">${button(p.consentUrl, "Revisar e Autorizar Compartilhamento")}</div>
+    `,
+    "Você tem autonomia total sobre quem acessa seus dados e pode revogar o consentimento a qualquer momento pelo portal do estudante."
+  );
+}
+
