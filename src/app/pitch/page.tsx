@@ -29,8 +29,21 @@ import {
   Tv,
   Eye,
   EyeOff,
+  ZoomIn,
+  ZoomOut,
 } from "lucide-react";
 import { SLIDES_DATA, TEAM_MEMBERS, SlideData } from "./slides-data";
+
+type FontSizeLevel = "sm" | "md" | "lg" | "xl" | "2xl";
+const FONT_SIZES: FontSizeLevel[] = ["sm", "md", "lg", "xl", "2xl"];
+
+const DRAWER_FONT_CLASSES: Record<FontSizeLevel, string> = {
+  sm: "text-xs leading-relaxed",
+  md: "text-xs sm:text-sm leading-relaxed",
+  lg: "text-sm sm:text-base leading-relaxed font-medium",
+  xl: "text-base sm:text-lg leading-relaxed font-medium",
+  "2xl": "text-lg sm:text-xl leading-relaxed font-semibold",
+};
 
 export default function PitchDeckPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -40,12 +53,24 @@ export default function PitchDeckPage() {
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [speakerWindowOpened, setSpeakerWindowOpened] = useState(false);
+  const [speakerFontSize, setSpeakerFontSize] = useState<FontSizeLevel>("md");
   
   const containerRef = useRef<HTMLDivElement>(null);
   const broadcastChannelRef = useRef<BroadcastChannel | null>(null);
 
   const totalSlides = SLIDES_DATA.length;
   const slide = SLIDES_DATA[currentSlide];
+
+  // Carregar preferência salva de tamanho de fonte das notas
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const saved = localStorage.getItem("lattes_pitch_font_size");
+      if (saved && FONT_SIZES.includes(saved as FontSizeLevel)) {
+        setSpeakerFontSize(saved as FontSizeLevel);
+      }
+    } catch {}
+  }, []);
 
   // BroadcastChannel setup para comunicação bidirecional com a janela do orador
   useEffect(() => {
@@ -63,6 +88,10 @@ export default function PitchDeckPage() {
         } else if (type === "SYNC_TIMER") {
           if (typeof payload?.seconds === "number") setTimerSeconds(payload.seconds);
           if (typeof payload?.isRunning === "boolean") setIsTimerRunning(payload.isRunning);
+        } else if (type === "SYNC_FONT_SIZE") {
+          if (payload?.fontSize && FONT_SIZES.includes(payload.fontSize as FontSizeLevel)) {
+            setSpeakerFontSize(payload.fontSize as FontSizeLevel);
+          }
         } else if (type === "REQUEST_STATE") {
           // Quando a janela de orador abrir, responde o estado corrente
           channel?.postMessage({
@@ -72,6 +101,10 @@ export default function PitchDeckPage() {
           channel?.postMessage({
             type: "SYNC_TIMER",
             payload: { seconds: timerSeconds, isRunning: isTimerRunning },
+          });
+          channel?.postMessage({
+            type: "SYNC_FONT_SIZE",
+            payload: { fontSize: speakerFontSize },
           });
         }
       };
@@ -85,6 +118,10 @@ export default function PitchDeckPage() {
         if (!isNaN(idx) && idx >= 0 && idx < totalSlides) {
           setCurrentSlide(idx);
         }
+      } else if (e.key === "lattes_pitch_font_size" && e.newValue) {
+        if (FONT_SIZES.includes(e.newValue as FontSizeLevel)) {
+          setSpeakerFontSize(e.newValue as FontSizeLevel);
+        }
       }
     };
     window.addEventListener("storage", handleStorage);
@@ -93,7 +130,7 @@ export default function PitchDeckPage() {
       if (channel) channel.close();
       window.removeEventListener("storage", handleStorage);
     };
-  }, [totalSlides, currentSlide, timerSeconds, isTimerRunning]);
+  }, [totalSlides, currentSlide, timerSeconds, isTimerRunning, speakerFontSize]);
 
   // Função para abrir notas do orador em janela independente pop-out
   const openSpeakerWindow = useCallback(() => {
@@ -211,6 +248,48 @@ export default function PitchDeckPage() {
     });
   }, []);
 
+  // Ajustes de tamanho de fonte das notas com sincronização
+  const changeFontSize = useCallback((newSize: FontSizeLevel) => {
+    setSpeakerFontSize(newSize);
+    try {
+      localStorage.setItem("lattes_pitch_font_size", newSize);
+      broadcastChannelRef.current?.postMessage({
+        type: "SYNC_FONT_SIZE",
+        payload: { fontSize: newSize },
+      });
+    } catch {}
+  }, []);
+
+  const increaseFontSize = useCallback(() => {
+    setSpeakerFontSize((curr) => {
+      const idx = FONT_SIZES.indexOf(curr);
+      const next = idx < FONT_SIZES.length - 1 ? FONT_SIZES[idx + 1] : curr;
+      try {
+        localStorage.setItem("lattes_pitch_font_size", next);
+        broadcastChannelRef.current?.postMessage({
+          type: "SYNC_FONT_SIZE",
+          payload: { fontSize: next },
+        });
+      } catch {}
+      return next;
+    });
+  }, []);
+
+  const decreaseFontSize = useCallback(() => {
+    setSpeakerFontSize((curr) => {
+      const idx = FONT_SIZES.indexOf(curr);
+      const next = idx > 0 ? FONT_SIZES[idx - 1] : curr;
+      try {
+        localStorage.setItem("lattes_pitch_font_size", next);
+        broadcastChannelRef.current?.postMessage({
+          type: "SYNC_FONT_SIZE",
+          payload: { fontSize: next },
+        });
+      } catch {}
+      return next;
+    });
+  }, []);
+
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -269,6 +348,16 @@ export default function PitchDeckPage() {
           e.preventDefault();
           toggleFullscreen();
           break;
+        case "+":
+        case "=":
+          e.preventDefault();
+          increaseFontSize();
+          break;
+        case "-":
+        case "_":
+          e.preventDefault();
+          decreaseFontSize();
+          break;
         case "1":
         case "2":
         case "3":
@@ -287,7 +376,7 @@ export default function PitchDeckPage() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [nextSlide, prevSlide, totalSlides, toggleTimer, resetTimer, openSpeakerWindow, toggleRecordingMode, goToSlide]);
+  }, [nextSlide, prevSlide, totalSlides, toggleTimer, resetTimer, openSpeakerWindow, toggleRecordingMode, goToSlide, increaseFontSize, decreaseFontSize]);
 
   // Fullscreen toggle
   const toggleFullscreen = () => {
@@ -925,7 +1014,7 @@ export default function PitchDeckPage() {
                   <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5 space-y-4">
                     <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                       <span className="text-xs font-bold uppercase tracking-wider text-solana-purpleSoft">
-                        Equipe de Engenharia • Jovian Tech
+                        Equipe de Engenharia • ASZA COMPANY
                       </span>
                       <Users className="h-4 w-4 text-solana-purple" />
                     </div>
@@ -1055,7 +1144,30 @@ export default function PitchDeckPage() {
               </span>
             </div>
             <div className="flex items-center gap-3 text-xs text-slate-400">
-              <span className="font-mono text-solana-green font-semibold">Meta de Tempo: {slide.timeRange}</span>
+              {/* CONTROLE DE TAMANHO DE FONTE DAS NOTAS */}
+              <div className="flex items-center gap-1 rounded-xl bg-slate-950 border border-slate-800 p-1 shadow-inner">
+                <button
+                  onClick={decreaseFontSize}
+                  disabled={speakerFontSize === "sm"}
+                  className="p-1 rounded-lg text-slate-400 hover:text-white disabled:opacity-30 transition-all"
+                  title="Diminuir fonte das notas (-)"
+                >
+                  <ZoomOut className="h-3.5 w-3.5" />
+                </button>
+                <span className="text-[10px] font-mono font-bold uppercase px-1.5 py-0.5 rounded bg-solana-purple/20 text-solana-purpleSoft border border-solana-purple/30">
+                  Aa {speakerFontSize}
+                </span>
+                <button
+                  onClick={increaseFontSize}
+                  disabled={speakerFontSize === "2xl"}
+                  className="p-1 rounded-lg text-slate-400 hover:text-white disabled:opacity-30 transition-all"
+                  title="Aumentar fonte das notas (+)"
+                >
+                  <ZoomIn className="h-3.5 w-3.5" />
+                </button>
+              </div>
+
+              <span className="font-mono text-solana-green font-semibold hidden sm:inline">Meta de Tempo: {slide.timeRange}</span>
               <button
                 onClick={() => setShowNotes(false)}
                 className="text-slate-400 hover:text-white text-xs underline"
@@ -1072,7 +1184,7 @@ export default function PitchDeckPage() {
                 <span className="text-solana-purpleSoft">🎙️ O que falar (Script do Vídeo):</span>
                 <span className="text-[10px] text-slate-500">~60 segundos de fala</span>
               </div>
-              <p className="text-slate-200 leading-relaxed text-xs sm:text-sm font-sans italic">
+              <p className={`text-slate-200 leading-relaxed font-sans italic ${DRAWER_FONT_CLASSES[speakerFontSize]}`}>
                 &ldquo;{slide.speakerScript}&rdquo;
               </p>
             </div>

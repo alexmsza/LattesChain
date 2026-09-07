@@ -51,10 +51,10 @@ export const SLIDES_DATA: SlideData[] = [
     subtitle: "Passaporte Acadêmico Global Descentralizado e Soberano na Solana",
     keyObjective: "Capturar atenção imediata da banca demonstrando autoridade técnica e relevância institucional.",
     speakerScript:
-      "Olá banca examinadora e comunidade Superteam Brasil! Nós somos a equipe da Jovian Tech e hoje apresentamos o LattesChain: o protocolo descentralizado que transforma diplomas, créditos e históricos acadêmicos em atestações soberanas, imutáveis e verificáveis em menos de 1 segundo na Solana. Estamos eliminando décadas de burocracia e fraudes com a melhor infraestrutura Web3 do planeta.",
+      "Banca examinadora e comunidade Superteam Brasil: nós somos a ASZA COMPANY e apresentamos o LattesChain. Transformamos diplomas, históricos escolares e horas curriculares em credenciais soberanas, imutáveis e verificáveis em menos de 1 segundo na rede Solana. Estamos substituindo décadas de lentidão burocrática e fraudes documentais pela infraestrutura Web3 mais rápida e eficiente do mundo.",
     citations: [
       { name: "Superteam Earn", url: "https://superteam.fun/earn", note: "Hackathon Universitário Superteam Brasil" },
-      { name: "Jovian Tech", url: "https://jovian.foo", note: "GovTech • DataSecAIOps • Web3" },
+      { name: "ASZA COMPANY", url: "https://github.com/alexmsza/ASZA-COMPANY", note: "Ecossistema Corporativo Autônomo • DataSecAIOps" },
     ],
     deliveryTip: "Fale com energia, confiança e postura firme. Faça contato visual com a câmera.",
   },
@@ -67,7 +67,7 @@ export const SLIDES_DATA: SlideData[] = [
     subtitle: "Documentos em PDF e papel custam semanas de espera e bilhões em validações manuais",
     keyObjective: "Comprovar que a dor é real, aguda e validada por dados da UNESCO e relatórios de mercado.",
     speakerScript:
-      "Hoje, validar diplomas e históricos escolares ainda depende de PDFs comuns e papéis carimbados — fáceis de forjar com qualquer software de edição. Quem sofre com isso? Primeiro, os estudantes, que perdem prazos de intercâmbio, bolsas e vagas no exterior por semanas de espera burocrática e taxas consulares. Segundo, as secretarias acadêmicas, sobrecarregadas com validações manuais por e-mail e telefone, gastando até 30% da sua jornada de trabalho. E terceiro, empresas e recrutadores que gastam até 15 dias e milhares de reais auditando históricos escolares. E como nós sabemos disso? Segundo a UNESCO, a falta de padronização e lentidão documental é o maior entrave para mais de 6 milhões de estudantes transfronteiriços. E no mercado corporativo, o relatório global da HireRight comprova que adulterações educacionais lideram as inconsistências detectadas em triagens de candidatos.",
+      "A validação acadêmica global ainda é refém de papéis carimbados e PDFs vulneráveis a qualquer software de edição. Isso gera três gargalos críticos: primeiro, para os estudantes, que perdem prazos de bolsas, intercâmbios e vagas internacionais aguardando semanas por carimbos e apostilamentos caros. Segundo, para as secretarias acadêmicas, que perdem até 30% da rotina respondendo checagens manuais por telefone e e-mail. E terceiro, para os recrutadores, que gastam dias auditando históricos. Os dados comprovam: segundo a UNESCO, a lentidão documental é o maior obstáculo para mais de 6 milhões de estudantes transfronteiriços. E no mercado de trabalho, o relatório global da HireRight atesta que discrepâncias em históricos escolares lideram as fraudes detectadas em processos seletivos.",
     citations: [
       { name: "UNESCO", url: "https://unesco.org", note: "Global Convention on the Recognition of Qualifications (6M+ estudantes transfronteiriços)" },
       { name: "HireRight", url: "https://hireright.com", note: "Global Employment Screening Benchmark Report (Fraude educacional lidera inconsistências)" },
@@ -83,7 +83,7 @@ export const SLIDES_DATA: SlideData[] = [
     subtitle: "Propriedade real do histórico escolar na carteira do aluno com validação em menos de 1 segundo",
     keyObjective: "Explicar o produto com metáforas simples: não é mais um PDF, é um passaporte digital criptográfico.",
     speakerScript:
-      "A nossa solução é o LattesChain: um passaporte acadêmico digital e global hospedado na Solana. O fluxo é simples: a universidade emite a credencial oficial assinada criptograficamente direto para a carteira digital do estudante. O aluno não precisa mais pedir 'segunda via' nem implorar carimbos: ele é o dono soberano do seu histórico. Para comprovar suas qualificações, ele compartilha apenas um link ou QR Code com qualquer recrutador ou instituição estrangeira. A validação ocorre em menos de 1 segundo direto na rede pública, eliminando intermediários e custos cartorários. O modelo segue rigorosamente o padrão internacional W3C Verifiable Credentials v2.0, permitindo que as credenciais sejam provadas matematicamente sem depender de servidores centrais da faculdade de origem.",
+      "A resposta é o LattesChain: um passaporte acadêmico soberano na Solana, sem intermediários. O fluxo opera em 4 etapas: a universidade emite a credencial oficial assinada digitalmente direto para a carteira do estudante. O aluno torna-se o único dono do seu histórico, sem depender da estabilidade de servidores legados da faculdade. Para comprovar suas qualificações, ele compartilha um link seguro ou QR Code com recrutadores e instituições de qualquer país. A validação ocorre em menos de 1 segundo direto na blockchain, com custo zero para quem audita. A arquitetura adota o padrão internacional W3C Verifiable Credentials v2.0, garantindo equivalência transfronteiriça e validade jurídica internacional por criptografia assimétrica.",
     citations: [
       { name: "W3C Verifiable Credentials", url: "https://w3.org/TR/vc-data-model-2.0", note: "Verifiable Credentials Data Model v2.0 Standard" },
       { name: "Convenção de Haia", url: "https://hcch.net", note: "Equivalência de Apostilamento Digital transfronteiriço" },
@@ -99,12 +99,12 @@ export const SLIDES_DATA: SlideData[] = [
     subtitle: "SAS nativo, Token-2022 Soulbound revogável, custo sub-centavo e privacidade LGPD",
     keyObjective: "Responder com autoridade técnica por que a Solana é insubstituível (e não Ethereum ou banco de dados).",
     speakerScript:
-      "Por que a Solana é indispensável nessa solução e o que ela resolve que outra tecnologia não resolveria? Nós não reinventamos a roda com smart contracts frágeis: usamos as primitivas nativas e auditadas da Solana. Primeiro: o Solana Attestation Service (SAS), o padrão oficial de credenciais abertas da rede, que confere interoperabilidade nativa com Civic e Solana ID. Segundo: o Token-2022 com a extensão NonTransferable — o certificado nasce como um Soulbound Token que cola na carteira do estudante, impedindo a venda ou transferência do diploma. Terceiro: PermanentDelegate — se a universidade detectar fraude administrativa ou anulação judicial, ela revoga a credencial on-chain de forma transparente. Quarto: Custo Sub-Centavo — emitir centenas de milhares de matérias e certificados custa frações de centavos de real, algo economicamente impossível no Ethereum ou Bitcoin. E quinto: Privacidade por Design — em total conformidade com a LGPD e o GDPR, nenhum dado pessoal sensível como CPF ou nome vai para a blockchain; ancoramos apenas o hash criptográfico SHA-256 do documento canônico.",
+      "Por que a Solana é insubstituível nessa arquitetura? Construímos tudo sobre primitivas nativas e auditadas da rede: Primeiro, o Solana Attestation Service (SAS), padrão oficial para atestações interoperáveis com Civic e Solana ID. Segundo, o SPL Token-2022 NonTransferable: o diploma nasce como Soulbound Token intransferível, impossível de ser vendido. Terceiro, o PermanentDelegate: permite que a universidade revogue a credencial on-chain em caso de fraude. Quarto, Custo Sub-Centavo: registrar milhares de matérias custa frações de centavo, inviável em outras blockchains. Quinto, Privacidade e LGPD: zero dados pessoais na rede; gravamos apenas hashes SHA-256 canônicos. E sexto, Zero Cripto Onboarding: nosso relayer corporativo assume as taxas gasless. A faculdade e o aluno usam a Web3 sem precisar comprar tokens.",
     citations: [
       { name: "Solana Labs", url: "https://docs.solanalabs.com", note: "Solana Attestation Service Architecture" },
       { name: "SPL Token-2022", url: "https://spl.solana.com/token-2022/extensions", note: "NonTransferable & PermanentDelegate Extensions" },
     ],
-    deliveryTip: "Este é o slide de maior peso técnico. Destaque o 'Token-2022 NonTransferable + PermanentDelegate' com firmeza.",
+    deliveryTip: "Este é o slide de maior peso técnico. Destaque o 'Token-2022 NonTransferable + PermanentDelegate' e o 'Zero Cripto Onboarding' com firmeza.",
   },
   {
     id: 4,
@@ -115,27 +115,27 @@ export const SLIDES_DATA: SlideData[] = [
     subtitle: "Emissão em 2s, passaporte com QR Code, validador instantâneo e equivalência curricular por IA",
     keyObjective: "Mostrar que o sistema está construído, funciona ponta a ponta e possui diferenciais de IA reais.",
     speakerScript:
-      "Vejam como isso funciona na prática nas nossas 4 pontas ativas: Na Emissão (/university), a instituição preenche os dados curriculares, assina a transação na devnet da Solana via SAS e o token intransferível chega à carteira do aluno em menos de 2 segundos. Na Custódia (/student), o estudante acessa seu passaporte unificado com acompanhamento de horas complementares do MEC e gera seu QR Code instantâneo. Na Validação (/validator), qualquer empresa arrasta o PDF ou clica nos nossos presets de teste rápido e a autenticidade é checada na Solana em menos de 400 milissegundos. E como grande diferencial, integramos o motor de IA com Google Gemini 1.5 Pro: ele traduz a blockchain em um 'Trust Report' executivo em linguagem natural e resolve o maior pesadelo acadêmico — a equivalência curricular automática entre ementas de faculdades diferentes.",
+      "O LattesChain já é um protótipo 100% funcional em 4 pontas: No Portal da Universidade, a emissão com metadados do MEC e ancoragem no SAS é concluída em menos de 2 segundos. No Passaporte do Aluno, o estudante monitora o progresso de horas curriculares e exibe seu QR Code soberano. No Validador Público, qualquer recrutador arrasta o PDF ou usa nossos presets rápidos para auditar a autenticidade na devnet em menos de 400 milissegundos. E como grande diferencial, integramos o motor Google Gemini 1.5 Pro: ele traduz dados criptográficos em um relatório executivo de confiança e soluciona o maior gargalo acadêmico global: a equivalência curricular automática e semântica entre ementas de faculdades distintas.",
     citations: [
       { name: "Demo ao Vivo", url: "/validator", note: "Validador público funcional com 4 presets canônicos" },
       { name: "Passaporte do Aluno", url: "/student", note: "Carteira soberana com barra de horas MEC e QR Code" },
       { name: "Portal IES", url: "/university", note: "Emissor on-chain com metadados MEC e histórico" },
     ],
-    deliveryTip: "Aponte para os cards na tela e convide a banca a testar o /validator ao vivo com 1 clique.",
+    deliveryTip: "Aponte para os cards na tela e convide a banca a testar o validador ao vivo com 1 clique.",
   },
   {
     id: 5,
-    timeRange: "04:30 - 05:00 (~1 min)",
+    timeRange: "04:30 - 05:00 (30s)",
     badge: "Bloco 5 • Time, Stack MVP & Próximos Passos",
     category: "Time & Roadmap",
     title: "Execução Focada & Escalabilidade Global",
     subtitle: "Stack open-source custo zero, modelo B2B2C freemium e expansão para o Processo de Bolonha",
     keyObjective: "Transmitir maturidade de produto, clareza no go-to-market e sustentabilidade econômica.",
     speakerScript:
-      "Quem está por trás do LattesChain? O time é composto por Alex Miqueias, Rogério Alencar Filho e Caio Vila Nova, com a incubação da Jovian Tech, unindo forte especialização em Engenharia de Dados, DevSecOps, Sistemas & Operações, Inteligência Artificial e Arquitetura Distribuída Solana. Toda a nossa stack do MVP é 100% open-source e com custo zero de infraestrutura: Go ultraleve, Python com IA, Supabase e SDKs Solana. O nosso roadmap possui 3 passos claros: Primeiro, piloto beachhead focado em horas complementares e certificados de extensão com centros acadêmicos parceiros, sem depender de aprovações ministeriais lentas. Segundo, calibração da IA para mapeamento curricular no padrão europeu do Processo de Bolonha (ECTS) e universidades norte-americanas. E terceiro, deploy na mainnet da Solana com State Compression e integração via API REST direta aos ERPs acadêmicos como TOTVS. LattesChain: a soberania educacional na velocidade da Solana!",
+      "O LattesChain é impulsionado pelo ecossistema tecnológico da ASZA COMPANY, reunindo Alex Miqueias na arquitetura Web3 Solana, Rogério Alencar em engenharia de dados e DevSecOps, e Caio Vila Nova em sistemas e operações. Nossa stack é open-source com Go, Python e Solana. Nosso roadmap ataca primeiro o piloto beachhead em horas complementares, expande para equivalência de IA no padrão de Bolonha e culmina na Mainnet com compressão de estado integrada a ERPs. LattesChain: soberania acadêmica na velocidade da Solana. Convidamos a banca a testar o validador ao vivo!",
     citations: [
       { name: "EHEA Bologna Process", url: "https://ehea.info", note: "Bologna Process & ECTS Users' Guide" },
-      { name: "Jovian Tech", url: "https://jovian.foo", note: "Venture Builder & GovTech Incubadora" },
+      { name: "ASZA COMPANY", url: "https://github.com/alexmsza/ASZA-COMPANY", note: "Ecossistema Corporativo Autônomo & DataSecAIOps" },
       { name: "Repositório GitHub", url: "https://github.com/alexmsza/LattesChain", note: "Código 100% Open-Source e Auditado" },
     ],
     deliveryTip: "Feche com impacto, energia alta e convite final para a banca inspecionar o código e a demo.",

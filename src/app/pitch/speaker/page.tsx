@@ -23,17 +23,31 @@ import {
 } from "lucide-react";
 import { SLIDES_DATA, TEAM_MEMBERS, SlideData } from "../slides-data";
 
+type FontSizeLevel = "sm" | "md" | "lg" | "xl" | "2xl";
+const FONT_SIZES: FontSizeLevel[] = ["sm", "md", "lg", "xl", "2xl"];
+
 export default function SpeakerNotesPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
-  const [fontSizeLevel, setFontSizeLevel] = useState<"sm" | "md" | "lg" | "xl">("lg");
+  const [fontSizeLevel, setFontSizeLevel] = useState<FontSizeLevel>("lg");
   const [channelConnected, setChannelConnected] = useState(false);
   const broadcastChannelRef = useRef<BroadcastChannel | null>(null);
 
   const totalSlides = SLIDES_DATA.length;
   const slide = SLIDES_DATA[currentSlide];
   const nextSlideData = currentSlide < totalSlides - 1 ? SLIDES_DATA[currentSlide + 1] : null;
+
+  // Carregar preferência de fonte salva
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const saved = localStorage.getItem("lattes_pitch_font_size");
+      if (saved && FONT_SIZES.includes(saved as FontSizeLevel)) {
+        setFontSizeLevel(saved as FontSizeLevel);
+      }
+    } catch {}
+  }, []);
 
   // BroadcastChannel setup for real-time bidirectional synchronization
   useEffect(() => {
@@ -52,6 +66,10 @@ export default function SpeakerNotesPage() {
         } else if (type === "SYNC_TIMER") {
           if (typeof payload?.seconds === "number") setTimerSeconds(payload.seconds);
           if (typeof payload?.isRunning === "boolean") setIsTimerRunning(payload.isRunning);
+        } else if (type === "SYNC_FONT_SIZE") {
+          if (payload?.fontSize && FONT_SIZES.includes(payload.fontSize as FontSizeLevel)) {
+            setFontSizeLevel(payload.fontSize as FontSizeLevel);
+          }
         }
       };
 
@@ -66,6 +84,10 @@ export default function SpeakerNotesPage() {
         const idx = parseInt(e.newValue, 10);
         if (!isNaN(idx) && idx >= 0 && idx < totalSlides) {
           setCurrentSlide(idx);
+        }
+      } else if (e.key === "lattes_pitch_font_size" && e.newValue) {
+        if (FONT_SIZES.includes(e.newValue as FontSizeLevel)) {
+          setFontSizeLevel(e.newValue as FontSizeLevel);
         }
       }
     };
@@ -157,6 +179,48 @@ export default function SpeakerNotesPage() {
     }
   };
 
+  // Ajustes de tamanho de fonte sincronizados
+  const changeFontSize = useCallback((newSize: FontSizeLevel) => {
+    setFontSizeLevel(newSize);
+    try {
+      localStorage.setItem("lattes_pitch_font_size", newSize);
+      broadcastChannelRef.current?.postMessage({
+        type: "SYNC_FONT_SIZE",
+        payload: { fontSize: newSize },
+      });
+    } catch {}
+  }, []);
+
+  const increaseFontSize = useCallback(() => {
+    setFontSizeLevel((curr) => {
+      const idx = FONT_SIZES.indexOf(curr);
+      const next = idx < FONT_SIZES.length - 1 ? FONT_SIZES[idx + 1] : curr;
+      try {
+        localStorage.setItem("lattes_pitch_font_size", next);
+        broadcastChannelRef.current?.postMessage({
+          type: "SYNC_FONT_SIZE",
+          payload: { fontSize: next },
+        });
+      } catch {}
+      return next;
+    });
+  }, []);
+
+  const decreaseFontSize = useCallback(() => {
+    setFontSizeLevel((curr) => {
+      const idx = FONT_SIZES.indexOf(curr);
+      const next = idx > 0 ? FONT_SIZES[idx - 1] : curr;
+      try {
+        localStorage.setItem("lattes_pitch_font_size", next);
+        broadcastChannelRef.current?.postMessage({
+          type: "SYNC_FONT_SIZE",
+          payload: { fontSize: next },
+        });
+      } catch {}
+      return next;
+    });
+  }, []);
+
   // Keyboard controls
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -186,26 +250,27 @@ export default function SpeakerNotesPage() {
         case "+":
         case "=":
           e.preventDefault();
-          setFontSizeLevel((curr) => (curr === "sm" ? "md" : curr === "md" ? "lg" : "xl"));
+          increaseFontSize();
           break;
         case "-":
         case "_":
           e.preventDefault();
-          setFontSizeLevel((curr) => (curr === "xl" ? "lg" : curr === "lg" ? "md" : "sm"));
+          decreaseFontSize();
           break;
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [nextSlide, prevSlide, toggleTimer, resetTimer]);
+  }, [nextSlide, prevSlide, toggleTimer, resetTimer, increaseFontSize, decreaseFontSize]);
 
-  const fontClasses = {
+  const fontClasses: Record<FontSizeLevel, string> = {
     sm: "text-base sm:text-lg leading-relaxed",
     md: "text-lg sm:text-xl leading-relaxed",
     lg: "text-xl sm:text-2xl leading-relaxed font-medium",
-    xl: "text-2xl sm:text-3xl leading-loose font-medium",
-  }[fontSizeLevel];
+    xl: "text-2xl sm:text-3xl leading-relaxed font-medium",
+    "2xl": "text-3xl sm:text-4xl leading-loose font-bold",
+  };
 
   return (
     <div className="min-h-screen bg-[#07050d] text-slate-100 flex flex-col selection:bg-solana-purple selection:text-white font-sans">
@@ -267,22 +332,22 @@ export default function SpeakerNotesPage() {
               </button>
             </div>
 
-            {/* AJUSTE DE FONTE */}
-            <div className="hidden sm:flex items-center gap-1 rounded-xl bg-slate-950 border border-slate-800 p-1">
+            {/* AJUSTE DE FONTE (SINCRONIZADO) */}
+            <div className="flex items-center gap-1 rounded-xl bg-slate-950 border border-slate-800 p-1 shadow-inner">
               <button
-                onClick={() => setFontSizeLevel((c) => (c === "xl" ? "lg" : c === "lg" ? "md" : "sm"))}
+                onClick={decreaseFontSize}
                 disabled={fontSizeLevel === "sm"}
                 className="p-1 rounded-lg text-slate-400 hover:text-white disabled:opacity-30 transition-all"
                 title="Diminuir texto (-)"
               >
                 <ZoomOut className="h-4 w-4" />
               </button>
-              <span className="text-[11px] font-mono uppercase px-1 text-slate-400">
-                {fontSizeLevel}
+              <span className="text-[11px] font-mono font-bold uppercase px-1.5 text-solana-purpleSoft">
+                Aa {fontSizeLevel}
               </span>
               <button
-                onClick={() => setFontSizeLevel((c) => (c === "sm" ? "md" : c === "md" ? "lg" : "xl"))}
-                disabled={fontSizeLevel === "xl"}
+                onClick={increaseFontSize}
+                disabled={fontSizeLevel === "2xl"}
                 className="p-1 rounded-lg text-slate-400 hover:text-white disabled:opacity-30 transition-all"
                 title="Aumentar texto (+)"
               >
@@ -348,20 +413,43 @@ export default function SpeakerNotesPage() {
 
         {/* PRIMARY TELEPROMPTER SCRIPT (O QUE FALAR PALAVRA POR PALAVRA) */}
         <section className="rounded-3xl border border-solana-purple/50 bg-[#120c22]/90 backdrop-blur-md p-6 sm:p-8 shadow-2xl space-y-4">
-          <div className="flex items-center justify-between border-b border-purple-900/40 pb-3">
+          <div className="flex flex-wrap items-center justify-between border-b border-purple-900/40 pb-3 gap-2">
             <div className="flex items-center gap-2">
               <span className="text-xl">🎙️</span>
               <h2 className="font-display text-base sm:text-lg font-bold text-white">
                 Roteiro Falado Palavra por Palavra (Script Guiado)
               </h2>
             </div>
-            <span className="text-xs font-mono text-solana-purpleSoft bg-solana-purple/10 px-2.5 py-1 rounded-full border border-solana-purple/30">
-              ~60s de locução fluida
-            </span>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 rounded-xl bg-slate-950 border border-slate-800 p-1 shadow-inner">
+                <button
+                  onClick={decreaseFontSize}
+                  disabled={fontSizeLevel === "sm"}
+                  className="p-1 rounded-lg text-slate-400 hover:text-white disabled:opacity-30 transition-all"
+                  title="Diminuir fonte (-)"
+                >
+                  <ZoomOut className="h-3.5 w-3.5" />
+                </button>
+                <span className="text-[10px] font-mono font-bold uppercase px-1 text-slate-300">
+                  {fontSizeLevel}
+                </span>
+                <button
+                  onClick={increaseFontSize}
+                  disabled={fontSizeLevel === "2xl"}
+                  className="p-1 rounded-lg text-slate-400 hover:text-white disabled:opacity-30 transition-all"
+                  title="Aumentar fonte (+)"
+                >
+                  <ZoomIn className="h-3.5 w-3.5" />
+                </button>
+              </div>
+              <span className="text-xs font-mono text-solana-purpleSoft bg-solana-purple/10 px-2.5 py-1 rounded-full border border-solana-purple/30">
+                ~60s de locução fluida
+              </span>
+            </div>
           </div>
 
           <div className="bg-slate-950/80 rounded-2xl p-5 sm:p-7 border border-slate-800/90 shadow-inner">
-            <p className={`text-slate-100 font-sans ${fontClasses}`}>
+            <p className={`text-slate-100 font-sans ${fontClasses[fontSizeLevel]}`}>
               &ldquo;{slide.speakerScript}&rdquo;
             </p>
           </div>
@@ -398,7 +486,7 @@ export default function SpeakerNotesPage() {
             <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-bold uppercase tracking-wider text-solana-purpleSoft">
-                  Participantes da Equipe • Jovian Tech
+                  Participantes da Equipe • ASZA COMPANY
                 </span>
               </div>
               <span className="text-[10px] text-slate-400 font-mono">3 Integrantes</span>

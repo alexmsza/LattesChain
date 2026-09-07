@@ -16,7 +16,7 @@
 ## 📑 Sumário Executivo de Documentação
 
 - 🎙️ **[Roteiro de Pitch (5 Minutos)](docs/PITCH_DECK.md)**: Minutagem, slides e script de fala guiada para gravação do vídeo de submissão.
-- 🖥️ **[Pitch Deck Interativo & Modo Gravação](doc/PITCH_SPEAKER_RECORDING_MODE.md)**: Apresentação em tela limpa 16:9 (`/pitch`) com Teleprompter e notas do orador desacopladas em 2ª janela (`/pitch/speaker`) via `BroadcastChannel`.
+- 🖥️ **[Pitch Deck Interativo & Modo Gravação](doc/PITCH_SPEAKER_RECORDING_MODE.md)**: Apresentação em tela limpa 16:9 (`/pitch`) com Teleprompter e notas do orador desacopladas em 2ª janela (`/pitch/speaker`) via `BroadcastChannel`, ajuste de fonte com 5 níveis e atalhos de teclado.
 - 🏢 **[Arquitetura Multi-Tenant & RBAC](doc/ARCHITECTURE_MULTITENANT_RBAC.md)**: Governança institucional, multi-campus, matriz de autorização e fluxos LGPD.
 - 🏛️ **[Arquitetura Tripartite & Modelo de Negócios](docs/12_tripartite_and_business_architecture.md)**: Ciclo Estudante ⇄ IES ⇄ RH, compliance de estágios, validade universal e produto Jovian Tech.
 - 📊 **[Plano de Negócios & GTM](docs/BUSINESS_PLAN.md)**: Modelagem B2B2C freemium, unit economics, personas e estratégia beachhead.
@@ -131,6 +131,11 @@ graph LR
 - **Mensageria Transacional Legal (LGPD)**: Envio automatizado de convite com credenciais de acesso ao passaporte para o estudante matriculado pela IES, e disparo de notificações com token de consentimento unívoco para solicitações de compliance feitas por empresas de RH (Artigos 7º e 9º da LGPD).
 - **Topbar & RBAC Dinâmico**: Identificador visual no header (`Estudante`, `Empresa`, ou `IES • Polo: [Nome do Campus]`) com isolamento estrito de abas e rotas por perfil de acesso.
 
+### 3.11 Pitch Deck Interativo, Teleprompter & Modo Gravação Dual-Screen (`/pitch` & `/pitch/speaker`)
+- **Separação de Janelas (Pop-out Dual-Screen)**: Modo de apresentação com janela limpa 16:9 (`/pitch`) para captura de vídeo em OBS/Loom e janela dedicada para o orador (`/pitch/speaker`).
+- **Ajuste Dinâmico de Tamanho de Fonte (Notas & Teleprompter)**: 5 níveis calibrados (`sm`, `md`, `lg`, `xl`, `2xl`) com atalhos de teclado (`+`/`=`, `-`/`_`), controles de zoom in/out e sincronização bidirecional em tempo real via `BroadcastChannel` com persistência em `localStorage`.
+- **Sincronização Total**: Slides, cronômetro de 5 minutos regressivo/progressivo e escala tipográfica mantidos em sincronia contínua entre as janelas.
+
 ---
 
 ## 4. Pipeline Visual e Timeline do Fluxo de Valor
@@ -231,6 +236,8 @@ Implementado interativamente na landing page ([`VisualFlowPipeline.tsx`](src/com
 | `/cadastro` | Solicitação de cadastro com validação de CPF/CNPJ e aprovação automática para `@jovian.foo` | Público |
 | `/guia-carteira` | Guia passo a passo de conexão Phantom/Solana e tester de conexão em tempo real | Público |
 | `/privacidade` | Diretrizes LGPD & Privacy by Design com contato oficial DPO (`contact@jovian.foo`) | Público |
+| `/pitch` | Pitch Deck interativo de 5 minutos, tela cheia 16:9, notas e modo gravação | Público |
+| `/pitch/speaker` | Teleprompter e notas do orador em janela desacoplada com sincronização em tempo real | Público |
 
 ### 6.2 Endpoints REST da API
 
