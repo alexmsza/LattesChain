@@ -51,10 +51,10 @@ export const SLIDES_DATA: SlideData[] = [
     subtitle: "Passaporte Acadêmico Global Descentralizado e Soberano na Solana",
     keyObjective: "Capturar atenção imediata da banca demonstrando autoridade técnica e relevância institucional.",
     speakerScript:
-      "Banca examinadora e comunidade Superteam Brasil: nós somos a ASZA COMPANY e apresentamos o LattesChain. Transformamos diplomas, históricos escolares e horas curriculares em credenciais soberanas, imutáveis e verificáveis em menos de 1 segundo na rede Solana. Estamos substituindo décadas de lentidão burocrática e fraudes documentais pela infraestrutura Web3 mais rápida e eficiente do mundo.",
+      "Banca examinadora e comunidade Superteam Brasil: nós somos a JOVIAN TECH e apresentamos o LattesChain. Transformamos diplomas, históricos escolares e horas curriculares em credenciais soberanas, imutáveis e verificáveis em menos de 1 segundo na rede Solana. Estamos substituindo décadas de lentidão burocrática e fraudes documentais pela infraestrutura Web3 mais rápida e eficiente do mundo.",
     citations: [
       { name: "Superteam Earn", url: "https://superteam.fun/earn", note: "Hackathon Universitário Superteam Brasil" },
-      { name: "ASZA COMPANY", url: "https://github.com/alexmsza/ASZA-COMPANY", note: "Ecossistema Corporativo Autônomo • DataSecAIOps" },
+      { name: "JOVIAN TECH", url: "https://jovian.foo", note: "Ecossistema Corporativo Autônomo • DataSecAIOps" },
     ],
     deliveryTip: "Fale com energia, confiança e postura firme. Faça contato visual com a câmera.",
   },
@@ -132,10 +132,10 @@ export const SLIDES_DATA: SlideData[] = [
     subtitle: "Stack open-source custo zero, modelo B2B2C freemium e expansão para o Processo de Bolonha",
     keyObjective: "Transmitir maturidade de produto, clareza no go-to-market e sustentabilidade econômica.",
     speakerScript:
-      "O LattesChain é impulsionado pelo ecossistema tecnológico da ASZA COMPANY, reunindo Alex Miqueias na arquitetura Web3 Solana, Rogério Alencar em engenharia de dados e DevSecOps, e Caio Vila Nova em sistemas e operações. Nossa stack é open-source com Go, Python e Solana. Nosso roadmap ataca primeiro o piloto beachhead em horas complementares, expande para equivalência de IA no padrão de Bolonha e culmina na Mainnet com compressão de estado integrada a ERPs. LattesChain: soberania acadêmica na velocidade da Solana. Convidamos a banca a testar o validador ao vivo!",
+      "O LattesChain é impulsionado pelo ecossistema tecnológico da JOVIAN TECH, reunindo Alex Miqueias na arquitetura Web3 Solana, Rogério Alencar em engenharia de dados e DevSecOps, e Caio Vila Nova em sistemas e operações. Nossa stack é open-source com Go, Python e Solana. Nosso roadmap ataca primeiro o piloto beachhead em horas complementares, expande para equivalência de IA no padrão de Bolonha e culmina na Mainnet com compressão de estado integrada a ERPs. LattesChain: soberania acadêmica na velocidade da Solana. Convidamos a banca a testar o validador ao vivo!",
     citations: [
       { name: "EHEA Bologna Process", url: "https://ehea.info", note: "Bologna Process & ECTS Users' Guide" },
-      { name: "ASZA COMPANY", url: "https://github.com/alexmsza/ASZA-COMPANY", note: "Ecossistema Corporativo Autônomo & DataSecAIOps" },
+      { name: "JOVIAN TECH", url: "https://jovian.foo", note: "Ecossistema Corporativo Autônomo & DataSecAIOps" },
       { name: "Repositório GitHub", url: "https://github.com/alexmsza/LattesChain", note: "Código 100% Open-Source e Auditado" },
     ],
     deliveryTip: "Feche com impacto, energia alta e convite final para a banca inspecionar o código e a demo.",

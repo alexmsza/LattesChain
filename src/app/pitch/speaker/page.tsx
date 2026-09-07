@@ -23,8 +23,8 @@ import {
 } from "lucide-react";
 import { SLIDES_DATA, TEAM_MEMBERS, SlideData } from "../slides-data";
 
-type FontSizeLevel = "sm" | "md" | "lg" | "xl" | "2xl";
-const FONT_SIZES: FontSizeLevel[] = ["sm", "md", "lg", "xl", "2xl"];
+type FontSizeLevel = "2xs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
+const FONT_SIZES: FontSizeLevel[] = ["2xs", "xs", "sm", "md", "lg", "xl", "2xl"];
 
 export default function SpeakerNotesPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -80,7 +80,21 @@ export default function SpeakerNotesPage() {
     }
 
     const handleStorage = (e: StorageEvent) => {
-      if (e.key === "lattes_pitch_current_slide" && e.newValue) {
+      if (e.key === "lattes_pitch_sync_event" && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (parsed.type === "SYNC_SLIDE" && typeof parsed.slideIndex === "number") {
+            const idx = parsed.slideIndex;
+            if (idx >= 0 && idx < totalSlides) {
+              setCurrentSlide(idx);
+            }
+          } else if (parsed.type === "SYNC_FONT_SIZE" && parsed.fontSize) {
+            if (FONT_SIZES.includes(parsed.fontSize as FontSizeLevel)) {
+              setFontSizeLevel(parsed.fontSize as FontSizeLevel);
+            }
+          }
+        } catch {}
+      } else if (e.key === "lattes_pitch_current_slide" && e.newValue) {
         const idx = parseInt(e.newValue, 10);
         if (!isNaN(idx) && idx >= 0 && idx < totalSlides) {
           setCurrentSlide(idx);
@@ -107,6 +121,10 @@ export default function SpeakerNotesPage() {
         payload: { slideIndex: idx },
       });
       localStorage.setItem("lattes_pitch_current_slide", idx.toString());
+      localStorage.setItem(
+        "lattes_pitch_sync_event",
+        JSON.stringify({ type: "SYNC_SLIDE", slideIndex: idx, timestamp: Date.now() })
+      );
     } catch {
       // ignore
     }
@@ -265,6 +283,8 @@ export default function SpeakerNotesPage() {
   }, [nextSlide, prevSlide, toggleTimer, resetTimer, increaseFontSize, decreaseFontSize]);
 
   const fontClasses: Record<FontSizeLevel, string> = {
+    "2xs": "text-xs sm:text-sm leading-normal",
+    xs: "text-sm sm:text-base leading-relaxed",
     sm: "text-base sm:text-lg leading-relaxed",
     md: "text-lg sm:text-xl leading-relaxed",
     lg: "text-xl sm:text-2xl leading-relaxed font-medium",
@@ -336,7 +356,7 @@ export default function SpeakerNotesPage() {
             <div className="flex items-center gap-1 rounded-xl bg-slate-950 border border-slate-800 p-1 shadow-inner">
               <button
                 onClick={decreaseFontSize}
-                disabled={fontSizeLevel === "sm"}
+                disabled={fontSizeLevel === "2xs"}
                 className="p-1 rounded-lg text-slate-400 hover:text-white disabled:opacity-30 transition-all"
                 title="Diminuir texto (-)"
               >
@@ -374,12 +394,13 @@ export default function SpeakerNotesPage() {
               onClick={() => goToSlide(idx)}
               className={`text-left p-1.5 rounded-lg border transition-all ${
                 idx === currentSlide
-                  ? "bg-solana-purple/20 border-solana-purple text-white shadow-sm"
+                  ? "bg-solana-purple/20 border-solana-purple text-white shadow-sm ring-1 ring-solana-purple/40"
                   : "bg-slate-950/40 border-slate-900 text-slate-400 hover:border-slate-700 hover:text-slate-200"
               }`}
+              title={`Trocar para a fala do Slide ${idx + 1} (muda o slide principal junto)`}
             >
               <div className="flex items-center justify-between text-[10px]">
-                <span className="font-bold">Slide {idx + 1}</span>
+                <span className="font-bold">Fala {idx + 1}</span>
                 <span className="font-mono text-[9px] opacity-75">{s.timeRange.split(" ")[0]}</span>
               </div>
               <p className="text-[10px] font-medium truncate mt-0.5">{s.category}</p>
@@ -416,15 +437,40 @@ export default function SpeakerNotesPage() {
           <div className="flex flex-wrap items-center justify-between border-b border-purple-900/40 pb-3 gap-2">
             <div className="flex items-center gap-2">
               <span className="text-xl">🎙️</span>
-              <h2 className="font-display text-base sm:text-lg font-bold text-white">
-                Roteiro Falado Palavra por Palavra (Script Guiado)
-              </h2>
+              <div>
+                <h2 className="font-display text-base sm:text-lg font-bold text-white">
+                  Roteiro Falado — Fala {currentSlide + 1} de {totalSlides}: {slide.category}
+                </h2>
+                <p className="text-[11px] text-solana-green font-medium flex items-center gap-1 mt-0.5">
+                  <Radio className="h-3 w-3 animate-pulse" /> Sincronizado: o slide principal muda automaticamente com esta fala
+                </p>
+              </div>
             </div>
             <div className="flex items-center gap-2">
+              {/* BOTÕES DE FALA ANTERIOR / PRÓXIMA DIRETAMENTE NO CABEÇALHO DO SCRIPT */}
+              <div className="flex items-center gap-1.5 mr-1">
+                <button
+                  onClick={prevSlide}
+                  disabled={currentSlide === 0}
+                  className="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition-all flex items-center gap-1"
+                  title="Voltar para fala anterior (muda slide junto)"
+                >
+                  <ChevronLeft className="h-3.5 w-3.5" /> Anterior
+                </button>
+                <button
+                  onClick={nextSlide}
+                  disabled={currentSlide === totalSlides - 1}
+                  className="px-2.5 py-1 rounded-lg bg-solana-purple/30 border border-solana-purple/50 text-xs font-bold text-solana-purpleSoft hover:bg-solana-purple hover:text-white disabled:opacity-30 disabled:pointer-events-none transition-all flex items-center gap-1"
+                  title="Avançar para próxima fala (muda slide junto)"
+                >
+                  Próxima <ChevronRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
+
               <div className="flex items-center gap-1 rounded-xl bg-slate-950 border border-slate-800 p-1 shadow-inner">
                 <button
                   onClick={decreaseFontSize}
-                  disabled={fontSizeLevel === "sm"}
+                  disabled={fontSizeLevel === "2xs"}
                   className="p-1 rounded-lg text-slate-400 hover:text-white disabled:opacity-30 transition-all"
                   title="Diminuir fonte (-)"
                 >
@@ -446,6 +492,27 @@ export default function SpeakerNotesPage() {
                 ~60s de locução fluida
               </span>
             </div>
+          </div>
+
+          {/* SELETOR RÁPIDO DE FALA (CLIQUE EM QUALQUER FALA PARA MUDAR A FALA E O SLIDE) */}
+          <div className="flex items-center gap-1.5 flex-wrap pt-1 pb-1">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mr-1 flex items-center gap-1">
+              <Sliders className="h-3 w-3 text-solana-purple" /> Pular para Fala:
+            </span>
+            {SLIDES_DATA.map((s, idx) => (
+              <button
+                key={s.id}
+                onClick={() => goToSlide(idx)}
+                className={`px-2 py-0.5 rounded-md text-[11px] font-semibold border transition-all ${
+                  idx === currentSlide
+                    ? "bg-solana-purple text-white border-solana-purple shadow-sm ring-1 ring-solana-purple/50"
+                    : "bg-slate-900/60 text-slate-400 border-slate-800 hover:text-slate-200 hover:border-slate-700"
+                }`}
+                title={`Ir para fala e slide ${idx + 1}: ${s.category}`}
+              >
+                {idx + 1}. {s.category}
+              </button>
+            ))}
           </div>
 
           <div className="bg-slate-950/80 rounded-2xl p-5 sm:p-7 border border-slate-800/90 shadow-inner">
@@ -486,7 +553,7 @@ export default function SpeakerNotesPage() {
             <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-bold uppercase tracking-wider text-solana-purpleSoft">
-                  Participantes da Equipe • ASZA COMPANY
+                  Participantes da Equipe • JOVIAN TECH
                 </span>
               </div>
               <span className="text-[10px] text-slate-400 font-mono">3 Integrantes</span>
@@ -506,10 +573,10 @@ export default function SpeakerNotesPage() {
 
         {/* NEXT SLIDE PREVIEW (O QUE VEM A SEGUIR) */}
         {nextSlideData && (
-          <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4 flex items-center justify-between gap-4">
+          <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-1">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
-                A Seguir • Slide {nextSlideData.id + 1} ({nextSlideData.category})
+                A Seguir • Fala {nextSlideData.id + 1} ({nextSlideData.category}) — Muda Slide Automaticamente
               </span>
               <h4 className="text-sm font-bold text-white">{nextSlideData.title}</h4>
               <p className="text-xs text-slate-400 line-clamp-1">{nextSlideData.subtitle}</p>
@@ -517,8 +584,9 @@ export default function SpeakerNotesPage() {
             <button
               onClick={nextSlide}
               className="inline-flex items-center gap-1.5 rounded-xl bg-solana-purple/30 border border-solana-purple/50 px-4 py-2 text-xs font-bold text-solana-purpleSoft hover:bg-solana-purple hover:text-white transition-all shrink-0"
+              title="Avançar para próxima fala e mudar slide da apresentação junto"
             >
-              Avançar <ChevronRight className="h-4 w-4" />
+              Ir para Próxima Fala <ChevronRight className="h-4 w-4" />
             </button>
           </div>
         )}

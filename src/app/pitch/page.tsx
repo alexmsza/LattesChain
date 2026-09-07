@@ -34,10 +34,12 @@ import {
 } from "lucide-react";
 import { SLIDES_DATA, TEAM_MEMBERS, SlideData } from "./slides-data";
 
-type FontSizeLevel = "sm" | "md" | "lg" | "xl" | "2xl";
-const FONT_SIZES: FontSizeLevel[] = ["sm", "md", "lg", "xl", "2xl"];
+type FontSizeLevel = "2xs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
+const FONT_SIZES: FontSizeLevel[] = ["2xs", "xs", "sm", "md", "lg", "xl", "2xl"];
 
 const DRAWER_FONT_CLASSES: Record<FontSizeLevel, string> = {
+  "2xs": "text-[10px] sm:text-[11px] leading-snug",
+  xs: "text-[11px] sm:text-xs leading-normal",
   sm: "text-xs leading-relaxed",
   md: "text-xs sm:text-sm leading-relaxed",
   lg: "text-sm sm:text-base leading-relaxed font-medium",
@@ -60,6 +62,23 @@ export default function PitchDeckPage() {
 
   const totalSlides = SLIDES_DATA.length;
   const slide = SLIDES_DATA[currentSlide];
+
+  // Ref estável para responder a REQUEST_STATE sem reinicializar o canal
+  const syncStateRef = useRef({
+    currentSlide,
+    timerSeconds,
+    isTimerRunning,
+    speakerFontSize,
+  });
+
+  useEffect(() => {
+    syncStateRef.current = {
+      currentSlide,
+      timerSeconds,
+      isTimerRunning,
+      speakerFontSize,
+    };
+  }, [currentSlide, timerSeconds, isTimerRunning, speakerFontSize]);
 
   // Carregar preferência salva de tamanho de fonte das notas
   useEffect(() => {
@@ -84,7 +103,10 @@ export default function PitchDeckPage() {
       channel.onmessage = (event) => {
         const { type, payload } = event.data || {};
         if (type === "SYNC_SLIDE" && typeof payload?.slideIndex === "number") {
-          setCurrentSlide(payload.slideIndex);
+          const target = payload.slideIndex;
+          if (target >= 0 && target < totalSlides) {
+            setCurrentSlide(target);
+          }
         } else if (type === "SYNC_TIMER") {
           if (typeof payload?.seconds === "number") setTimerSeconds(payload.seconds);
           if (typeof payload?.isRunning === "boolean") setIsTimerRunning(payload.isRunning);
@@ -93,18 +115,21 @@ export default function PitchDeckPage() {
             setSpeakerFontSize(payload.fontSize as FontSizeLevel);
           }
         } else if (type === "REQUEST_STATE") {
-          // Quando a janela de orador abrir, responde o estado corrente
+          // Quando a janela de orador abrir, responde o estado corrente através do ref
           channel?.postMessage({
             type: "SYNC_SLIDE",
-            payload: { slideIndex: currentSlide },
+            payload: { slideIndex: syncStateRef.current.currentSlide },
           });
           channel?.postMessage({
             type: "SYNC_TIMER",
-            payload: { seconds: timerSeconds, isRunning: isTimerRunning },
+            payload: {
+              seconds: syncStateRef.current.timerSeconds,
+              isRunning: syncStateRef.current.isTimerRunning,
+            },
           });
           channel?.postMessage({
             type: "SYNC_FONT_SIZE",
-            payload: { fontSize: speakerFontSize },
+            payload: { fontSize: syncStateRef.current.speakerFontSize },
           });
         }
       };
@@ -113,7 +138,21 @@ export default function PitchDeckPage() {
     }
 
     const handleStorage = (e: StorageEvent) => {
-      if (e.key === "lattes_pitch_current_slide" && e.newValue) {
+      if (e.key === "lattes_pitch_sync_event" && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (parsed.type === "SYNC_SLIDE" && typeof parsed.slideIndex === "number") {
+            const idx = parsed.slideIndex;
+            if (idx >= 0 && idx < totalSlides) {
+              setCurrentSlide(idx);
+            }
+          } else if (parsed.type === "SYNC_FONT_SIZE" && parsed.fontSize) {
+            if (FONT_SIZES.includes(parsed.fontSize as FontSizeLevel)) {
+              setSpeakerFontSize(parsed.fontSize as FontSizeLevel);
+            }
+          }
+        } catch {}
+      } else if (e.key === "lattes_pitch_current_slide" && e.newValue) {
         const idx = parseInt(e.newValue, 10);
         if (!isNaN(idx) && idx >= 0 && idx < totalSlides) {
           setCurrentSlide(idx);
@@ -130,7 +169,7 @@ export default function PitchDeckPage() {
       if (channel) channel.close();
       window.removeEventListener("storage", handleStorage);
     };
-  }, [totalSlides, currentSlide, timerSeconds, isTimerRunning, speakerFontSize]);
+  }, [totalSlides]);
 
   // Função para abrir notas do orador em janela independente pop-out
   const openSpeakerWindow = useCallback(() => {
@@ -160,6 +199,10 @@ export default function PitchDeckPage() {
         payload: { slideIndex: idx },
       });
       localStorage.setItem("lattes_pitch_current_slide", idx.toString());
+      localStorage.setItem(
+        "lattes_pitch_sync_event",
+        JSON.stringify({ type: "SYNC_SLIDE", slideIndex: idx, timestamp: Date.now() })
+      );
     } catch {
       // ignore
     }
@@ -1014,7 +1057,7 @@ export default function PitchDeckPage() {
                   <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5 space-y-4">
                     <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                       <span className="text-xs font-bold uppercase tracking-wider text-solana-purpleSoft">
-                        Equipe de Engenharia • ASZA COMPANY
+                        Equipe de Engenharia • JOVIAN TECH
                       </span>
                       <Users className="h-4 w-4 text-solana-purple" />
                     </div>
@@ -1148,7 +1191,7 @@ export default function PitchDeckPage() {
               <div className="flex items-center gap-1 rounded-xl bg-slate-950 border border-slate-800 p-1 shadow-inner">
                 <button
                   onClick={decreaseFontSize}
-                  disabled={speakerFontSize === "sm"}
+                  disabled={speakerFontSize === "2xs"}
                   className="p-1 rounded-lg text-slate-400 hover:text-white disabled:opacity-30 transition-all"
                   title="Diminuir fonte das notas (-)"
                 >
@@ -1177,11 +1220,58 @@ export default function PitchDeckPage() {
             </div>
           </div>
 
+          {/* SELETOR DIRETO DE FALA (MUDAR A FALA ALTERA O SLIDE JUNTO) */}
+          <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 mb-3 border-b border-purple-900/30">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mr-1 flex items-center gap-1">
+                <span className="h-1.5 w-1.5 rounded-full bg-solana-green animate-pulse" /> Trocar Fala:
+              </span>
+              {SLIDES_DATA.map((s, idx) => (
+                <button
+                  key={s.id}
+                  onClick={() => goToSlide(idx)}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all ${
+                    idx === currentSlide
+                      ? "bg-solana-purple text-white border-solana-purple shadow-sm ring-1 ring-solana-purple/50"
+                      : "bg-slate-900/80 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700"
+                  }`}
+                  title={`Ir para a fala e slide ${idx + 1}: ${s.category}`}
+                >
+                  Fala {idx + 1} • {s.category}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-1.5 shrink-0">
+              <button
+                onClick={prevSlide}
+                disabled={currentSlide === 0}
+                className="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition-all flex items-center gap-1"
+                title="Fala anterior (muda o slide junto)"
+              >
+                <ChevronLeft className="h-3.5 w-3.5" /> Fala Anterior
+              </button>
+              <button
+                onClick={nextSlide}
+                disabled={currentSlide === totalSlides - 1}
+                className="px-2.5 py-1 rounded-lg bg-solana-purple/30 border border-solana-purple/50 text-xs font-semibold text-solana-purpleSoft hover:bg-solana-purple hover:text-white disabled:opacity-30 disabled:pointer-events-none transition-all flex items-center gap-1"
+                title="Próxima fala (muda o slide junto)"
+              >
+                Próxima Fala <ChevronRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 text-xs">
             {/* SCRIPT DE FALA FALADA (PALAVRA POR PALAVRA) */}
             <div className="lg:col-span-2 space-y-2 bg-slate-950/60 rounded-xl p-3.5 border border-slate-800">
               <div className="flex items-center justify-between text-slate-300 font-semibold">
-                <span className="text-solana-purpleSoft">🎙️ O que falar (Script do Vídeo):</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-solana-purpleSoft">🎙️ O que falar (Script do Vídeo):</span>
+                  <span className="rounded bg-solana-green/10 border border-solana-green/30 px-2 py-0.5 text-[10px] text-solana-green font-mono">
+                    Slide {currentSlide + 1} ativo
+                  </span>
+                </div>
                 <span className="text-[10px] text-slate-500">~60 segundos de fala</span>
               </div>
               <p className={`text-slate-200 leading-relaxed font-sans italic ${DRAWER_FONT_CLASSES[speakerFontSize]}`}>

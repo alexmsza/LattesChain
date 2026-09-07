@@ -34,8 +34,8 @@ sequenceDiagram
 
 | Atalho | Ação | Descrição |
 | :--- | :--- | :--- |
-| `+` ou `=` | **Aumentar Fonte das Notas** | Eleva a escala tipográfica das notas/teleprompter (`SM` ➔ `2XL`) |
-| `-` ou `_` | **Diminuir Fonte das Notas** | Reduz a escala tipográfica das notas/teleprompter (`2XL` ➔ `SM`) |
+| `+` ou `=` | **Aumentar Fonte das Notas** | Eleva a escala tipográfica das notas/teleprompter (`2XS` ➔ `2XL`) |
+| `-` ou `_` | **Diminuir Fonte das Notas** | Reduz a escala tipográfica das notas/teleprompter (`2XL` ➔ `2XS`) |
 | `O` | **Separar Notas (Janela Pop-out)** | Abre `/pitch/speaker` em janela popup e oculta notas da tela principal |
 | `G` | **Modo Gravação (Clean View)** | Oculta cabeçalho, barra de progresso e bordas; foca no slide 16:9 |
 | `N` | **Notas Embutidas** | Alterna exibição das notas na parte inferior da própria página |
@@ -50,15 +50,17 @@ sequenceDiagram
 
 ## 4. Níveis de Escala Tipográfica Suportados
 
-Ambas as telas compartilham 5 níveis calibrados para legibilidade em monitores de qualquer distância e resolução:
+Ambas as telas compartilham 7 níveis calibrados para legibilidade em monitores de qualquer distância, resolução ou layout (inclusive split-screen e janelas ultra compactas):
 
 | Nível | Identificador | Indicador Visual | Aplicação Recomendada |
 | :---: | :---: | :---: | :--- |
-| **Pequeno** | `sm` | `A- (SM)` | Telas pequenas, notebooks 13" ou visão próxima |
-| **Médio (Padrão)** | `md` | `A (MD)` | Resolução padrão 1080p e leitura balanceada |
-| **Grande** | `lg` | `A+ (LG)` | Monitores 2K/4K ou maior facilidade de escaneamento visual |
-| **Extra Grande** | `xl` | `A++ (XL)` | Uso como teleprompter a meia distância (1,5m) |
-| **Teleprompter Pro** | `2xl` | `A+++ (2XL)` | Leitura dinâmica a longa distância ou gravação em pé |
+| **Ultra Compacto** | `2xs` | `Aa 2xs` | Janelas divididas (tiling/split), visualização completa sem rolagem |
+| **Muito Pequeno** | `xs` | `Aa xs` | Laptops compactos ou teleprompter lateral estreito |
+| **Pequeno** | `sm` | `Aa sm` | Telas pequenas, notebooks 13" ou visão próxima |
+| **Médio (Padrão)** | `md` | `Aa md` | Resolução padrão 1080p e leitura balanceada |
+| **Grande** | `lg` | `Aa lg` | Monitores 2K/4K ou maior facilidade de escaneamento visual |
+| **Extra Grande** | `xl` | `Aa xl` | Uso como teleprompter a meia distância (1,5m) |
+| **Teleprompter Pro** | `2xl` | `Aa 2xl` | Leitura dinâmica a longa distância ou gravação em pé |
 
 ---
 
@@ -74,4 +76,27 @@ Ambas as telas compartilham 5 níveis calibrados para legibilidade em monitores 
 5. No software de gravação (ex: OBS Studio ou Loom):
    - Selecione para capturar exclusivamente a janela do **Pitch Deck Principal**.
 6. Use o teclado (`Espaço`, `→`) na janela do orador ou na janela principal: ambas avançam juntas instantaneamente.
+
+---
+
+## 6. Sincronização Bidirecional Contínua (Troca de Fala ➔ Troca de Slide)
+
+### Descrição da Mudança
+Implementada navegação síncrona imediata entre o script falado do orador e os slides da apresentação. A troca de fala (seja via seletor numérico, abas de fala, botões "Fala Anterior" / "Próxima Fala" ou avanço no card "A Seguir") altera automaticamente e de forma instantânea o slide correspondente tanto na apresentação principal quanto na janela de teleprompter/drawer.
+
+### Impacto Técnico
+- **Canal IPC Estável (`BroadcastChannel`)**: Eliminação do ciclo de teardown/reabertura a cada segundo no `useEffect` causado pelo cronômetro. O canal agora é persistente durante todo o ciclo de vida do componente.
+- **Fallback Resiliente por Timestamp (`StorageEvent`)**: Inclusão de chave `lattes_pitch_sync_event` com carimbo temporal (`Date.now()`), assegurando que mensagens entre abas ou telas nunca sejam descartadas mesmo se o valor for reemitido.
+- **Seletor de Fala Integrado no Drawer**: Adicionado seletor de 6 falas com botões de navegação no drawer de notas da tela principal (`/pitch`), permitindo trocar a fala e o slide simultaneamente sem precisar fechar o drawer.
+- **Controles de Fala no Teleprompter**: Adicionados controles diretos de "Pular para Fala", "Fala Anterior", "Próxima Fala" e indicador de status ao vivo no cabeçalho do script em `/pitch/speaker`.
+
+### Instruções de Uso
+1. **Pelo Teleprompter Dedicado (`/pitch/speaker`)**:
+   - Clique em qualquer chip de fala na barra superior ou na seção `Pular para Fala:` (ex: `Fala 3: Arquitetura SAS`).
+   - O teleprompter muda a fala e a janela de apresentação (`/pitch`) troca imediatamente para o Slide 3.
+   - Use os botões `Anterior` ou `Próxima` no bloco de script para passar a fala e o slide juntos.
+2. **Pelo Drawer de Notas Embutidas (`/pitch`)**:
+   - Pressione `N` para abrir as notas do orador.
+   - Clique em qualquer uma das 6 opções da barra `Trocar Fala:` ou use os botões `Fala Anterior` / `Próxima Fala`.
+   - O slide da apresentação e a fala em exibição mudarão instantaneamente em sincronia.
 

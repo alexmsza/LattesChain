@@ -16,7 +16,7 @@
 ## 📑 Sumário Executivo de Documentação
 
 - 🎙️ **[Roteiro de Pitch (5 Minutos)](docs/PITCH_DECK.md)**: Minutagem, slides e script de fala guiada para gravação do vídeo de submissão.
-- 🖥️ **[Pitch Deck Interativo & Modo Gravação](doc/PITCH_SPEAKER_RECORDING_MODE.md)**: Apresentação em tela limpa 16:9 (`/pitch`) com Teleprompter e notas do orador desacopladas em 2ª janela (`/pitch/speaker`) via `BroadcastChannel`, ajuste de fonte com 5 níveis e atalhos de teclado.
+- 🖥️ **[Pitch Deck Interativo & Modo Gravação](doc/PITCH_SPEAKER_RECORDING_MODE.md)**: Apresentação em tela limpa 16:9 (`/pitch`) com Teleprompter e notas do orador desacopladas em 2ª janela (`/pitch/speaker`) via `BroadcastChannel`, ajuste dinâmico de fonte com 7 níveis (`2xs` a `2xl`, permitindo modo ultra compacto) e sincronização em tempo real.
 - 🏢 **[Arquitetura Multi-Tenant & RBAC](doc/ARCHITECTURE_MULTITENANT_RBAC.md)**: Governança institucional, multi-campus, matriz de autorização e fluxos LGPD.
 - 🏛️ **[Arquitetura Tripartite & Modelo de Negócios](docs/12_tripartite_and_business_architecture.md)**: Ciclo Estudante ⇄ IES ⇄ RH, compliance de estágios, validade universal e produto Jovian Tech.
 - 📊 **[Plano de Negócios & GTM](docs/BUSINESS_PLAN.md)**: Modelagem B2B2C freemium, unit economics, personas e estratégia beachhead.
@@ -133,8 +133,10 @@ graph LR
 
 ### 3.11 Pitch Deck Interativo, Teleprompter & Modo Gravação Dual-Screen (`/pitch` & `/pitch/speaker`)
 - **Separação de Janelas (Pop-out Dual-Screen)**: Modo de apresentação com janela limpa 16:9 (`/pitch`) para captura de vídeo em OBS/Loom e janela dedicada para o orador (`/pitch/speaker`).
-- **Ajuste Dinâmico de Tamanho de Fonte (Notas & Teleprompter)**: 5 níveis calibrados (`sm`, `md`, `lg`, `xl`, `2xl`) com atalhos de teclado (`+`/`=`, `-`/`_`), controles de zoom in/out e sincronização bidirecional em tempo real via `BroadcastChannel` com persistência em `localStorage`.
-- **Sincronização Total**: Slides, cronômetro de 5 minutos regressivo/progressivo e escala tipográfica mantidos em sincronia contínua entre as janelas.
+- **Sincronização Bidirecional Fala ➔ Slide**: A seleção ou avanço de qualquer fala nas notas do orador (seja no teleprompter `/pitch/speaker` ou no drawer embutido de `/pitch`) altera imediatamente o slide correspondente na tela de apresentação via `BroadcastChannel` persistente e fallback de storage com timestamp.
+- **Navegação Integrada de Falas**: Seletor de 6 falas com botões de "Fala Anterior" e "Próxima Fala" diretamente no teleprompter e no drawer das notas, com indicadores ao vivo de sincronização.
+- **Ajuste Dinâmico de Tamanho de Fonte (Notas & Teleprompter)**: 7 níveis calibrados (`2xs`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`) com atalhos de teclado (`+`/`=`, `-`/`_`), controles de zoom in/out e sincronização bidirecional em tempo real via `BroadcastChannel` com persistência em `localStorage`.
+- **Sincronização Total**: Slides, cronômetro de 5 minutos regressivo/progressivo e escala tipográfica mantidos em sincronia contínua entre as janelas. Consulte **[doc/PITCH_SPEAKER_RECORDING_MODE.md](doc/PITCH_SPEAKER_RECORDING_MODE.md)**.
 
 ---
 
