@@ -33,11 +33,12 @@
 
 ## 1. O Problema: Burocracia, Fraudes e Atrito no Ensino Superior
 
-Hoje, o ecossistema educacional e o mercado corporativo enfrentam custos bilionários com validação documental manual:
+Hoje, o ecossistema educacional e o mercado corporativo enfrentam custos bilionários e paralisia operacional com a validação manual de documentos em papel ou PDFs editáveis:
 
-1. **Sobrecarga Crônica nas Secretarias Acadêmicas**: Universidades despendem semanas processando solicitações manuais de aproveitamento de disciplinas, emissão de segunda via de diplomas e declarações de matrícula.
-2. **Epidemia de Fraudes em Diplomas e Certificados**: Estima-se que mais de 10% dos currículos e certificados apresentados em seleções contenham adulterações digitais em PDFs comuns, impossíveis de auditar sem telefonar para a instituição de origem.
-3. **Atrito Extremo para Alunos e Recrutadores**: Estudantes perdem vagas de estágio e oportunidades internacionais aguardando carimbos; empresas gastam até 15 dias em processos de *background check* educacional.
+1. **Epidemia de Fraudes e Discrepâncias em Títulos (HireRight Benchmark)**: Segundo o *HireRight Global Employment Screening Benchmark Report*, discrepâncias e adulterações em históricos acadêmicos e diplomas constituem a **inconsistência número #1** detectada em triagens corporativas no mundo todo — com até **85% dos empregadores** flagrando currículos forjados ou cursos incompletos alegados como concluídos.
+2. **Barreiras para 6,3 Milhões de Estudantes (UNESCO & EHEA)**: De acordo com a *UNESCO Global Convention on the Recognition of Qualifications*, mais de 6,3 milhões de estudantes transfronteiriços enfrentam entraves de mobilidade internacional, perdendo bolsas de estudo, intercâmbios e contratações urgentes devido a semanas de lentidão em legalizações consulares e carência de padronização interoperável.
+3. **Sobrecarga Crônica nas Secretarias Acadêmicas**: Equipes administrativas de IES gastam até **30% da sua jornada de trabalho** respondendo chamados repetitivos por telefone e e-mail para atestar a veracidade de certidões, enquanto veem o prestígio da instituição exposto a fraudes de PDFs adulterados que circulam livremente.
+4. **Incerteza e Custo para Empresas e RHs**: Organizações despendem de 10 a 20 dias úteis e orçamentos elevados em auditorias terceirizadas de *background check*, sem garantia criptográfica contra documentos forjados digitalmente.
 
 ---
 

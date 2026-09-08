@@ -23,21 +23,24 @@
 ## 🎬 Script de Apresentação (Fala Guiada de 5 Minutos)
 
 ### [00:00 - 01:00] Bloco 1: O Problema, Quem Sofre e Evidências Concretas
-*(Slide 2 no app `/pitch`: Burocracia Paralisante & Fraudes)*
+*(Slide 2 no app `/pitch`: Burocracia Paralisante & Epidemia de Fraudes)*
 
 > **Narrador**:  
-> "Hoje, validar diplomas e históricos escolares ainda depende de PDFs comuns e papéis carimbados — fáceis de forjar com qualquer ferramenta simples de edição.
+> "O modelo tradicional de validação acadêmica opera sob um abismo de comunicação: documentos em papel ou PDFs editáveis custam semanas de espera, paralisam carreiras e expõem a reputação das próprias faculdades a fraudes.
 > 
-> Quem sofre diretamente com isso?  
-> 1. **Os Estudantes**, que perdem prazos de intercâmbio, bolsas e vagas no exterior por semanas de espera burocrática e custos consulares.  
-> 2. **As Secretarias Acadêmicas**, sobrecarregadas com validações manuais via e-mail e telefone, gastando até 30% da sua jornada de trabalho.  
-> 3. **Os RHs e Universidades Estrangeiras**, que gastam tempo e dinheiro valiosos auditando históricos escolares.  
+> Como comprova o **HireRight Global Employment Screening Benchmark Report**, a discrepância e adulteração em históricos acadêmicos e diplomas é a **inconsistência número um** detectada em triagens corporativas em todo o mundo — com até **85% dos empregadores** já tendo flagrado currículos ou diplomas forjados.
 > 
-> E como nós sabemos disso? De acordo com a **UNESCO**, a falta de padronização e a lentidão na validação de títulos são os maiores entraves para a mobilidade de mais de **6 milhões de estudantes transfronteiriços**. No mercado corporativo, os dados do **HireRight Global Benchmark Report** confirmam que adulterações educacionais lideram as inconsistências detectadas em triagens de candidatos em todo o mundo."
+> Na ponta dos estudantes, a **UNESCO** alerta que mais de **6,3 milhões de alunos internacionais** enfrentam barreiras severas de mobilidade e equivalência de créditos, perdendo bolsas de pesquisa, intercâmbios e contratações urgentes por causa de semanas de espera e custos consulares abusivos.
+> 
+> Ao mesmo tempo, as **secretarias acadêmicas** gastam até **30% da sua jornada de trabalho** respondendo chamados manuais para atestar papéis, enquanto o prestígio da instituição fica refém de falsificações digitais que circulam livremente. E as **empresas** gastam de 10 a 20 dias em auditorias lentas e inconclusivas.
+> 
+> O problema não é a competência das universidades, mas a ausência de um trilho digital comum e soberano que una estudante, faculdade e mercado com prova criptográfica instantânea."
 
 **Fontes Consultáveis**:
-- **UNESCO**: *Global Convention on the Recognition of Qualifications* ([unesco.org](https://unesco.org))
-- **HireRight**: *Global Employment Screening Benchmark Report* ([hireright.com](https://hireright.com))
+- **HireRight**: *Global Employment Screening Benchmark Report* ([hireright.com](https://hireright.com)) — Inconsistências educacionais lideram o ranking global #1 de discrepâncias em triagens corporativas.
+- **UNESCO**: *Global Convention on the Recognition of Qualifications concerning Higher Education* ([unesco.org](https://unesco.org)) — 6.3M+ estudantes internacionais com entraves de mobilidade e convalidação.
+- **EHEA / Processo de Bolonha**: *ECTS Users' Guide & Recognition of Qualifications* ([ehea.info](https://ehea.info)) — Burocracia na equivalência de créditos e perda média de semestres letivos em transferências.
+- **W3C**: *Verifiable Credentials Data Model v2.0* ([w3.org/TR/vc-data-model-2.0](https://www.w3.org/TR/vc-data-model-2.0/)) — Padrão internacional aberto para atestações digitais soberanas e à prova de adulteração.
 
 ---
 

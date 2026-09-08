@@ -65,14 +65,16 @@ export const SLIDES_DATA: SlideData[] = [
     category: "O Problema",
     title: "Burocracia Paralisante & Epidemia de Fraudes",
     subtitle: "Documentos em PDF e papel custam semanas de espera e bilhões em validações manuais",
-    keyObjective: "Demonstrar que o gargalo é o canal de comunicação frágil e analógico entre os atores, valorizando a seriedade das faculdades.",
+    keyObjective: "Demonstrar o impacto humano e financeiro do abismo de comunicação nos 3 envolvidos, respaldado pelos dados corporativos da HireRight e relatórios internacionais da UNESCO e EHEA.",
     speakerScript:
-      "O modelo tradicional de validação acadêmica opera sob um abismo de comunicação: documentos em papel ou PDFs editáveis custam semanas de espera e expõem a reputação das próprias faculdades a fraudes. De um lado, como aponta a UNESCO, mais de 6 milhões de estudantes encontram barreiras para levar suas conquistas além das fronteiras. Do outro, as secretarias acadêmicas ficam sobrecarregadas com verificações manuais repetitivas, enquanto empresas enfrentam semanas de incerteza em background checks. O problema não é a competência das instituições, mas a ausência de um trilho digital comum que una essas três pontas com segurança e autenticidade imediata.",
+      "O modelo tradicional de validação acadêmica opera sob um abismo de comunicação: documentos em papel ou PDFs editáveis custam semanas de espera, paralisam carreiras e expõem a reputação das próprias faculdades a fraudes. Como comprova o HireRight Global Employment Screening Benchmark Report, a discrepância e adulteração em históricos acadêmicos e diplomas é a inconsistência número um detectada em triagens corporativas em todo o mundo — com até 85% dos empregadores já tendo flagrado currículos ou diplomas forjados. Na ponta dos estudantes, a UNESCO alerta que mais de 6 milhões de alunos internacionais enfrentam barreiras severas de mobilidade e equivalência de créditos, perdendo bolsas de pesquisa, intercâmbios e contratações urgentes por causa de semanas de espera e custos consulares abusivos. Ao mesmo tempo, secretarias acadêmicas gastam até 30% da sua jornada respondendo chamados manuais para atestar papéis, enquanto o prestígio da instituição fica refém de falsificações digitais que circulam livremente. O problema não é a competência das universidades, mas a ausência de um trilho digital comum e soberano que una estudante, faculdade e mercado com prova criptográfica instantânea.",
     citations: [
-      { name: "UNESCO", url: "https://unesco.org", note: "Global Convention on the Recognition of Qualifications (6M+ estudantes transfronteiriços)" },
-      { name: "HireRight", url: "https://hireright.com", note: "Global Employment Screening Benchmark Report (Fraude educacional lidera inconsistências)" },
+      { name: "HireRight Global Benchmark", url: "https://hireright.com", note: "Global Employment Screening Benchmark Report (Fraude em credenciais educacionais lidera o ranking #1 de inconsistências corporativas; até 85% dos empregadores detectam discrepâncias)" },
+      { name: "UNESCO", url: "https://unesco.org", note: "Global Convention on the Recognition of Qualifications (6.3M+ estudantes internacionais com mobilidade travada por burocracia e equivalência)" },
+      { name: "EHEA / Processo de Bolonha", url: "https://ehea.info", note: "ECTS Users' Guide (Perda média de 1 a 2 semestres letivos em transferências devido à lentidão na validação de créditos)" },
+      { name: "W3C Verifiable Credentials", url: "https://w3.org/TR/vc-data-model-2.0", note: "Verifiable Credentials Data Model v2.0 (Padrão internacional aberto para atestações digitais soberanas e à prova de adulteração)" },
     ],
-    deliveryTip: "Enfatize o contraste: o problema é a ausência de um canal moderno unificado, e não a qualidade das instituições de ensino.",
+    deliveryTip: "Enfatize o impacto humano em cada uma das três pontas (estudante perdendo oportunidade, faculdade sobrecarregada/exposta e empresa no escuro), ancorando a fala nos dados concretos da HireRight e da UNESCO.",
   },
   {
     id: 2,

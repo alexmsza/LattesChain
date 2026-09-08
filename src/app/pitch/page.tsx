@@ -727,54 +727,118 @@ export default function PitchDeckPage() {
                   <p className="text-sm sm:text-lg text-slate-300 mt-1">{slide.subtitle}</p>
                 </div>
 
-                {/* STATS IMPACTANTES */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="rounded-2xl border border-rose-500/30 bg-rose-950/20 p-5 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold uppercase tracking-wider text-rose-400">Dado Global UNESCO</span>
-                      <AlertTriangle className="h-5 w-5 text-rose-400" />
-                    </div>
-                    <div className="font-display text-3xl sm:text-4xl font-black text-white">6 Milhões +</div>
-                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                      De estudantes transfronteiriços travados por falta de padronização, lentidão e custos consulares
-                      na validação de qualificações acadêmicas.
-                    </p>
-                    <span className="text-[10px] text-slate-400 italic">Fonte: UNESCO Global Convention on Recognition</span>
-                  </div>
-
-                  <div className="rounded-2xl border border-amber-500/30 bg-amber-950/20 p-5 space-y-2">
+                {/* STATS IMPACTANTES COM FONTES DE MERCADO */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                  <div className="rounded-2xl border border-amber-500/40 bg-amber-950/20 p-4 space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold uppercase tracking-wider text-amber-400">HireRight Benchmark</span>
-                      <TrendingUp className="h-5 w-5 text-amber-400" />
+                      <TrendingUp className="h-4 w-4 text-amber-400" />
                     </div>
-                    <div className="font-display text-3xl sm:text-4xl font-black text-white">#1 Em Inconsistência</div>
-                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                      Adulterações e discrepâncias em histórico educacional lideram o ranking de fraudes detectadas em
-                      processos seletivos corporativos no mundo todo.
+                    <div className="font-display text-2xl sm:text-3xl font-black text-white">#1 Em Fraudes</div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      Adulterações e discrepâncias em histórico educacional e diplomas são o tipo número 1 de inconsistência detectada em background checks globais (até 85% dos empregadores já flagraram mentiras).
                     </p>
-                    <span className="text-[10px] text-slate-400 italic">Fonte: HireRight Global Screening Benchmark</span>
+                    <span className="text-[10px] text-amber-300/80 font-mono block">Fonte: HireRight Global Screening Benchmark</span>
+                  </div>
+
+                  <div className="rounded-2xl border border-rose-500/40 bg-rose-950/20 p-4 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold uppercase tracking-wider text-rose-400">Dado Global UNESCO</span>
+                      <AlertTriangle className="h-4 w-4 text-rose-400" />
+                    </div>
+                    <div className="font-display text-2xl sm:text-3xl font-black text-white">6,3 Milhões +</div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      Estudantes transfronteiriços com mobilidade acadêmica e profissional travada por burocracia, falta de padronização interoperável e altos custos consulares.
+                    </p>
+                    <span className="text-[10px] text-rose-300/80 font-mono block">Fonte: UNESCO Global Convention on Recognition</span>
+                  </div>
+
+                  <div className="rounded-2xl border border-purple-500/40 bg-purple-950/20 p-4 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold uppercase tracking-wider text-purple-400">Custo & Lentidão Crônica</span>
+                      <Clock className="h-4 w-4 text-purple-400" />
+                    </div>
+                    <div className="font-display text-2xl sm:text-3xl font-black text-white">15 a 30 Dias</div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      Tempo médio desperdiçado por empresas em auditorias educacionais manuais, enquanto secretarias consomem até 30% da rotina em conferências mecânicas de papéis.
+                    </p>
+                    <span className="text-[10px] text-purple-300/80 font-mono block">Fonte: EHEA / Métricas Operacionais IES</span>
                   </div>
                 </div>
 
-                {/* AS 3 VÍTIMAS */}
+                {/* AS 3 VÍTIMAS E IMPACTO HUMANO */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-3.5 space-y-1">
-                    <span className="text-xs font-bold text-solana-purpleSoft">1. Estudantes</span>
+                  <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-3.5 space-y-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-rose-400" />
+                      <span className="text-xs font-bold text-white">1. Estudantes & Alunos</span>
+                    </div>
                     <p className="text-xs text-slate-300 leading-relaxed">
-                      Perdem prazos de bolsas de estudo, intercâmbios e vagas no exterior por semanas de espera burocrática.
+                      Perdem prazos críticos de bolsas internacionais, intercâmbios e contratações de trabalho por semanas de espera burocrática, apostilamento e taxas consulares. Suas conquistas ficam trancadas.
                     </p>
                   </div>
-                  <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-3.5 space-y-1">
-                    <span className="text-xs font-bold text-solana-purpleSoft">2. Secretarias de IES</span>
+                  <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-3.5 space-y-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-amber-400" />
+                      <span className="text-xs font-bold text-white">2. Secretarias Acadêmicas (IES)</span>
+                    </div>
                     <p className="text-xs text-slate-300 leading-relaxed">
-                      Gargalo crônico respondendo e-mails e telefonemas de terceiros para confirmar autenticidade de papéis.
+                      Consomem até 30% da jornada em conferências manuais e repetitivas por e-mail e telefone, enquanto veem a reputação e o prestígio da faculdade reféns de diplomas falsificados em PDF editável.
                     </p>
                   </div>
-                  <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-3.5 space-y-1">
-                    <span className="text-xs font-bold text-solana-purpleSoft">3. RHs e Empresas</span>
+                  <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-3.5 space-y-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-solana-purpleSoft" />
+                      <span className="text-xs font-bold text-white">3. RHs, Empresas e Universidades</span>
+                    </div>
                     <p className="text-xs text-slate-300 leading-relaxed">
-                      Gastam de 5 a 15 dias em background check educacional sem garantia real de integridade documental.
+                      Enfrentam de 10 a 20 dias de lentidão e custos com auditorias terceirizadas de background check, vulneráveis ao risco crítico de admitir pessoas com títulos curriculares adulterados.
                     </p>
+                  </div>
+                </div>
+
+                {/* CITAÇÕES & FONTES OFICIAIS */}
+                <div className="rounded-xl border border-slate-800/80 bg-slate-950/40 p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <span className="font-semibold text-slate-300 flex items-center gap-1.5">
+                    <FileText className="h-3.5 w-3.5 text-solana-purple" />
+                    Fontes Oficiais Citadas:
+                  </span>
+                  <div className="flex flex-wrap items-center gap-3 text-[11px]">
+                    <a
+                      href="https://hireright.com"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-amber-400 hover:underline flex items-center gap-1"
+                    >
+                      HireRight Global Benchmark <ExternalLink className="h-2.5 w-2.5" />
+                    </a>
+                    <span className="text-slate-600">•</span>
+                    <a
+                      href="https://unesco.org"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-rose-400 hover:underline flex items-center gap-1"
+                    >
+                      UNESCO Global Convention <ExternalLink className="h-2.5 w-2.5" />
+                    </a>
+                    <span className="text-slate-600">•</span>
+                    <a
+                      href="https://ehea.info"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-purple-400 hover:underline flex items-center gap-1"
+                    >
+                      EHEA Processo de Bolonha & ECTS <ExternalLink className="h-2.5 w-2.5" />
+                    </a>
+                    <span className="text-slate-600">•</span>
+                    <a
+                      href="https://w3.org/TR/vc-data-model-2.0"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-solana-green hover:underline flex items-center gap-1"
+                    >
+                      W3C Verifiable Credentials <ExternalLink className="h-2.5 w-2.5" />
+                    </a>
                   </div>
                 </div>
               </div>

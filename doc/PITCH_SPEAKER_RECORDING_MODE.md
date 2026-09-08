@@ -146,3 +146,32 @@ Implementada navegação síncrona imediata entre o script falado do orador e os
 3. Os botões de ação ("Iniciar Apresentação", "Abrir Validador Ao Vivo", links de portais), contadores de minutagem (`00:00 - 00:30`, etc.) e instruções de setas desaparecem instantaneamente da área do slide, mantendo apenas o conteúdo puro.
 4. Para navegar entre os slides durante a gravação, utilize as teclas de direção (`←` / `→`), barra de espaço, ou a janela desacoplada do teleprompter (tecla `O`). Caso precise usar o cursor, os botões de navegação reaparecem discretamente ao passar o mouse sobre o rodapé.
 5. Para restaurar os painéis e botões interativos na tela do slide, pressione `G` novamente.
+
+---
+
+## 9. Aprofundamento do Bloco 1: Métricas de Mercado, HireRight Benchmark & Impacto Tripartite
+
+### Descrição da Mudança
+- **Narrativa do Problema e Fontes Oficiais**: O roteiro falado (`speakerScript`) e o slide visual do Bloco 1 (*O Problema & Quem Sofre*) foram aprofundados para evidenciar a dor real de cada ponta com respaldo em dados empíricos de mercado e convenções internacionais:
+  - **HireRight Global Employment Screening Benchmark Report**: Citação direta demonstrando que adulterações e discrepâncias em histórico educacional e diplomas constituem a **inconsistência número #1** detectada em triagens corporativas em todo o mundo, com até **85% dos empregadores** flagrando mentiras curriculares.
+  - **UNESCO Global Convention on the Recognition of Qualifications**: Citação da convenção internacional que mapeia mais de **6,3 milhões de estudantes transfronteiriços** paralisados por falta de padronização interoperável e lentidão burocrática.
+  - **EHEA / Processo de Bolonha (ECTS Users' Guide)**: Reconhecimento da perda média de 1 a 2 semestres letivos em transferências acadêmicas por falta de trilho comum de equivalência.
+  - **W3C Verifiable Credentials Data Model v2.0**: Referência técnica ao padrão internacional aberto para credenciais digitais soberanas e à prova de adulteração.
+- **Detalhamento do Impacto na Vida dos 3 Envolvidos**:
+  1. **Estudantes**: Perdem prazos inegociáveis de bolsas de pesquisa internacionais, intercâmbios e contratações de trabalho devido a semanas de espera, apostilamento e taxas consulares. Suas conquistas permanecem trancadas em silos analógicos.
+  2. **Secretarias Acadêmicas (IES)**: Consomem até 30% a 40% da jornada operacional respondendo chamados repetitivos de terceiros por e-mail e telefone, enquanto veem a reputação e o prestígio da instituição reféns de diplomas falsificados em PDF editável que circulam livremente.
+  3. **RHs, Empresas e Universidades**: Enfrentam de 10 a 20 dias de incerteza operacional e custos elevados com auditorias manuais de background check, vulneráveis ao risco crítico de admitir pessoas com títulos adulterados.
+- **Enriquecimento Visual no Slide 1 (`src/app/pitch/page.tsx`)**:
+  - Grid de 3 cards estatísticos com badges de autoridade (`HireRight Benchmark`, `Dado Global UNESCO` e `Custo & Lentidão Crônica`).
+  - Cards detalhados com marcadores coloridos para os 3 envolvidos.
+  - Banner inferior com links diretos para as 4 fontes citadas (`hireright.com`, `unesco.org`, `ehea.info` e `w3.org`).
+
+### Impacto Técnico
+- Sincronização automática entre a visualização de apresentação (`/pitch`), a gaveta de notas (tecla `N`), o teleprompter desacoplado (`/pitch/speaker`) e o roteiro canônico em `docs/PITCH_DECK.md`.
+- Paridade semântica 1:1 com a Seção 1 do `README.md`.
+- Validação completa de compilação sem warnings adicionais ou regressões de tipagem.
+
+### Instruções de Uso
+1. Acesse `/pitch` e navegue até o Slide 2 (Bloco 1 • O Problema).
+2. Observe os 3 cards estatísticos com os dados da HireRight, UNESCO e EHEA.
+3. Pressione a tecla `O` para abrir o teleprompter ou `N` para exibir a gaveta de notas: o script falado guiará a locução enfatizando a dor humana dos estudantes, o risco institucional das faculdades e a vulnerabilidade das empresas, citando as fontes canônicas com precisão.
