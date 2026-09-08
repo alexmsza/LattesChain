@@ -1,7 +1,7 @@
 <div align="center">
-  <img src="public/brand/v4/logo_horizontal_light_v4.svg" alt="LattesChain Logo" width="460" />
-  <br /><br />
   <img src="public/brand/v4/lattes_linkedin_cover_v4.jpg" alt="LattesChain Official Banner" width="100%" />
+  <br /><br />
+ <img src="public/brand/v4/logo_horizontal_light_v4.svg" alt="LattesChain Logo" width="460" />
   <br /><br />
 </div>
 
