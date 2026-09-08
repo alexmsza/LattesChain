@@ -20,6 +20,7 @@ const archivo = Archivo({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://latteschain.vercel.app"),
   title: "LattesChain — Passaporte Acadêmico Global na Solana",
   description:
     "Certificação soberana de documentos educacionais, diplomas e horas complementares na Solana com SAS e inteligência artificial.",
