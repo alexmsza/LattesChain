@@ -225,15 +225,15 @@ Implementado interativamente na landing page ([`VisualFlowPipeline.tsx`](src/com
    - **"Testar no Validador RH"**: Abre a verificação pública imediata da atestação recém-emitida.
    - **"Ver no Passaporte do Aluno"**: Confere a credencial refletida instantaneamente na carteira do estudante.
 
-### 5.4 Para Administradores Jovian Tech (`@jovian.foo`)
-1. Todo e-mail com domínio `@jovian.foo` possui acesso administrativo padrão com papel `ADMIN` e status `APPROVED`.
-2. Para obter acesso inicial ou redefinir credenciais:
-   - Acesse `/login`.
-   - Clique em **"Primeiro acesso ou esqueceu a senha?"**.
-   - Digite o e-mail sob o domínio `jovian.foo` (ex: `admin@jovian.foo` ou `contact@jovian.foo`).
-   - O sistema auto-provisiona a conta administrativa de imediato e envia o link de criação de senha válido por 1 hora.
-   - Após definir a senha em `/redefinir-senha`, o login direciona diretamente para o **Painel Geral do Dono do Protocolo** (`/admin-protocol`).
-3. **E-mail Oficial de Contato**: Para evitar informações inventadas, o canal oficial da Jovian Tech é exclusivamente `contact@jovian.foo`.
+### 5.4 Autenticação, Presets de Demonstração e Resiliência da Sessão
+1. **Acesso Rápido para Banca Hackathon (1 Clique)**: Na página `/login`, estão disponíveis botões de preenchimento automático para os perfis canônicos de demonstração:
+   - **Aluno Demo**: `ana.estudante.teste@jovian.foo` (Senha: `SenhaAluno123`) → Direciona para o Portal do Estudante (`/student`).
+   - **IES / Admin Protocol**: `latteschain@jovian.foo` (Senha: `NovaSenha456`) → Direciona para a Governança (`/admin-protocol`).
+2. **Resiliência Fail-Safe de Sessão**: O hook `useSession` e o helper de tenant operam com fallback dinâmico em dois estágios, garantindo que ausências de colunas ou migrações remotas nunca travem a interface em loading infinito.
+3. **Para Administradores Jovian Tech (`@jovian.foo`)**:
+   - Todo e-mail sob o domínio `jovian.foo` com papel de administração possui acesso ao **Painel Geral do Dono do Protocolo** (`/admin-protocol`).
+   - Para primeiro acesso ou recuperação de senha: em `/login`, utilize **"Primeiro acesso ou esqueceu a senha?"** para auto-provisionamento com envio de link de criação de senha.
+4. **E-mail Oficial de Contato**: Para evitar informações inventadas, o canal oficial da Jovian Tech é exclusivamente `contact@jovian.foo`.
 
 ### 5.5 Alternância Dinâmica de Temas de Cores (Theme Switcher)
 1. **Botão no Navbar**: Clique no botão de paleta cromática (`Palette`) posicionado no cabeçalho ao lado do seletor de idiomas.

@@ -45,8 +45,13 @@ export async function middleware(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
 
-  // Usuário logado não deve ver login/cadastro
-  if (user && AUTH_PAGES.some((p) => path === p || path.startsWith(p + "/"))) {
+  // Usuário logado não deve ver login/cadastro, exceto quando houver alerta de status pendente/rejeitado/suspenso
+  const hasStatusParam =
+    request.nextUrl.searchParams.has("pending") ||
+    request.nextUrl.searchParams.has("rejected") ||
+    request.nextUrl.searchParams.has("suspended");
+
+  if (user && !hasStatusParam && AUTH_PAGES.some((p) => path === p || path.startsWith(p + "/"))) {
     const url = request.nextUrl.clone();
     url.pathname = "/";
     return NextResponse.redirect(url);
@@ -69,8 +74,8 @@ export async function middleware(request: NextRequest) {
       .maybeSingle();
 
     const isJovian = user.email?.toLowerCase().endsWith("@jovian.foo");
-    const role = isJovian ? "ADMIN" : profile?.role;
-    const status = isJovian ? "APPROVED" : profile?.status;
+    const role = profile?.role || (isJovian ? "ADMIN" : undefined);
+    const status = profile?.status || (isJovian ? "APPROVED" : undefined);
 
     if (!status || status !== "APPROVED") {
       const url = request.nextUrl.clone();
@@ -87,6 +92,7 @@ export async function middleware(request: NextRequest) {
       if (role === "STUDENT") url.pathname = "/student";
       else if (role === "INSTITUTION") url.pathname = "/university";
       else if (role === "EMPLOYER") url.pathname = "/validator";
+      else if (role === "ADMIN") url.pathname = "/admin-protocol";
       else url.pathname = "/";
       url.search = "";
       return NextResponse.redirect(url);

@@ -20,11 +20,23 @@ export async function resolveUserTenant(
 ): Promise<ResolvedTenant | null> {
   const isJovian = userEmail?.toLowerCase().endsWith("@jovian.foo");
 
-  const { data: profile } = await admin
+  let profile: any = null;
+  const mtRes = await admin
     .from("user_profiles")
     .select("user_id, role, status, institution_name, cnpj, institution_id, campus_id")
     .eq("user_id", userId)
     .maybeSingle();
+
+  if (mtRes.error) {
+    const baseRes = await admin
+      .from("user_profiles")
+      .select("user_id, role, status, institution_name, cnpj")
+      .eq("user_id", userId)
+      .maybeSingle();
+    profile = baseRes.data;
+  } else {
+    profile = mtRes.data;
+  }
 
   if (!profile && !isJovian) return null;
 
@@ -49,8 +61,9 @@ export async function resolveUserTenant(
       if (inst) {
         institutionId = inst.id;
         institutionName = inst.name;
-        // Atualiza para acelerar futuras chamadas
-        await admin.from("user_profiles").update({ institution_id: inst.id }).eq("user_id", userId);
+        try {
+          await admin.from("user_profiles").update({ institution_id: inst.id }).eq("user_id", userId);
+        } catch {}
       }
     }
 
@@ -64,7 +77,9 @@ export async function resolveUserTenant(
       if (inst) {
         institutionId = inst.id;
         institutionName = inst.name;
-        await admin.from("user_profiles").update({ institution_id: inst.id }).eq("user_id", userId);
+        try {
+          await admin.from("user_profiles").update({ institution_id: inst.id }).eq("user_id", userId);
+        } catch {}
       }
     }
 

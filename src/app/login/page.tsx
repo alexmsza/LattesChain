@@ -71,8 +71,8 @@ function LoginForm() {
         .eq("user_id", data.user.id)
         .maybeSingle();
 
-      const userRole = isJovian ? "ADMIN" : profile?.role;
-      const userStatus = isJovian ? "APPROVED" : profile?.status;
+      const userRole = profile?.role || (isJovian ? "ADMIN" : "STUDENT");
+      const userStatus = profile?.status || (isJovian ? "APPROVED" : "PENDING");
 
       if (!userStatus || userStatus !== "APPROVED") {
         await supabase.auth.signOut();
@@ -214,7 +214,46 @@ function LoginForm() {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-slate-400">
+        {/* PRESETS DE DEMONSTRAÇÃO / BANCA HACKATHON */}
+        <div className="mt-5 pt-4 border-t border-slate-800">
+          <p className="text-[11px] font-semibold text-slate-400 mb-2">
+            Acesso Rápido de Demonstração (Banca Hackathon):
+          </p>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setEmail("ana.estudante.teste@jovian.foo");
+                setPassword("SenhaAluno123");
+              }}
+              className="text-left rounded-lg border border-solana-purple/40 bg-solana-purple/10 px-2.5 py-1.5 hover:bg-solana-purple/20 transition-all group"
+            >
+              <span className="block text-[11px] font-bold text-solana-purpleSoft group-hover:text-white">
+                🎓 Aluno Demo
+              </span>
+              <span className="block text-[10px] text-slate-400 truncate font-mono">
+                ana.estudante.teste...
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setEmail("latteschain@jovian.foo");
+                setPassword("NovaSenha456");
+              }}
+              className="text-left rounded-lg border border-solana-green/40 bg-solana-green/10 px-2.5 py-1.5 hover:bg-solana-green/20 transition-all group"
+            >
+              <span className="block text-[11px] font-bold text-solana-green group-hover:text-emerald-300">
+                🏛️ IES / Admin
+              </span>
+              <span className="block text-[10px] text-slate-400 truncate font-mono">
+                latteschain@jovian...
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <p className="mt-5 text-center text-sm text-slate-400">
           {t.noAccount}{" "}
           <Link href="/cadastro" className="font-semibold text-solana-green hover:text-solana-green/80">
             {t.requestAccount}

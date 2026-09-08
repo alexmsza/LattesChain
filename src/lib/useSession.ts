@@ -41,53 +41,75 @@ export function useSession() {
   const [loading, setLoading] = useState(true);
 
   const loadProfile = useCallback(async (userId: string) => {
-    const supabase = getSupabaseBrowser();
-    const { data } = await supabase
-      .from("user_profiles")
-      .select("user_id, role, full_name, email, status, cpf, cnpj, institution_name, company_name, institution_id, campus_id")
-      .eq("user_id", userId)
-      .maybeSingle();
+    try {
+      const supabase = getSupabaseBrowser();
+      
+      // Tentativa 1: busca com campos multitenant (migration 006)
+      let data: any = null;
+      const res = await supabase
+        .from("user_profiles")
+        .select("user_id, role, full_name, email, status, cpf, cnpj, institution_name, company_name, institution_id, campus_id")
+        .eq("user_id", userId)
+        .maybeSingle();
 
-    const { data: authData } = await supabase.auth.getUser();
-    const userEmail = authData.user?.email?.toLowerCase() || data?.email?.toLowerCase() || "";
-    const isJovian = userEmail.endsWith("@jovian.foo");
-
-    let campusName: string | null = null;
-    if (data?.campus_id) {
-      try {
-        const { data: c } = await supabase
-          .from("institution_campuses")
-          .select("name")
-          .eq("id", data.campus_id)
+      if (res.error) {
+        // Fallback defensivo: se colunas multitenant ainda não existirem no schema remoto, carrega schema base (migration 003)
+        const fallbackRes = await supabase
+          .from("user_profiles")
+          .select("user_id, role, full_name, email, status, cpf, cnpj, institution_name, company_name")
+          .eq("user_id", userId)
           .maybeSingle();
-        if (c?.name) campusName = c.name;
-      } catch (e) {
-        console.warn("Campus fetch fallback:", e);
+        data = fallbackRes.data;
+      } else {
+        data = res.data;
       }
-    }
 
-    if (isJovian) {
-      setProfile({
-        user_id: userId,
-        role: "ADMIN",
-        status: "APPROVED",
-        full_name: data?.full_name || authData.user?.user_metadata?.full_name || "Admin Jovian",
-        email: userEmail,
-        cpf: data?.cpf || null,
-        cnpj: data?.cnpj || null,
-        institution_name: data?.institution_name || null,
-        company_name: data?.company_name || null,
-        institution_id: data?.institution_id || null,
-        campus_id: data?.campus_id || null,
-        campus_name: campusName,
-      });
-    } else if (data) {
-      setProfile({
-        ...data,
-        campus_name: campusName,
-      } as UserProfile);
-    } else {
+      const { data: authData } = await supabase.auth.getUser();
+      const userEmail = authData.user?.email?.toLowerCase() || data?.email?.toLowerCase() || "";
+      const isJovian = userEmail.endsWith("@jovian.foo");
+
+      let campusName: string | null = null;
+      if (data?.campus_id) {
+        try {
+          const { data: c } = await supabase
+            .from("institution_campuses")
+            .select("name")
+            .eq("id", data.campus_id)
+            .maybeSingle();
+          if (c?.name) campusName = c.name;
+        } catch (e) {
+          console.warn("Campus fetch fallback:", e);
+        }
+      }
+
+      if (isJovian) {
+        setProfile({
+          user_id: userId,
+          role: "ADMIN",
+          status: "APPROVED",
+          full_name: data?.full_name || authData.user?.user_metadata?.full_name || "Admin Jovian",
+          email: userEmail,
+          cpf: data?.cpf || null,
+          cnpj: data?.cnpj || null,
+          institution_name: data?.institution_name || null,
+          company_name: data?.company_name || null,
+          institution_id: data?.institution_id || null,
+          campus_id: data?.campus_id || null,
+          campus_name: campusName,
+        });
+      } else if (data) {
+        setProfile({
+          ...data,
+          campus_name: campusName,
+        } as UserProfile);
+      } else {
+        setProfile(null);
+      }
+    } catch (err) {
+      console.warn("loadProfile error:", err);
       setProfile(null);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -96,16 +118,21 @@ export function useSession() {
 
     supabase.auth.getSession().then(({ data: { session: s } }) => {
       setSession(s);
-      if (s?.user) loadProfile(s.user.id);
-      else setLoading(false);
+      if (s?.user) {
+        loadProfile(s.user.id);
+      } else {
+        setProfile(null);
+        setLoading(false);
+      }
     });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, s) => {
       setSession(s);
-      if (s?.user) loadProfile(s.user.id);
-      else {
+      if (s?.user) {
+        loadProfile(s.user.id);
+      } else {
         setProfile(null);
         setLoading(false);
       }
@@ -113,10 +140,6 @@ export function useSession() {
 
     return () => subscription.unsubscribe();
   }, [loadProfile]);
-
-  useEffect(() => {
-    if (session !== null && profile !== null) setLoading(false);
-  }, [session, profile]);
 
   const signOut = useCallback(async () => {
     const supabase = getSupabaseBrowser();
