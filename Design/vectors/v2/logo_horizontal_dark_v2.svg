@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 180" width="100%" height="100%">
+  <defs>
+    <linearGradient id="solanaGradH2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9945FF" />
+      <stop offset="50%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#14F195" />
+    </linearGradient>
+    <filter id="glowH2" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="5" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="680" height="180" rx="20" fill="#080C14" />
+
+  <!-- ICON SECTION (Center vertically in 180px height) -->
+  <g transform="translate(36, 20)">
+    <!-- Hexagon Outer -->
+    <polygon points="70,10 126,42 126,106 70,138 14,106 14,42" fill="#101D32" stroke="url(#solanaGradH2)" stroke-width="2.5" />
+    
+    <!-- Cap Top -->
+    <polygon points="70,28 116,52 70,76 24,52" fill="url(#solanaGradH2)" />
+    
+    <!-- Speed Bars -->
+    <path d="M 42 88 L 98 88 L 92 98 L 36 98 Z" fill="#14F195" />
+    <path d="M 48 104 L 104 104 L 98 114 L 42 114 Z" fill="#38BDF8" />
+    <path d="M 38 120 L 94 120 L 88 130 L 32 130 Z" fill="#9945FF" />
+
+    <!-- Tassel / Key -->
+    <path d="M 70,52 Q 100,65 104,85" fill="none" stroke="#FFFFFF" stroke-width="2" />
+    <circle cx="104" cy="88" r="4" fill="#14F195" filter="url(#glowH2)" />
+  </g>
+
+  <!-- DIVIDER LINE -->
+  <line x1="200" y1="35" x2="200" y2="145" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" />
+
+  <!-- TYPOGRAPHY SECTION (Balanced without the badge) -->
+  <g transform="translate(232, 0)">
+    <!-- Main Title -->
+    <text x="0" y="98" font-family="'Space Grotesk', 'Inter', system-ui, sans-serif" font-size="64" font-weight="800" letter-spacing="-1.5">
+      <tspan fill="#FFFFFF">Lattes</tspan><tspan fill="url(#solanaGradH2)">Chain</tspan>
+    </text>
+
+    <!-- Subtitle / Tagline -->
+    <text x="4" y="134" font-family="'Inter', system-ui, sans-serif" font-size="15" font-weight="600" letter-spacing="5" fill="#94A3B8">
+      EDUCORE PROTOCOL
+    </text>
+  </g>
+</svg>

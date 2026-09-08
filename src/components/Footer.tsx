@@ -19,8 +19,12 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
           {/* COLUNA 1: PROJETO */}
           <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <GraduationCap className={`h-6 w-6 transition-colors duration-300 ${accentColor}`} />
+            <div className="flex items-center gap-2.5">
+              <img
+                src="/brand/logo_icon.svg"
+                alt="LattesChain"
+                className="h-7 w-7 object-contain"
+              />
               <span className="font-display text-lg font-bold text-white">
                 Lattes<span className={`transition-colors duration-300 ${accentColor}`}>Chain</span>
               </span>

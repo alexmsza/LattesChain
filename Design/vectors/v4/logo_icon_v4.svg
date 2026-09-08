@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="solanaGradV4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9945FF" />
+      <stop offset="50%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#14F195" />
+    </linearGradient>
+    <filter id="neonGlowV4" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background Base Canvas -->
+  <rect width="512" height="512" rx="96" fill="#080C14" />
+  <rect x="6" y="6" width="500" height="500" rx="90" fill="none" stroke="url(#solanaGradV4)" stroke-width="2" stroke-opacity="0.3" />
+
+  <!-- Canonical Master Icon (Escala 2.8x da geometria exata do favicon_v3) -->
+  <g transform="translate(256, 256) scale(2.8) translate(-70, -74)">
+    <!-- Hexagon Outer Frame -->
+    <polygon points="70,10 126,42 126,106 70,138 14,106 14,42" fill="#101D32" stroke="url(#solanaGradV4)" stroke-width="3" filter="url(#neonGlowV4)" />
+    <polygon points="70,10 126,42 126,106 70,138 14,106 14,42" fill="#101D32" stroke="url(#solanaGradV4)" stroke-width="2" />
+    
+    <!-- Academic Cap Rhombus Top -->
+    <polygon points="70,28 116,52 70,76 24,52" fill="url(#solanaGradV4)" />
+    
+    <!-- 3 Parallel Solana Speed Bars -->
+    <path d="M 42 88 L 98 88 L 92 98 L 36 98 Z" fill="#14F195" />
+    <path d="M 48 104 L 104 104 L 98 114 L 42 114 Z" fill="#38BDF8" />
+    <path d="M 38 120 L 94 120 L 88 130 L 32 130 Z" fill="#9945FF" />
+
+    <!-- Tassel Cord (Dark: White line #FFFFFF) & Emerald Clean Dot -->
+    <path d="M 70,52 Q 100,65 104,85" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" />
+    <circle cx="104" cy="88" r="5" fill="#14F195" filter="url(#neonGlowV4)" />
+  </g>
+</svg>

@@ -30,6 +30,15 @@ export const metadata: Metadata = {
     description: "Certificação educacional soberana e instantânea com Solana e SAS.",
     type: "website",
     locale: "pt_BR",
+    images: [{ url: "/brand/lattes_hero_banner.jpg", width: 1200, height: 630, alt: "LattesChain" }],
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico" },
+    ],
+    apple: "/brand/logo_icon.svg",
+    shortcut: "/favicon.svg",
   },
 };
 

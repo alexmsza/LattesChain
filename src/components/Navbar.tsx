@@ -103,14 +103,12 @@ export function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b border-slate-800/80 bg-[var(--header-bg)] backdrop-blur-md transition-colors duration-300">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-solana-purple to-solana-green p-0.5 shadow-lg shadow-solana-purple/20">
-            <div className="flex h-full w-full items-center justify-center rounded-[10px] bg-navy-900 transition-colors group-hover:bg-navy-800">
-              <GraduationCap
-                className={`h-5 w-5 transition-colors duration-300 ${
-                  theme === "purple" ? "text-solana-purple" : "text-solana-green"
-                }`}
-              />
-            </div>
+          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl overflow-hidden border border-slate-800/80 bg-navy-900/90 p-1 shadow-lg shadow-solana-purple/20 transition-all duration-300 group-hover:border-solana-green/50 group-hover:shadow-solana-green/20">
+            <img
+              src="/brand/logo_icon.svg"
+              alt="LattesChain"
+              className="h-8 w-8 object-contain transition-transform duration-300 group-hover:scale-105"
+            />
           </div>
           <div className="flex flex-col">
             <span className="font-display text-lg font-bold tracking-tight text-white">

@@ -16,6 +16,7 @@
 ## 📑 Sumário Executivo de Documentação
 
 - 🎙️ **[Roteiro de Pitch (5 Minutos)](docs/PITCH_DECK.md)**: Minutagem, slides e script de fala guiada para gravação do vídeo de submissão.
+- 🎨 **[Manual de Identidade Visual & Design System](Design/BRAND_GUIDELINES.md)**: Tokens de cor, família de logotipos SVG, badges Soulbound e mídias em alta resolução publicados em `/public/brand/` e documentados em `/Design`.
 - 🔬 **[Validação Criptográfica de Documentos](doc/VALIDACAO_DOCUMENTOS_ACADEMICOS.md)**: Especificação técnica detalhada do que fazemos e do pipeline em 4 etapas (SHA-256, SAS on-chain, checagem em <400ms e IA curricular).
 - 🖥️ **[Pitch Deck Interativo & Modo Gravação](doc/PITCH_SPEAKER_RECORDING_MODE.md)**: Apresentação em tela limpa 16:9 (`/pitch`) com Teleprompter e notas do orador desacopladas em 2ª janela (`/pitch/speaker`) via `BroadcastChannel`, ajuste dinâmico de fonte com 7 níveis (`2xs` a `2xl`), sincronização em tempo real e supressão automática de contadores temporais, atalhos e botões de ação na tela do slide durante gravação.
 - 🏢 **[Arquitetura Multi-Tenant & RBAC](doc/ARCHITECTURE_MULTITENANT_RBAC.md)**: Governança institucional, multi-campus, matriz de autorização e fluxos LGPD.

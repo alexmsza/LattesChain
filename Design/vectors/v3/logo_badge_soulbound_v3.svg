@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="badgeBorderV3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9945FF" />
+      <stop offset="50%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#14F195" />
+    </linearGradient>
+    <filter id="badgeGlowV3" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Outer Ring -->
+  <circle cx="200" cy="200" r="186" fill="#080C14" stroke="url(#badgeBorderV3)" stroke-width="3" filter="url(#badgeGlowV3)" />
+  <circle cx="200" cy="200" r="168" fill="#101D32" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" stroke-dasharray="6,4" />
+
+  <!-- Circular Text Paths -->
+  <path id="textPathTopV3" d="M 50,200 A 150,150 0 1,1 350,200" fill="none" />
+  <path id="textPathBottomV3" d="M 350,200 A 150,150 0 0,1 50,200" fill="none" />
+
+  <text font-family="'Space Grotesk', 'Inter', sans-serif" font-size="13" font-weight="700" fill="#14F195" letter-spacing="3">
+    <textPath href="#textPathTopV3" startOffset="50%" text-anchor="middle">
+      ★ LATTESCHAIN SOULBOUND CREDENTIAL ★
+    </textPath>
+  </text>
+
+  <text font-family="'JetBrains Mono', monospace" font-size="12" font-weight="600" fill="#94A3B8" letter-spacing="2.5">
+    <textPath href="#textPathBottomV3" startOffset="50%" text-anchor="middle">
+      TOKEN-2022 • EDUCORE PROTOCOL
+    </textPath>
+  </text>
+
+  <!-- CENTER CANONICAL ICON (Padrão canônico rigoroso: cordão limpo e bolinha única sem caixa) -->
+  <g transform="translate(200, 196) scale(1.35) translate(-70, -74)">
+    <polygon points="70,10 126,42 126,106 70,138 14,106 14,42" fill="#080C14" stroke="url(#badgeBorderV3)" stroke-width="2.5" />
+    <polygon points="70,28 116,52 70,76 24,52" fill="url(#badgeBorderV3)" />
+    <path d="M 42 88 L 98 88 L 92 98 L 36 98 Z" fill="#14F195" />
+    <path d="M 48 104 L 104 104 L 98 114 L 42 114 Z" fill="#38BDF8" />
+    <path d="M 38 120 L 94 120 L 88 130 L 32 130 Z" fill="#9945FF" />
+    <!-- Tassel cord & dot -->
+    <path d="M 70,52 Q 100,65 104,85" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" />
+    <circle cx="104" cy="88" r="4" fill="#14F195" filter="url(#badgeGlowV3)" />
+  </g>
+</svg>
