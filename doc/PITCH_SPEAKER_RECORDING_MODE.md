@@ -100,3 +100,49 @@ Implementada navegação síncrona imediata entre o script falado do orador e os
    - Clique em qualquer uma das 6 opções da barra `Trocar Fala:` ou use os botões `Fala Anterior` / `Próxima Fala`.
    - O slide da apresentação e a fala em exibição mudarão instantaneamente em sincronia.
 
+---
+
+## 7. Calibração da Narrativa do Orador & Posicionamento Tripartite (JOVIAN TECH)
+
+### Descrição da Mudança
+- **Eliminação da Leitura Literal**: As notas do orador foram reescritas para não repetir mecanicamente os títulos, cartões e dados já renderizados visualmente nos slides, focando na síntese conceitual e no valor executivo.
+- **Conceito de Ponte Tripartite**: Incorporação expressa do posicionamento da página inicial ("A ponte de confiança universal entre Faculdades, Estudantes e Empresas").
+- **Valorização da Infraestrutura Acadêmica**: Eliminação de frases adversárias sobre instabilidade de servidores legados ou faculdades que podem fechar. A narrativa agora posiciona o LattesChain como um potencializador dos sistemas existentes através de tecnologia de ponta, mantendo a faculdade como autoridade emissora e de governança legal.
+- **Padronização Institucional**: Vinculação do projeto à **JOVIAN TECH** em todos os metadados, citações e componentes da apresentação.
+
+### Impacto Técnico e Mercadológico
+- **Cadência Otimizada**: Contagem total reduzida para 559 palavras (~112 PPM), permitindo apresentação fluida, pausas enfáticas e cumprimento seguro do limite de 5 minutos (300 segundos).
+- **Relação Institucional Cooperativa**: Apresenta a solução como aliada e integradora de ERPs acadêmicos, e não como substituta hostil.
+- **Paridade com a Home Page**: Alinhamento semântico 1:1 entre a proposta de valor exibida no site e o pitch apresentado à banca.
+
+### Instruções de Uso
+1. Ao abrir `/pitch` ou `/pitch/speaker`, o orador dispõe imediatamente dos novos scripts sucintos e objetivos.
+2. Cada bloco de fala acompanha a respectiva **Dica de Entrega & Entonação** e o **Objetivo Crucial do Slide (O que a Banca Deve Reter)** no teleprompter.
+3. Utilize a cadência guiada (~112 PPM) para assegurar que a apresentação conclua com conforto em até 04:30 a 04:45, reservando tempo para o call-to-action final.
+
+---
+
+## 8. Otimização do Modo Gravação: Ocultação de Contadores, Metadados e Botões de Ação
+
+### Descrição da Mudança
+- **Supressão de Metadados Temporais (`timeRange`) no Slide**: Remoção dos badges e textos contadores de ensaio (ex: `00:00 - 00:30`, `00:30 - 01:30 (~1 min)`) da moldura do slide (tanto no Top Meta quanto no Footer Navigation) quando o **Modo Gravação (`isRecordingMode`)** estiver ativado.
+- **Supressão de Dicas de Teclado**: Ocultação automática do aviso de navegação técnica (`Use as setas ← → ou clique nos botões`) na tela do slide durante o Modo Gravação.
+- **Remoção de Botões de Ação e Links Externos**:
+  - **Slide 0**: Ocultação dos botões "Iniciar Apresentação (5 Min)" e "Abrir Validador Ao Vivo" (`/validator`), deixando a capa exclusivamente focada na identidade, missão e nos 3 pilares conceituais.
+  - **Slide 4**: Ocultação dos links de acesso externo ("Ver Portal IES", "Ver Passaporte", "Test Drive 1 Clique", "Testar Equivalência" e "Abrir Simulador On-Chain"), garantindo que os cards apresentem estritamente a arquitetura do fluxo tripartite.
+  - **Rodapé do Slide**: Ocultação do link "Testar Validador Ao Vivo" e esmaecimento com opacidade zero nos botões "Anterior" / "Próximo" (revelados apenas no hover do mouse).
+- **Foco Estrito no Conteúdo**: A área do slide preserva apenas o badge categórico temático e o conteúdo visual e institucional limpo em proporção 16:9, eliminando quaisquer elementos de interface web da gravação.
+- **Preservação no Teleprompter**: O orador continua com acesso total ao cronômetro, metas de tempo por slide, minutagem recomendada e controles de navegação na janela desacoplada `/pitch/speaker` ou no modo de ensaio normal.
+
+### Impacto Técnico
+- Condicionamento booleano `!isRecordingMode` aplicado nos botões do Slide 0, links do Slide 4, Top Meta e Footer Navigation de `src/app/pitch/page.tsx`.
+- Botões de navegação no rodapé recebem classe dinâmica `opacity-0 hover:opacity-100 transition-opacity` durante o modo gravação, prevenindo cliques acidentais e poluição visual em capturas de tela.
+- Zero quebra de layout ou deslocamento cumulativo de layout (CLS).
+- A gravação via OBS, Loom ou captura de janela exibe exclusivamente o conteúdo temático da apresentação em formato profissional de alta definição.
+
+### Instruções de Uso
+1. Acesse `/pitch`.
+2. Pressione a tecla `G` (ou clique em "Modo Gravação").
+3. Os botões de ação ("Iniciar Apresentação", "Abrir Validador Ao Vivo", links de portais), contadores de minutagem (`00:00 - 00:30`, etc.) e instruções de setas desaparecem instantaneamente da área do slide, mantendo apenas o conteúdo puro.
+4. Para navegar entre os slides durante a gravação, utilize as teclas de direção (`←` / `→`), barra de espaço, ou a janela desacoplada do teleprompter (tecla `O`). Caso precise usar o cursor, os botões de navegação reaparecem discretamente ao passar o mouse sobre o rodapé.
+5. Para restaurar os painéis e botões interativos na tela do slide, pressione `G` novamente.

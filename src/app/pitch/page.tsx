@@ -630,14 +630,18 @@ export default function PitchDeckPage() {
                 <Sparkles className="h-3 w-3 text-solana-green" />
                 {slide.badge}
               </span>
-              <span className="rounded-full bg-slate-800/80 px-2.5 py-1 text-xs font-mono text-slate-300 border border-slate-700/60">
-                {slide.timeRange}
-              </span>
+              {!isRecordingMode && (
+                <span className="rounded-full bg-slate-800/80 px-2.5 py-1 text-xs font-mono text-slate-300 border border-slate-700/60">
+                  {slide.timeRange}
+                </span>
+              )}
             </div>
-            <span className="text-xs text-slate-400 font-mono">
-              Use as setas <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700">←</kbd>{" "}
-              <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700">→</kbd> ou clique nos botões
-            </span>
+            {!isRecordingMode && (
+              <span className="text-xs text-slate-400 font-mono">
+                Use as setas <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700">←</kbd>{" "}
+                <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700">→</kbd> ou clique nos botões
+              </span>
+            )}
           </div>
 
           {/* SLIDE DYNAMIC CONTENT */}
@@ -692,22 +696,24 @@ export default function PitchDeckPage() {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3 pt-2">
-                  <button
-                    onClick={nextSlide}
-                    className="inline-flex items-center gap-2 rounded-full bg-solana-purple px-6 py-3 text-sm font-bold text-white shadow-lg shadow-solana-purple/30 hover:bg-solana-purpleDeep hover:scale-105 transition-all"
-                  >
-                    Iniciar Apresentação (5 Min)
-                    <ArrowRight className="h-4 w-4" />
-                  </button>
-                  <Link
-                    href="/validator"
-                    className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/80 px-5 py-3 text-sm font-semibold text-slate-300 hover:text-white hover:border-slate-500 transition-all"
-                  >
-                    Abrir Validador Ao Vivo
-                    <ExternalLink className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
+                {!isRecordingMode && (
+                  <div className="flex flex-wrap items-center gap-3 pt-2">
+                    <button
+                      onClick={nextSlide}
+                      className="inline-flex items-center gap-2 rounded-full bg-solana-purple px-6 py-3 text-sm font-bold text-white shadow-lg shadow-solana-purple/30 hover:bg-solana-purpleDeep hover:scale-105 transition-all"
+                    >
+                      Iniciar Apresentação (5 Min)
+                      <ArrowRight className="h-4 w-4" />
+                    </button>
+                    <Link
+                      href="/validator"
+                      className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/80 px-5 py-3 text-sm font-semibold text-slate-300 hover:text-white hover:border-slate-500 transition-all"
+                    >
+                      Abrir Validador Ao Vivo
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
+                )}
               </div>
             )}
 
@@ -803,8 +809,8 @@ export default function PitchDeckPage() {
                     </div>
                     <h3 className="font-bold text-white text-base">Posse Soberana</h3>
                     <p className="text-xs text-slate-300 leading-relaxed">
-                      A credencial vai direto para a carteira digital do aluno. Não fica presa no servidor de faculdades
-                      que podem fechar.
+                      A credencial é entregue à custódia do aluno com disponibilidade perene, complementando os sistemas
+                      da faculdade com preservação histórica permanente.
                     </p>
                   </div>
 
@@ -951,13 +957,15 @@ export default function PitchDeckPage() {
                         Cadastro de notas, ementas e Portaria MEC com ancoragem assinada no SAS em 2 segundos.
                       </p>
                     </div>
-                    <Link
-                      href="/university"
-                      target="_blank"
-                      className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800/80 py-1.5 text-xs font-semibold text-slate-200 hover:text-white hover:bg-slate-700 transition-all"
-                    >
-                      Ver Portal IES <ExternalLink className="h-3 w-3" />
-                    </Link>
+                    {!isRecordingMode && (
+                      <Link
+                        href="/university"
+                        target="_blank"
+                        className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800/80 py-1.5 text-xs font-semibold text-slate-200 hover:text-white hover:bg-slate-700 transition-all"
+                      >
+                        Ver Portal IES <ExternalLink className="h-3 w-3" />
+                      </Link>
+                    )}
                   </div>
 
                   <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 space-y-2 flex flex-col justify-between">
@@ -970,13 +978,15 @@ export default function PitchDeckPage() {
                         Visualização de credenciais, progresso de horas complementares e QR Code de apresentação pública.
                       </p>
                     </div>
-                    <Link
-                      href="/student"
-                      target="_blank"
-                      className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800/80 py-1.5 text-xs font-semibold text-slate-200 hover:text-white hover:bg-slate-700 transition-all"
-                    >
-                      Ver Passaporte <ExternalLink className="h-3 w-3" />
-                    </Link>
+                    {!isRecordingMode && (
+                      <Link
+                        href="/student"
+                        target="_blank"
+                        className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800/80 py-1.5 text-xs font-semibold text-slate-200 hover:text-white hover:bg-slate-700 transition-all"
+                      >
+                        Ver Passaporte <ExternalLink className="h-3 w-3" />
+                      </Link>
+                    )}
                   </div>
 
                   <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 space-y-2 flex flex-col justify-between">
@@ -989,13 +999,15 @@ export default function PitchDeckPage() {
                         Upload de PDF (hash calculado localmente no browser) ou consulta por hash em menos de 400ms.
                       </p>
                     </div>
-                    <Link
-                      href="/validator"
-                      target="_blank"
-                      className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-blue-500/40 bg-blue-900/30 py-1.5 text-xs font-semibold text-blue-300 hover:bg-blue-800/50 transition-all"
-                    >
-                      Test Drive 1 Clique <ExternalLink className="h-3 w-3" />
-                    </Link>
+                    {!isRecordingMode && (
+                      <Link
+                        href="/validator"
+                        target="_blank"
+                        className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-blue-500/40 bg-blue-900/30 py-1.5 text-xs font-semibold text-blue-300 hover:bg-blue-800/50 transition-all"
+                      >
+                        Test Drive 1 Clique <ExternalLink className="h-3 w-3" />
+                      </Link>
+                    )}
                   </div>
 
                   <div className="rounded-2xl border border-indigo-500/40 bg-indigo-950/20 p-4 space-y-2 flex flex-col justify-between">
@@ -1008,13 +1020,15 @@ export default function PitchDeckPage() {
                         Gera Trust Report executivo e calcula equivalência curricular semântica entre ementas diferentes.
                       </p>
                     </div>
-                    <Link
-                      href="/validator"
-                      target="_blank"
-                      className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-indigo-500/40 bg-indigo-900/30 py-1.5 text-xs font-semibold text-indigo-300 hover:bg-indigo-800/50 transition-all"
-                    >
-                      Testar Equivalência <ExternalLink className="h-3 w-3" />
-                    </Link>
+                    {!isRecordingMode && (
+                      <Link
+                        href="/validator"
+                        target="_blank"
+                        className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-indigo-500/40 bg-indigo-900/30 py-1.5 text-xs font-semibold text-indigo-300 hover:bg-indigo-800/50 transition-all"
+                      >
+                        Testar Equivalência <ExternalLink className="h-3 w-3" />
+                      </Link>
+                    )}
                   </div>
                 </div>
 
@@ -1031,13 +1045,15 @@ export default function PitchDeckPage() {
                       </p>
                     </div>
                   </div>
-                  <Link
-                    href="/validator"
-                    className="inline-flex items-center gap-2 rounded-xl bg-solana-green px-5 py-2.5 text-xs font-bold text-navy-900 hover:bg-emerald-300 transition-all shadow-md shrink-0"
-                  >
-                    Abrir Simulador On-Chain
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
+                  {!isRecordingMode && (
+                    <Link
+                      href="/validator"
+                      className="inline-flex items-center gap-2 rounded-xl bg-solana-green px-5 py-2.5 text-xs font-bold text-navy-900 hover:bg-emerald-300 transition-all shadow-md shrink-0"
+                    >
+                      Abrir Simulador On-Chain
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  )}
                 </div>
               </div>
             )}
@@ -1139,7 +1155,7 @@ export default function PitchDeckPage() {
 
           {/* SLIDE FOOTER NAVIGATION */}
           <div className="relative z-10 pt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
+            <div className={`flex items-center gap-2 transition-opacity ${isRecordingMode ? "opacity-0 hover:opacity-100" : ""}`}>
               <button
                 onClick={prevSlide}
                 disabled={currentSlide === 0}
@@ -1159,19 +1175,25 @@ export default function PitchDeckPage() {
             </div>
 
             <div className="flex items-center gap-2 text-xs text-slate-400">
-              <span>{slide.timeRange}</span>
-              <span>•</span>
+              {!isRecordingMode && (
+                <>
+                  <span>{slide.timeRange}</span>
+                  <span>•</span>
+                </>
+              )}
               <span>Slide {currentSlide + 1} de {totalSlides}</span>
             </div>
 
-            <div className="flex items-center gap-2">
-              <Link
-                href="/validator"
-                className="text-xs text-solana-green hover:underline flex items-center gap-1"
-              >
-                Testar Validador Ao Vivo <ExternalLink className="h-3 w-3" />
-              </Link>
-            </div>
+            {!isRecordingMode && (
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/validator"
+                  className="text-xs text-solana-green hover:underline flex items-center gap-1"
+                >
+                  Testar Validador Ao Vivo <ExternalLink className="h-3 w-3" />
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
