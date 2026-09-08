@@ -16,6 +16,7 @@
 ## 📑 Sumário Executivo de Documentação
 
 - 🎙️ **[Roteiro de Pitch (5 Minutos)](docs/PITCH_DECK.md)**: Minutagem, slides e script de fala guiada para gravação do vídeo de submissão.
+- 🔬 **[Validação Criptográfica de Documentos](doc/VALIDACAO_DOCUMENTOS_ACADEMICOS.md)**: Especificação técnica detalhada do que fazemos e do pipeline em 4 etapas (SHA-256, SAS on-chain, checagem em <400ms e IA curricular).
 - 🖥️ **[Pitch Deck Interativo & Modo Gravação](doc/PITCH_SPEAKER_RECORDING_MODE.md)**: Apresentação em tela limpa 16:9 (`/pitch`) com Teleprompter e notas do orador desacopladas em 2ª janela (`/pitch/speaker`) via `BroadcastChannel`, ajuste dinâmico de fonte com 7 níveis (`2xs` a `2xl`), sincronização em tempo real e supressão automática de contadores temporais, atalhos e botões de ação na tela do slide durante gravação.
 - 🏢 **[Arquitetura Multi-Tenant & RBAC](doc/ARCHITECTURE_MULTITENANT_RBAC.md)**: Governança institucional, multi-campus, matriz de autorização e fluxos LGPD.
 - 🏛️ **[Arquitetura Tripartite & Modelo de Negócios](docs/12_tripartite_and_business_architecture.md)**: Ciclo Estudante ⇄ IES ⇄ RH, compliance de estágios, validade universal e produto Jovian Tech.
@@ -42,30 +43,36 @@ Hoje, o ecossistema educacional e o mercado corporativo enfrentam custos bilion�
 
 ---
 
-## 2. A Solução LattesChain: Passaporte Acadêmico Soberano
+## 2. A Solução LattesChain: O Que Fazemos & Como Fazemos
 
-O **LattesChain** é um protocolo que une **Universidades**, **Estudantes** e **Empresas/RHs** sobre a infraestrutura ultrarrápida da **Solana**:
+O **LattesChain** é um protocolo de **validação criptográfica e análise curricular de documentos acadêmicos** (diplomas, históricos escolares, certificados de extensão e ementas) ancorado na rede de alto desempenho **Solana**:
 
 ```mermaid
 graph LR
-    subgraph Emissao ["1. Emissão Autêntica"]
-      IES[Universidade Credenciada\nAssinatura ICP-Brasil] -->|Hash SHA-256| SAS[Solana Attestation Service\nToken-2022 Soulbound]
+    subgraph Emissao ["1. Hashing & Assinatura IES"]
+      IES[Universidade Credenciada\nDocumento Original PDF/XML] -->|Hash SHA-256| SAS[Solana Attestation Service\nToken-2022 Soulbound]
     end
 
     subgraph Posse ["2. Posse Soberana"]
       SAS -->|Mint Intransferível| WALLET[Passaporte do Aluno\nCarteira Pública / QR Code]
     end
 
-    subgraph Verificacao ["3. Verificação Pública"]
+    subgraph Verificacao ["3. Validação Instantânea & IA"]
       WALLET -.->|Hash / URL / PDF| VAL[Validador RH Instantâneo\nConsulta On-Chain em <400ms]
       VAL -->|Análise Semântica| IA[Motor de IA Gemini 1.5 Pro\nTrust Report & Equivalência]
     end
 ```
 
-- **Emissão Soberana**: Universidades ancoram atestações no padrão aberto SAS (*Solana Attestation Service*) e emitem certificados como tokens Soulbound (Token-2022).
-- **Propriedade Real pelo Estudante**: O aluno possui sua identidade educacional em sua própria carteira, compartilhável via link ou QR Code.
-- **Validação Pública em 1 Segundo**: Qualquer recrutador ou universidade do mundo confere a autenticidade diretamente na blockchain, sem intermediários e sem custo.
-- **Camada de Inteligência Artificial**: Tradução de dados brutos da blockchain em relatórios executivos de confiança (*Trust Reports*) e análise semântica de equivalência entre ementas curriculares.
+### O Que Fazemos:
+- **Autenticação Inviolável de Títulos**: Garantimos se um diploma ou histórico escolar é genuíno sem precisar ligar para a universidade emissora.
+- **Custódia Soberana pelo Estudante**: O aluno carrega suas conquistas formativas em uma carteira digital segura e as compartilha em 1 clique via QR Code ou link.
+- **Equivalência Curricular Automatizada**: Cruzamos ementas e disciplinas de diferentes instituições para dispensas acadêmicas e mobilidade internacional instantânea.
+
+### Como Fazemos (O Pipeline em 4 Etapas):
+1. **Hash Criptográfico SHA-256 (Local no Browser)**: O PDF ou XML oficial do documento gera uma impressão digital imutável de 256 bits. Qualquer caractere ou nota alterada adultera o hash completamente.
+2. **Assinatura da IES na Solana (SAS + Token-2022)**: A universidade credenciada assina o hash via *Solana Attestation Service* e emite um token Soulbound (`NonTransferable`) com autoridade de revogação auditada (`PermanentDelegate`). Nenhum dado pessoal sensível é exposto on-chain (100% LGPD/GDPR).
+3. **Auditoria em Menos de 400ms (`/validator`)**: O recrutador ou IES receptora arrasta o PDF ou digita a chave da credencial. A RPC da Solana audita instantaneamente a integridade do hash, a autoridade da assinatura institucional e se o documento está ativo ou revogado.
+4. **Camada de IA Curricular (Gemini 1.5 Pro)**: Uma vez atestada a autenticidade criptográfica, a IA lê as ementas das matérias, calcula o percentual de equivalência curricular entre grades acadêmicas (MEC/ECTS) e gera o *Trust Report* executivo.
 
 ---
 
@@ -343,12 +350,14 @@ Para detalhes técnicos e jurídicos da conformidade, consulte **[docs/15_mec_xm
 
 ---
 
-## 10. Guia de Conexão com a Carteira Solana
+## 10. Guia de Conexão com a Carteira Solana & Adoção Web3 Gradual
 
 O LattesChain inclui um **[Guia Interativo de Conexão (/guia-carteira)](src/app/guia-carteira/page.tsx)** dedicado para todos os participantes do ecossistema:
+- **Carteira Phantom & Testes do MVP**: Qualquer participante (aluno, faculdade ou recrutador) pode conectar sua carteira **Phantom** (ou Solflare/Backpack) diretamente no navegador para testar a emissão, custódia e validação no MVP na Solana Devnet em 1 clique.
+- **Transações Reais Futuras na Mainnet**: A mesma chave pública ed25519 e a mesma carteira Phantom serão utilizadas para atestações com fé pública na Mainnet, liquidação de micro-taxas de equivalência internacional e custódia soberana de Soulbound Tokens (Token-2022).
 - **Estudantes**: Instalação da Phantom/Solflare/Backpack, criação de chave pública e obtenção de SOL na Devnet.
 - **Faculdades (IES)**: Conexão via Master Authority e PDA de Emissor Credenciado.
-- **Recrutadores e RH**: Verificação de atestações via link/hash público sem necessidade de tokens cripto.
+- **Recrutadores e RH**: Verificação de atestações via link/hash público sem necessidade de tokens cripto (suporte a relayer gasless).
 
 Consulte o documento completo: **[docs/14_solana_wallet_connection_and_security.md](docs/14_solana_wallet_connection_and_security.md)**.
 
@@ -361,6 +370,8 @@ Consulte o documento completo: **[docs/14_solana_wallet_connection_and_security.
 - **Sistemas & Operações**: Caio Vila Nova (Application Support, Automation & Data Workflows)
 - **Empresa Parceira / Hub de Inovação**: [Jovian Tech](https://jovian.foo/) · [LinkedIn da Jovian](https://www.linkedin.com/company/jovian-tech-foo/)
 - **Ecossistema**: Desenvolvido com suporte e foco no **Hackathon Universitário Superteam Brasil**, alavancando **Solana Attestation Service (SAS)** e **Token-2022 Extensions**.
+
+> **Lema Oficial**: *"LattesChain: a soberania educacional na velocidade da Solana!"*
 
 Para suporte institucional, credenciamento de IES ou integração empresarial, consulte **[docs/12_tripartite_and_business_architecture.md](docs/12_tripartite_and_business_architecture.md)**.
 

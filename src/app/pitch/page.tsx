@@ -854,16 +854,15 @@ export default function PitchDeckPage() {
                   <p className="text-sm sm:text-lg text-slate-300 mt-1">{slide.subtitle}</p>
                 </div>
 
-                {/* 4 ETAPAS DA SOLUÇÃO */}
+                {/* 4 PILARES DA ARQUITETURA DA SOLUÇÃO */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="rounded-2xl border border-solana-purple/30 bg-slate-900/80 p-5 space-y-2 relative overflow-hidden">
                     <div className="h-8 w-8 rounded-lg bg-solana-purple/20 text-solana-purple flex items-center justify-center font-bold text-sm">
                       1
                     </div>
-                    <h3 className="font-bold text-white text-base">Emissão Oficial</h3>
+                    <h3 className="font-bold text-white text-base">Fonte Única da Verdade</h3>
                     <p className="text-xs text-slate-300 leading-relaxed">
-                      A faculdade ancora a credencial diretamente no protocolo aberto via assinatura digital, criando uma
-                      prova matemática na Solana.
+                      Substitui papéis e PDFs forjáveis por atestações canônicas imutáveis, eliminando silos analógicos e semanas de espera em secretarias.
                     </p>
                   </div>
 
@@ -871,49 +870,46 @@ export default function PitchDeckPage() {
                     <div className="h-8 w-8 rounded-lg bg-solana-purple/20 text-solana-purple flex items-center justify-center font-bold text-sm">
                       2
                     </div>
-                    <h3 className="font-bold text-white text-base">Posse Soberana</h3>
+                    <h3 className="font-bold text-white text-base">Custódia Soberana</h3>
                     <p className="text-xs text-slate-300 leading-relaxed">
-                      A credencial é entregue à custódia do aluno com disponibilidade perene, complementando os sistemas
-                      da faculdade com preservação histórica permanente.
-                    </p>
-                  </div>
-
-                  <div className="rounded-2xl border border-solana-purple/30 bg-slate-900/80 p-5 space-y-2 relative overflow-hidden">
-                    <div className="h-8 w-8 rounded-lg bg-solana-purple/20 text-solana-purple flex items-center justify-center font-bold text-sm">
-                      3
-                    </div>
-                    <h3 className="font-bold text-white text-base">Partilha Fácil</h3>
-                    <p className="text-xs text-slate-300 leading-relaxed">
-                      O aluno compartilha um link público seguro ou QR Code no currículo, LinkedIn ou candidatura de
-                      emprego.
+                      O estudante é o verdadeiro proprietário do seu histórico e certificados em sua carteira digital, garantindo portabilidade internacional sem retenções.
                     </p>
                   </div>
 
                   <div className="rounded-2xl border border-solana-green/40 bg-slate-900/80 p-5 space-y-2 relative overflow-hidden">
                     <div className="h-8 w-8 rounded-lg bg-solana-green/20 text-solana-green flex items-center justify-center font-bold text-sm">
+                      3
+                    </div>
+                    <h3 className="font-bold text-white text-base">Auditoria Zero-Trust</h3>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      A autenticidade documental deixa de exigir confiança cega ou ligações manuais e passa a ser uma propriedade matemática auditável em milissegundos.
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-blue-500/40 bg-slate-900/80 p-5 space-y-2 relative overflow-hidden">
+                    <div className="h-8 w-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-sm">
                       4
                     </div>
-                    <h3 className="font-bold text-white text-base">Auditoria &lt;1s</h3>
+                    <h3 className="font-bold text-white text-base">Privacidade & Conformidade</h3>
                     <p className="text-xs text-slate-300 leading-relaxed">
-                      Qualquer recrutador ou universidade no mundo confere a autenticidade on-chain instantaneamente sem
-                      intermediários.
+                      Arquitetura Zero-PII on-chain: total alinhamento às exigências da LGPD, GDPR e às Portarias 330/554 do MEC sem vazar dados sensíveis.
                     </p>
                   </div>
                 </div>
 
-                {/* PADRÃO W3C VC CALLOUT */}
+                {/* PADRÃO W3C VC & PRIVACIDADE CALLOUT */}
                 <div className="rounded-2xl border border-blue-500/30 bg-blue-950/20 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 text-blue-400 font-bold text-sm">
                       <Lock className="h-4 w-4" />
-                      Padrão Internacional: W3C Verifiable Credentials Data Model v2.0
+                      Mudança de Paradigma: W3C Verifiable Credentials v2.0 + LGPD por Design
                     </div>
                     <p className="text-xs text-slate-300">
-                      Interoperabilidade global comprovada matematicamente por criptografia assimétrica de curva elíptica ed25519.
+                      Transformação da validação educacional: da burocracia analógica e vulnerável a fraudes para um protocolo aberto, soberano e universalmente interoperável.
                     </p>
                   </div>
                   <span className="shrink-0 text-xs font-mono bg-blue-900/40 text-blue-300 border border-blue-500/30 rounded-lg px-3 py-1.5">
-                    w3.org/TR/vc-data-model-2.0
+                    W3C VC • SHA-256 • ed25519
                   </span>
                 </div>
               </div>
@@ -988,13 +984,25 @@ export default function PitchDeckPage() {
                   <div className="rounded-2xl border border-pink-500/40 bg-slate-900/70 p-4 space-y-2">
                     <div className="flex items-center gap-2 text-pink-300 font-bold text-sm">
                       <Cpu className="h-4 w-4 text-pink-400" />
-                      6. Zero Cripto Onboarding
+                      6. Carteira Phantom & Gasless
                     </div>
                     <p className="text-xs text-slate-300 leading-relaxed">
-                      Nem faculdades nem alunos compram cripto: nosso relayer atua como Fee Payer corporativo,
-                      absorvendo as micro-taxas gasless.
+                      Os envolvidos podem usar carteiras como a <strong>Phantom</strong> para testar o MVP na Devnet e, futuramente, realizar transações reais no ecossistema com relayer corporativo.
                     </p>
                   </div>
+                </div>
+
+                {/* PHANTOM & ECOSSISTEMA BANNER */}
+                <div className="rounded-2xl border border-solana-purple/40 bg-gradient-to-r from-purple-950/40 via-slate-900/80 to-solana-green/10 p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
+                  <div className="flex items-center gap-2.5">
+                    <span className="h-2 w-2 rounded-full bg-solana-green animate-pulse shrink-0" />
+                    <p className="text-xs text-slate-200">
+                      <strong className="text-white">Adoção Web3 Gradual:</strong> Qualquer usuário pode conectar uma carteira como a <strong className="text-solana-purpleSoft">Phantom</strong> diretamente pelo navegador para testar o MVP hoje e, no futuro, assinar, custodiar e liquidar transações reais com essa mesma carteira.
+                    </p>
+                  </div>
+                  <span className="shrink-0 text-[10px] font-mono font-bold bg-solana-purple/20 text-solana-purpleSoft border border-solana-purple/40 rounded-lg px-2.5 py-1">
+                    MVP Devnet ➔ Transações Reais
+                  </span>
                 </div>
               </div>
             )}
@@ -1039,7 +1047,7 @@ export default function PitchDeckPage() {
                       </span>
                       <h4 className="font-bold text-sm text-white">2. Meu Passaporte</h4>
                       <p className="text-xs text-slate-300">
-                        Visualização de credenciais, progresso de horas complementares e QR Code de apresentação pública.
+                        Custódia na carteira Phantom, progresso de horas complementares e QR Code de apresentação pública.
                       </p>
                     </div>
                     {!isRecordingMode && (
@@ -1212,6 +1220,16 @@ export default function PitchDeckPage() {
                       </div>
                     </div>
                   </div>
+                </div>
+
+                {/* FRASE DE EFEITO DE ENCERRAMENTO */}
+                <div className="rounded-2xl border border-solana-purple/50 bg-gradient-to-r from-purple-950/40 via-solana-purple/15 to-emerald-950/30 p-4 text-center shadow-lg shadow-solana-purple/10">
+                  <p className="font-display text-base sm:text-lg lg:text-xl font-extrabold text-white tracking-wide">
+                    &ldquo;LattesChain: a soberania educacional na velocidade da Solana!&rdquo;
+                  </p>
+                  <p className="text-[11px] sm:text-xs text-slate-300 mt-1">
+                    Equipe <strong className="text-solana-purpleSoft">JOVIAN TECH</strong> • Alex Miqueias • Rogério Alencar Filho • Caio Vila Nova
+                  </p>
                 </div>
               </div>
             )}

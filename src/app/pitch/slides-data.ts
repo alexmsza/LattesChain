@@ -81,16 +81,17 @@ export const SLIDES_DATA: SlideData[] = [
     timeRange: "01:30 - 02:30 (~1 min)",
     badge: "Bloco 2 • A Solução em Linguagem Simples",
     category: "A Solução",
-    title: "O Passaporte Acadêmico Soberano",
-    subtitle: "Propriedade real do histórico escolar na carteira do aluno com validação em menos de 1 segundo",
-    keyObjective: "Explicar como a ponte LattesChain potencializa os sistemas acadêmicos existentes com tecnologia de ponta, sem fricção nem ataques a servidores legados.",
+    title: "Protocolo Unificado de Integridade Acadêmica",
+    subtitle: "Transformando diplomas, históricos e certificados em credenciais criptográficas soberanas",
+    keyObjective: "Apresentar a proposta de valor e a arquitetura conceitual da solução: fim do modelo de PDFs vulneráveis e instituição de um padrão comum de verdade compartilhada (W3C/LGPD) entre Universidade, Aluno e Mercado, sem antecipar o walkthrough prático do Bloco 4.",
     speakerScript:
-      "O LattesChain atua exatamente como essa ponte integradora. Não viemos substituir nem concorrer com os sistemas consolidados das faculdades, mas potencializá-los com tecnologia de ponta. Quando a instituição emite uma credencial, ela assina digitalmente no protocolo e estende essa autenticidade diretamente para a carteira do estudante. O histórico ganha custódia perene e portabilidade universal no padrão W3C Verifiable Credentials. Na outra ponta, qualquer recrutador ou universidade no mundo audita a veracidade em menos de 1 segundo via QR Code, sem sobrecarregar a secretaria e blindando o nome da faculdade contra fraudes.",
+      "O que o LattesChain propõe como solução definitiva? Nós criamos o Protocolo Unificado de Integridade Acadêmica: uma camada de infraestrutura descentralizada que transforma documentos educacionais vulneráveis — como diplomas, históricos e certificados — em credenciais digitais soberanas e matematicamente invioláveis. Em vez de depender de papéis carimbados ou PDFs editáveis que qualquer um forja no Photoshop, estabelecemos uma fonte única e compartilhada da verdade entre faculdade, estudante e mercado. A solução ancora a integridade dos dados através de impressões digitais criptográficas e assinaturas oficiais das universidades, garantindo custódia soberana ao aluno, eliminação total de intermediários manuais e conformidade estrita com a LGPD e o padrão internacional W3C Verifiable Credentials. Nós não apenas digitalizamos papéis; nós criamos uma nova arquitetura de confiança onde a veracidade é uma propriedade matemática irrefutável do documento.",
     citations: [
       { name: "W3C Verifiable Credentials", url: "https://w3.org/TR/vc-data-model-2.0", note: "Verifiable Credentials Data Model v2.0 Standard" },
-      { name: "Convenção de Haia", url: "https://hcch.net", note: "Equivalência de Apostilamento Digital transfronteiriço" },
+      { name: "Solana Attestation Service", url: "https://docs.solanalabs.com", note: "Padrão de atestações nativas da Solana" },
+      { name: "NIST SHA-256 Standard", url: "https://csrc.nist.gov/publications/detail/fips/180-4/final", note: "Padrão criptográfico de integridade documental" },
     ],
-    deliveryTip: "Destaque a harmonia: a faculdade continua como autoridade emissora com sua reputação protegida, enquanto o aluno ganha mobilidade global.",
+    deliveryTip: "Foque na proposta de valor e na mudança de paradigma: substituição de PDFs vulneráveis por um protocolo descentralizado de confiança mútua. Deixe o passo a passo de telas e a IA para o Bloco 4.",
   },
   {
     id: 3,
@@ -101,12 +102,12 @@ export const SLIDES_DATA: SlideData[] = [
     subtitle: "SAS nativo, Token-2022 Soulbound revogável, custo sub-centavo e privacidade LGPD",
     keyObjective: "Demonstrar a arquitetura corporativa em Solana: governança institucional garantida para a faculdade, privacidade e custo zero de onboarding.",
     speakerScript:
-      "Para sustentar essa ponte com viabilidade institucional, a escolha da Solana é cirúrgica. Em vez de contratos experimentais, ancoramos o sistema no Solana Attestation Service e em extensões nativas do Token-2022. O diploma é emitido como um Soulbound intransferível, com governança mantida pela faculdade através de delegação permanente para revogação em casos legais. Garantimos conformidade total com LGPD registrando apenas hashes criptográficos, enquanto nosso relayer corporativo viabiliza custo sub-centavo com experiência 'gasless': nem a faculdade nem o aluno precisam comprar criptoativos. É a sofisticação da Web3 com simplicidade de software corporativo.",
+      "Para sustentar essa ponte com viabilidade institucional, a escolha da Solana é cirúrgica. Em vez de contratos experimentais, ancoramos o sistema no Solana Attestation Service e em extensões nativas do Token-2022. O diploma é emitido como um Soulbound intransferível, com governança mantida pela faculdade através de delegação permanente para revogação em casos legais. Garantimos conformidade com LGPD registrando apenas hashes criptográficos. Todos os envolvidos podem usar, por exemplo, a carteira Phantom diretamente no navegador para testar o MVP na Devnet e, futuramente, assinar e liquidar transações reais com essa mesma carteira em nosso ecossistema — com suporte a relayer corporativo gasless. É a sofisticação da Web3 com usabilidade corporativa.",
     citations: [
       { name: "Solana Labs", url: "https://docs.solanalabs.com", note: "Solana Attestation Service Architecture" },
       { name: "SPL Token-2022", url: "https://spl.solana.com/token-2022/extensions", note: "NonTransferable & PermanentDelegate Extensions" },
     ],
-    deliveryTip: "Firmeza técnica: enfatize que a universidade mantém a autoridade de revogação legal e que a barreira de entrada é zero graças ao relayer corporativo.",
+    deliveryTip: "Firmeza técnica: enfatize que os envolvidos usam a carteira Phantom hoje no MVP e farão transações reais com ela no futuro, com suporte gasless.",
   },
   {
     id: 4,
@@ -117,13 +118,13 @@ export const SLIDES_DATA: SlideData[] = [
     subtitle: "Emissão em 2s, passaporte com QR Code, validador instantâneo e equivalência curricular por IA",
     keyObjective: "Apresentar o produto em produção conectando as três pontas em tempo real e o diferencial de equivalência por IA.",
     speakerScript:
-      "E isso não é apenas conceito — nosso protótipo está 100% funcional e operando ao vivo. Cobrimos as três pontas em tempo real: a secretaria acadêmica ancora credenciais com metadados do MEC em dois segundos; o aluno acompanha seu passaporte e compartilha seu QR Code; e o recrutador audita qualquer documento em menos de 400 milissegundos direto na Devnet. Como salto qualitativo, integramos a inteligência do Google Gemini 1.5 Pro, que analisa semanticamente as ementas e resolve um dos maiores atritos históricos da educação: o cálculo automático de equivalência curricular entre instituições nacionais e internacionais.",
+      "E como essa arquitetura funciona na prática no nosso produto? Nosso protótipo está 100% funcional e operando ao vivo com as três pontas integradas: Primeiro, a secretaria acadêmica emite atestações oficiais no Portal da Universidade em 2 segundos com metadados do MEC. Segundo, o estudante conecta sua carteira Phantom, acessa seu passaporte com a contagem de horas complementares e gera seu QR Code soberano. Terceiro, o recrutador ou empresa audita qualquer documento no validador público em menos de 400 milissegundos, com prova irrefutável na Solana. E como salto de produtividade, ativamos o Google Gemini 1.5 Pro, que lê semanticamente as ementas, gera um Trust Report executivo e calcula automaticamente a equivalência curricular entre diferentes instituições.",
     citations: [
       { name: "Demo ao Vivo", url: "/validator", note: "Validador público funcional com 4 presets canônicos" },
       { name: "Passaporte do Aluno", url: "/student", note: "Carteira soberana com barra de horas MEC e QR Code" },
       { name: "Portal IES", url: "/university", note: "Emissor on-chain com metadados MEC e histórico" },
     ],
-    deliveryTip: "Convide a banca com os olhos na tela. Ressalte que a IA resolve a dor prática da equivalência de matérias entre faculdades.",
+    deliveryTip: "Demonstração prática ao vivo: conduza os 4 passos operacionais (Portal IES, Passaporte com Phantom, Validador do RH e IA Gemini calculando equivalência).",
   },
   {
     id: 5,
@@ -134,12 +135,12 @@ export const SLIDES_DATA: SlideData[] = [
     subtitle: "Stack open-source custo zero, modelo B2B2C freemium e expansão para o Processo de Bolonha",
     keyObjective: "Transmitir maturidade executiva da JOVIAN TECH, integração com ERPs já existentes e convite final.",
     speakerScript:
-      "Por trás do LattesChain está a JOVIAN TECH, combinando arquitetura Web3 em Solana, engenharia de dados, DevSecOps e operações de sistemas. Nosso plano de entrada inicia na gestão de horas complementares com centros acadêmicos, escala para equivalência internacional e integra-se diretamente aos ERPs já utilizados pelas faculdades. O LattesChain é a ponte que une tradição acadêmica e vanguarda tecnológica. Convidamos todos a testar nossa demo ao vivo!",
+      "Por trás do LattesChain está a JOVIAN TECH, formada por Alex Miqueias na liderança de arquitetura Web3 e contratos Solana, Rogério Alencar Filho em engenharia de dados, backend e DevSecOps, e Caio Vila Nova em operações de sistemas e automações. Desenvolvemos uma stack 100% open-source de custo zero no MVP: Go ultraleve, Python com IA, Supabase e Solana. Nosso plano de entrada inicia no piloto beachhead de horas complementares com centros acadêmicos, escala para equivalência internacional no padrão Bolonha e integra-se via API direta aos ERPs legados. LattesChain: a soberania educacional na velocidade da Solana!",
     citations: [
       { name: "EHEA Bologna Process", url: "https://ehea.info", note: "Bologna Process & ECTS Users' Guide" },
       { name: "JOVIAN TECH", url: "https://jovian.foo", note: "Ecossistema Corporativo Autônomo & DataSecAIOps" },
       { name: "Repositório GitHub", url: "https://github.com/alexmsza/LattesChain", note: "Código 100% Open-Source e Auditado" },
     ],
-    deliveryTip: "Fechamento memorável: reforce o valor da ponte entre tradição acadêmica e vanguarda tecnológica, chamando a banca para a ação.",
+    deliveryTip: "Fechamento memorável: cite nominalmente os integrantes da JOVIAN TECH com postura firme e finalize cravando a frase de efeito com autoridade.",
   },
 ];

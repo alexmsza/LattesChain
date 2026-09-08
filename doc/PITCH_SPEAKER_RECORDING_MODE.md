@@ -175,3 +175,90 @@ Implementada navegação síncrona imediata entre o script falado do orador e os
 1. Acesse `/pitch` e navegue até o Slide 2 (Bloco 1 • O Problema).
 2. Observe os 3 cards estatísticos com os dados da HireRight, UNESCO e EHEA.
 3. Pressione a tecla `O` para abrir o teleprompter ou `N` para exibir a gaveta de notas: o script falado guiará a locução enfatizando a dor humana dos estudantes, o risco institucional das faculdades e a vulnerabilidade das empresas, citando as fontes canônicas com precisão.
+
+---
+
+## 10. Slide 5: Apresentação Nominal da Equipe JOVIAN TECH & Frase de Efeito Canônica
+
+### Descrição da Mudança
+- **Citação Nominal dos Integrantes no Roteiro do Orador (`speakerScript`)**:
+  - **Alex Miqueias**: Liderança de arquitetura Web3, smart contracts Solana (Token-2022/SAS) e governança on-chain.
+  - **Rogério Alencar Filho**: Engenharia de dados, backend (Go/Python), DevSecOps e integrações corporativas.
+  - **Caio Vila Nova**: Suporte e operações de sistemas, automação de processos e fluxos de dados.
+  - Vínculo institucional sob o ecossistema da **JOVIAN TECH**.
+- **Frase de Efeito Marcante de Encerramento (Punchline)**:
+  - Inserção do lema canônico: **"LattesChain: a soberania educacional na velocidade da Solana!"**.
+  - Roteiro do orador finaliza com essa declaração de posicionamento.
+  - No slide visual (`src/app/pitch/page.tsx` - Slide 5), inclusão de banner com degradê temático e tipografia com alto peso visual renderizando a frase de efeito e a menção nominal da equipe.
+  - Na janela pop-out do teleprompter (`src/app/pitch/speaker/page.tsx`), inclusão de card com a frase de efeito em destaque no fechamento da fala 6.
+- **Sincronização Textual em `docs/PITCH_DECK.md`**: Bloco 5 atualizado para manter paridade absoluta entre a fala do orador e o documento mestre do pitch.
+
+### Impacto Técnico e Executivo
+- Eliminação de qualquer ambiguidade sobre os membros e competências técnicas do time perante a banca avaliadora.
+- Fechamento memorável do pitch cumprindo a meta de tempo (30 segundos para o Bloco 5) sem estourar o limite de 5 minutos da Superteam.
+- Garantia de que a gravação (tanto com teleprompter pop-out quanto com slide limpo) ofereça visual e oratória 100% alinhados.
+
+### Instruções de Uso
+1. Acesse `/pitch` e vá para o último slide (Slide 6 / Bloco 5).
+2. Verifique o banner de fechamento com a frase de efeito `"LattesChain: a soberania educacional na velocidade da Solana!"` e os nomes dos 3 integrantes.
+3. Abra a janela de notas (`N` ou `O`): a leitura guiada conduzirá a citação nominal fluida e a finalização com a frase de efeito.
+
+---
+
+## 11. Adoção Web3 Gradual: Carteira Phantom no MVP e Transações Reais Futuras
+
+### Descrição da Mudança
+- **Narrativa de Onboarding e Usabilidade Híbrida**: O pitch agora explicita que os envolvidos (estudantes, universidades e empresas/RHs) têm a opção de conectar carteiras padrão do ecossistema Solana — destacando a **Phantom** — para testar o MVP na Devnet hoje e, futuramente, realizar transações reais de emissão, liquidação e custódia soberana com essa mesma chave pública no ecossistema LattesChain.
+- **Integração Visual nos Slides (`src/app/pitch/page.tsx`)**:
+  - **Slide 3 (Diferencial Tecnológico Solana)**:
+    - Card 6 atualizado com o badge `Adoção Web3 Gradual` e título `6. Carteira Phantom & Gasless`.
+    - Adicionado banner degradê inferior: *"Adoção Web3 Gradual: Devnet MVP ➔ Transações Reais: Qualquer participante pode conectar sua carteira Phantom diretamente no navegador para testar o MVP na Devnet hoje e, futuramente, assinar e liquidar transações reais com essa mesma carteira em nosso ecossistema — com suporte a relayer corporativo gasless para eliminação de fricção."*
+  - **Slide 4 (Na Prática / Demo)**:
+    - Card 2 (*"Meu Passaporte"*) atualizado destacando que o estudante conecta sua carteira Phantom, mantendo a custódia soberana dos seus certificados e credenciais Token-2022.
+- **Sincronização dos Scripts do Orador (`src/app/pitch/slides-data.ts` & `docs/PITCH_DECK.md`)**:
+  - **Bloco 3 (`id: 3`)**: O `speakerScript` declara explicitamente que todos os envolvidos podem usar a carteira Phantom para testar o MVP na Devnet e realizar transações reais no futuro.
+  - **Bloco 4 (`id: 4`)**: O `speakerScript` reforça que o aluno conecta sua Phantom e acompanha seu passaporte acadêmico em tempo real.
+  - O `deliveryTip` instrui o orador a transmitir firmeza técnica sobre essa ponte entre usabilidade Web2 e custódia Web3.
+
+### Impacto Técnico e Estratégico
+- **Redução de Fricção de Onboarding**: Mostra para a banca e investidores que o LattesChain não exige compra imediata de criptoativos (graças ao relayer gasless), mas é 100% nativo de Web3, permitindo que usuários da Phantom interajam com suas chaves criptográficas diretamente.
+- **Migração Transparente Devnet ➔ Mainnet**: A mesma carteira Phantom que testa a emissão e validação no MVP será o canal para atestações oficiais de diplomas e micro-pagamentos de equivalência internacional na Mainnet.
+- **Conformidade de Padrões**: Alinhamento com a infraestrutura do ecossistema Solana (Phantom, Solflare, Backpack) e com o Solana Attestation Service (SAS).
+
+### Instruções de Uso
+1. Acesse `/pitch` e navegue até o Slide 4 (Bloco 3) e Slide 5 (Bloco 4).
+2. Verifique o Card 6 e o banner degradê no Slide 4, e o card de passaporte no Slide 5.
+3. Abra a gaveta de notas (`N`) ou o teleprompter (`O`) para conferir as instruções de locução sincronizadas.
+
+---
+
+## 12. Desacoplamento Semântico: Bloco 2 (A Solução Conceitual) vs Bloco 4 (Na Prática / Demo)
+
+### Descrição da Mudança
+- **Eliminação de Redundância Operacional**: O Bloco 2 (*A Solução*) anteriormente antecipava o passo a passo da demonstração prática (mencionando arrastar PDFs no validador, clique em botões e geração de Trust Report pela IA), duplicando a narrativa do Bloco 4 (*Na Prática / Demo & Camada de IA*).
+- **Redefinição dos Escopos**:
+  - **Bloco 2 (`id: 2`) — A Solução (Conceito, Proposta de Valor e Pilares Estruturais)**:
+    - Foco exclusivo na **proposta de valor** e na **mudança de paradigma**: substituição de PDFs editáveis vulneráveis a falsificações por um **Protocolo Unificado de Integridade Acadêmica**.
+    - Apresentação dos 4 Pilares Arquiteturais:
+      1. *Fonte Única da Verdade*: Atestações canônicas imutáveis sem silos analógicos.
+      2. *Custódia Soberana do Aluno*: Portabilidade vitalícia de credenciais na carteira digital.
+      3. *Auditoria Zero-Trust*: Prova matemática irrefutável sem dependência de conferências manuais.
+      4. *Privacidade & Conformidade Estrita*: Zero-PII on-chain, alinhado à LGPD e ao padrão internacional W3C Verifiable Credentials v2.0.
+  - **Bloco 4 (`id: 4`) — Na Prática (Walkthrough dos 3 Portais e Motor Gemini 1.5 Pro)**:
+    - Concentra 100% da **demonstração prática**:
+      1. Emissão no Portal IES (`/university`) em 2 segundos com metadados do MEC.
+      2. Conexão do Passaporte do Aluno (`/student`) com carteira Phantom e QR Code soberano.
+      3. Auditoria do Recrutador (`/validator`) com upload de PDF e conferência on-chain em <400ms.
+      4. Camada de IA Gemini 1.5 Pro analisando ementas e calculando equivalência curricular semântica.
+- **Sincronização Visual e Documental**:
+  - `src/app/pitch/page.tsx`: Slide 2 atualizado com os 4 pilares estruturais e banner conceitual W3C VC v2.0.
+  - `src/app/pitch/slides-data.ts`: Roteiros do orador (`speakerScript`) e dicas de entrega (`deliveryTip`) atualizados.
+  - `docs/PITCH_DECK.md`: Narração do Bloco 2 sincronizada, eliminando redundâncias.
+
+### Impacto Técnico e de Apresentação
+- Estrutura narrativa sem repetições para a banca do hackathon: o Bloco 2 vende a tese e a arquitetura de confiança, o Bloco 3 explica por que só a Solana resolve, e o Bloco 4 comprova a execução com o produto operando ao vivo.
+- Adequação rigorosa à meta de 1 minuto por bloco dentro do teto global de 5 minutos.
+
+### Instruções de Uso
+1. Acesse `/pitch` e navegue do Slide 3 (Bloco 2) para o Slide 5 (Bloco 4).
+2. Note a transição semântica límpida: o Slide 3 aborda os pilares da arquitetura de integridade e o Slide 5 apresenta os 4 módulos práticos em ação com links diretos para teste.

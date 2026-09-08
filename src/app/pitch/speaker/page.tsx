@@ -568,6 +568,15 @@ export default function SpeakerNotesPage() {
                 </div>
               ))}
             </div>
+
+            <div className="rounded-xl border border-solana-purple/50 bg-gradient-to-r from-purple-950/40 via-solana-purple/15 to-emerald-950/30 p-3.5 text-center">
+              <span className="text-[10px] uppercase tracking-widest text-solana-green font-mono font-bold block mb-0.5">
+                Frase de Efeito (Fechamento)
+              </span>
+              <p className="font-display text-sm sm:text-base font-extrabold text-white">
+                &ldquo;LattesChain: a soberania educacional na velocidade da Solana!&rdquo;
+              </p>
+            </div>
           </div>
         )}
 

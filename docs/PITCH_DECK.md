@@ -45,21 +45,23 @@
 ---
 
 ### [01:00 - 02:00] Bloco 2: A Solução em Linguagem Simples
-*(Slide 3 no app `/pitch`: O Passaporte Acadêmico Soberano)*
+*(Slide 3 no app `/pitch`: Protocolo Unificado de Integridade Acadêmica)*
 
 > **Narrador**:  
-> "Apresentamos o **LattesChain**: um passaporte acadêmico digital e global hospedado na **Solana**.
+> "O que o **LattesChain** propõe como solução definitiva? Nós criamos o **Protocolo Unificado de Integridade Acadêmica**: uma infraestrutura descentralizada que transforma documentos educacionais vulneráveis — como diplomas, históricos, certificados de extensão e ementas — em credenciais digitais soberanas e matematicamente invioláveis.  
 > 
-> O funcionamento é simples e direto:  
-> 1. A universidade emite a credencial oficial assinada criptograficamente direto para a carteira digital do estudante.  
-> 2. O aluno é o dono soberano do seu histórico: cada disciplina, extensão e diploma fica sob sua custódia pessoal.  
-> 3. Para comprovar suas qualificações, o estudante compartilha apenas um link ou QR Code com qualquer recrutador ou universidade estrangeira.  
-> 4. A validação ocorre em menos de 1 segundo direto na rede pública, eliminando intermediários, cartórios e carimbos físicos.  
+> Em vez de depender de papéis carimbados ou PDFs editáveis que qualquer pessoa altera no Photoshop, estabelecemos uma fonte única e compartilhada da verdade entre faculdade, estudante e mercado. A solução ancora-se em 4 pilares estruturais:  
+> 1. **Fonte Única da Verdade**: Eliminação de silos analógicos e semanas de espera em secretarias através de dados canônicos imutáveis.  
+> 2. **Custódia Soberana do Aluno**: O estudante é o legítimo dono do seu passaporte de qualificações em sua carteira digital, com portabilidade global para trabalho ou pós-graduação.  
+> 3. **Auditoria Zero-Trust**: A autenticidade deixa de exigir confiança cega ou chamados telefônicos e passa a ser uma propriedade matemática comprovável instantaneamente.  
+> 4. **Privacidade & Conformidade Estrita**: Arquitetura Zero-PII on-chain, 100% alinhada à LGPD, GDPR e às Portarias 330/554 do MEC.  
 > 
-> Esse modelo segue rigorosamente o padrão internacional **W3C Verifiable Credentials Data Model v2.0**, permitindo que as credenciais sejam provadas matematicamente sem depender de servidores centrais da faculdade de origem."
+> Nós não apenas digitalizamos documentos; nós criamos uma nova arquitetura de confiança fundamentada no padrão internacional **W3C Verifiable Credentials**."
 
 **Fontes Consultáveis**:
 - **W3C**: *Verifiable Credentials Data Model v2.0* ([w3.org/TR/vc-data-model-2.0](https://www.w3.org/TR/vc-data-model-2.0/))
+- **Solana Labs**: *Solana Attestation Service Architecture* ([docs.solanalabs.com](https://docs.solanalabs.com))
+- **NIST**: *SHA-256 Standard FIPS 180-4* ([csrc.nist.gov](https://csrc.nist.gov/publications/detail/fips/180-4/final))
 
 ---
 
@@ -75,7 +77,8 @@
 > 2. **Token-2022 (NonTransferable)**: O certificado nasce como um Soulbound Token que cola na carteira do aluno, impedindo que o título seja vendido ou transferido para terceiros.  
 > 3. **PermanentDelegate**: Recurso nativo que permite à instituição emissora revogar o título on-chain em caso de fraude administrativa comprovada ou cancelamento judicial.  
 > 4. **Custo Sub-Centavo (< R$ 0,01)**: Permite emitir centenas de milhares de matérias e certificados por frações de centavos de real — algo economicamente inviável no Ethereum ou Bitcoin.  
-> 5. **Privacidade por Design (LGPD/GDPR)**: Nenhum dado pessoal sensível como CPF ou nome vai para a blockchain; apenas o hash criptográfico SHA-256 do documento canônico é ancorado on-chain."
+> 5. **Privacidade por Design (LGPD/GDPR)**: Nenhum dado pessoal sensível como CPF ou nome vai para a blockchain; apenas o hash criptográfico SHA-256 do documento canônico é ancorado on-chain.  
+> 6. **Carteira Phantom & Transações Reais Futuras**: Todos os envolvidos — alunos, faculdades e recrutadores — podem utilizar, por exemplo, a carteira Phantom diretamente no navegador para testar o MVP na Devnet e, futuramente, assinar e liquidar transações reais com essa mesma carteira em nosso ecossistema, viabilizado por relayer corporativo gasless."
 
 **Fontes Consultáveis**:
 - **Solana Labs**: *Solana Attestation Service Architecture* ([docs.solanalabs.com](https://docs.solanalabs.com))
@@ -90,7 +93,7 @@
 > "Vejamos isso funcionando na prática na nossa plataforma:
 > 
 > 1. **Emissão (/university)**: A universidade insere os dados curriculares com metadados do MEC, assina a transação na devnet da Solana via SAS e o token intransferível chega à carteira do aluno em apenas 2 segundos.  
-> 2. **Custódia (/student)**: O estudante visualiza seus certificados na interface com a barra de horas complementares e gera um link ou QR Code instantâneo.  
+> 2. **Custódia (/student)**: O estudante conecta sua carteira Phantom, visualiza seus certificados na interface com a barra de horas complementares do MEC e gera um link ou QR Code instantâneo com custódia soberana.  
 > 3. **Validação Instantânea (/validator)**: O recrutador acessa o link, arrasta o PDF ou clica nos nossos botões de test drive, e a assinatura pública da universidade é auditada on-chain em menos de 400 milissegundos.  
 > 4. **Camada de IA Curricular (Gemini 1.5 Pro)**: Em paralelo, nossa IA analisa as ementas e gera um **Trust Report** estruturado em linguagem natural, além de calcular a **equivalência curricular** automática entre as grades da instituição de origem e a de destino."
 
@@ -104,16 +107,16 @@
 *(Slide 6 no app `/pitch`: Execução Focada & Escalabilidade Global)*
 
 > **Narrador**:  
-> Nosso time é composto por **Alex Miqueias**, **Rogério Alencar Filho** e **Caio Vila Nova**, incubado pela **Jovian Tech**, combinando especializações em Arquitetura Distribuída Solana, Engenharia de Dados, Segurança de Infraestrutura (DevSecOps) e Suporte a Aplicações, Automações e Fluxos de Dados.
+> "Por trás do LattesChain está a **JOVIAN TECH**, formada por **Alex Miqueias** na liderança de arquitetura Web3 e contratos Solana, **Rogério Alencar Filho** em engenharia de dados, backend e DevSecOps, e **Caio Vila Nova** em suporte e operações de sistemas.
 > 
-> Toda a nossa **stack do MVP é 100% open-source com custo zero de infraestrutura**: Go ultraleve, Python com IA, Supabase (PostgreSQL + RLS) e SDKs Solana.
+> Desenvolvemos uma **stack 100% open-source de custo zero no MVP**: Go ultraleve, Python com IA, Supabase (PostgreSQL + RLS) e SDKs Solana.
 > 
-> Nosso roadmap de execução possui 3 passos claros:  
+> Nosso plano de entrada possui 3 passos claros:  
 > 1. **Piloto Beachhead**: Focado na emissão de horas complementares e certificados de extensão com Diretórios e Centros Acadêmicos parceiros (sem amarras regulatórias).  
 > 2. **Expansão Internacional de IA**: Calibração dos modelos de IA para mapeamento de equivalência curricular nos padrões do **Processo de Bolonha (ECTS - Europa)** e universidades dos Estados Unidos.  
-> 3. **Mainnet & Integração com ERPs**: Deploy na Solana Mainnet com State Compression e integração via API REST direta aos sistemas legados (TOTVS RM, Lyceum) e plataformas de RH (Gupy).
+> 3. **Mainnet & Integração com ERPs**: Deploy na Solana Mainnet com State Compression e integração via API REST direta aos sistemas legados (TOTVS RM, Sophia) e plataformas de RH (Gupy).
 > 
-> LattesChain: a soberania educacional na velocidade da Solana!"
+> **LattesChain: a soberania educacional na velocidade da Solana!**"
 
 **Fontes Consultáveis**:
 - **European Higher Education Area (EHEA)**: *Bologna Process & ECTS Users' Guide* ([ehea.info](https://ehea.info))
