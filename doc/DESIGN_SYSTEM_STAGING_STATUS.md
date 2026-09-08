@@ -24,12 +24,13 @@ Consolidação da **Versão 4 (v4)** adotando o `favicon_v3.svg` como **padrão 
 ---
 
 ## 2. Impacto no Sistema
-- **Ativo em Produção:** Assets publicados em `public/brand/` e `public/favicon.svg` / `public/icon.svg`.
+- **Ativo em Produção:** Assets publicados em `public/brand/`, `public/brand/v4/` e `public/favicon.svg` / `public/icon.svg`.
 - **Interface Integrada:** Navbar (`Navbar.tsx`), Rodapé (`Footer.tsx`) e metadados (`layout.tsx`) consumindo os novos logotipos oficiais.
+- **Documentação Unificada:** `README.md`, `doc/VALIDACAO_DOCUMENTOS_ACADEMICOS.md`, `docs/PITCH_DECK.md`, `Design/CATALOGO_VISUAL_E_APROVACAO.md` e `Design/BRAND_GUIDELINES.md` integrados com `logo_horizontal_light_v4.svg`, `lattes_linkedin_cover_v4.jpg`, `logo_icon_v4.svg`, `lattes_hero_banner_v4.jpg`, `lattes_soulbound_badge_v4.jpg` e `lattes_logo_3d_v4.jpg`.
 - **Rastreabilidade Total:** Todas as versões (`v1`, `v2`, `v3` e `v4`) estão preservadas e organizadas no diretório oficial `Design/`.
 
 ---
 
 ## 3. Instruções de Uso
 - Os arquivos originais e masters encontram-se em `Design/vectors/` e `Design/images/`.
-- No frontend, acesse diretamente via `/brand/logo_icon.svg`, `/brand/logo_horizontal_dark.svg` ou `/favicon.svg`.
+- No frontend e documentação, acesse diretamente via `public/brand/v4/` ou `/brand/` para vetores e imagens de alta resolução.

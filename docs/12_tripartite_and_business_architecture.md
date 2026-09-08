@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="../public/brand/v4/logo_horizontal_light_v4.svg" alt="LattesChain Tripartite Architecture" width="360" />
+</div>
+
 # EduCore Protocol / LattesChain — Arquitetura Tripartite, Validade Universal e Jovian Tech
 
 > **Documento de Engenharia e Modelo de Negócios**  

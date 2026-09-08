@@ -1,3 +1,12 @@
+<div align="center">
+  <img src="public/brand/v4/logo_horizontal_light_v4.svg" alt="LattesChain Logo" width="460" />
+  <br /><br />
+  <img src="public/brand/v4/lattes_linkedin_cover_v4.jpg" alt="LattesChain Official Banner" width="100%" />
+  <br /><br />
+  <img src="public/brand/v4/logo_icon_v4.svg" alt="LattesChain Icon" width="56" height="56" />
+  <br />
+</div>
+
 # LattesChain — Passaporte Acadêmico Global Descentralizado 🎓⛓️
 
 [![Solana](https://img.shields.io/badge/Blockchain-Solana%20Devnet%20%2F%20Mainnet-9945FF?logo=solana)](https://solana.com)
@@ -5,7 +14,6 @@
 [![Token-2022](https://img.shields.io/badge/Token--2022-Soulbound%20%26%20Revocable-blueviolet)](https://spl.solana.com/token-2022)
 [![Open Source](https://img.shields.io/badge/Stack-100%25%20Free%20%26%20Open--Source-brightgreen)](https://opensource.org)
 [![Superteam Brasil](https://img.shields.io/badge/Hackathon-Superteam%20Brasil-008C4C)](https://uni.superteam.com.br/)
-..
 
 > **Projeto submetido ao [Hackathon Universitário Superteam Brasil](https://uni.superteam.com.br/)**  
 > Listagem oficial no Superteam Earn: [Hackathon Universitária Superteam Brasil](https://superteam.fun/earn/listing/hackathon-universitaria-superteam-brasil-1)  
@@ -64,6 +72,10 @@ graph LR
     end
 ```
 
+<p align="center">
+  <img src="public/brand/v4/lattes_hero_banner_v4.jpg" alt="LattesChain Protocol Architecture & UI Overview" width="100%" />
+</p>
+
 ### O Que Fazemos:
 - **Autenticação Inviolável de Títulos**: Garantimos se um diploma ou histórico escolar é genuíno sem precisar ligar para a universidade emissora.
 - **Custódia Soberana pelo Estudante**: O aluno carrega suas conquistas formativas em uma carteira digital segura e as compartilha em 1 clique via QR Code ou link.
@@ -80,6 +92,11 @@ graph LR
 ## 3. Principais Features do Sistema
 
 ### 3.1 Passaporte Acadêmico do Estudante (`/student`)
+
+<p align="center">
+  <img src="public/brand/v4/lattes_soulbound_badge_v4.jpg" alt="Selo Soulbound Token-2022" width="280" />
+</p>
+
 - **Visualização Unificada de Conquistas**: Histórico completo de disciplinas cursadas, cursos de extensão e diplomas oficiais.
 - **Token-2022 Soulbound**: Credenciais intransferíveis (`NonTransferable`) com capacidade de revogação auditada (`PermanentDelegate`).
 - **Barra de Progresso de Horas Complementares**: Acompanhamento visual da carga horária concluída vs. exigida pelo MEC.
@@ -99,6 +116,11 @@ graph LR
 - **Detecção de Fraude & Alerta Visual**: Exibição imediata de alertas vermelhos caso o documento tenha sido adulterado ou revogado pelo emissor.
 
 ### 3.3 Motor de Inteligência Artificial Curricular (Gemini 1.5 Pro)
+
+<p align="center">
+  <img src="public/brand/v4/lattes_logo_3d_v4.jpg" alt="LattesChain 3D Emblem & IA Curricular" width="260" />
+</p>
+
 - **Trust Report Automatizado**: Geração de parecer técnico para recrutadores, interpretando o contexto institucional, autenticidade on-chain e data de emissão.
 - **Análise Semântica de Equivalência**: Comparador entre duas ementas universitárias (ex: UFMG vs. USP), analisando compatibilidade de carga horária, tópicos coincidentes, grau percentual de equivalência e parecer técnico justificado.
 

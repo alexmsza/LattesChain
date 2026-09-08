@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="../public/brand/v4/logo_horizontal_light_v4.svg" alt="LattesChain Header" width="380" />
+</div>
+
 # Validação Criptográfica de Documentos Acadêmicos — LattesChain
 
 ## 1. Descrição da Solução
@@ -51,6 +55,12 @@ sequenceDiagram
   - `NonTransferable`: impede alienação, venda ou transferência da credencial para outra carteira (Soulbound).
   - `PermanentDelegate`: autoridade exclusiva da IES emissora para revogar a credencial on-chain em caso de anulação de matrícula ou fraude administrativa.
 
+<p align="center">
+  <img src="../public/brand/v4/logo_badge_soulbound_v4.svg" alt="Selo Soulbound Token-2022" width="180" />
+  <br />
+  <sub><em>Selo Heráldico Soulbound Token-2022 (Padrão v4)</em></sub>
+</p>
+
 ### Etapa 3: Auditoria Instantânea pelo Validador (< 400ms)
 - O validador (empresa de recrutamento ou faculdade receptora) acessa `/validator` e arrasta o arquivo PDF (ou insere a chave pública da atestação).
 - O motor recalcula o SHA-256 do arquivo localmente no navegador e consulta a RPC da Solana:
@@ -70,3 +80,9 @@ sequenceDiagram
 - **Tempo de Auditoria**: Redução de 15 a 30 dias para < 1 segundo.
 - **Taxa de Fraude**: 0% de risco em documentos auditados pelo protocolo.
 - **Custo Operacional**: < R$ 0,01 por atestação on-chain (contra R$ 30 a R$ 250 de cartórios e despachantes).
+
+<p align="center">
+  <img src="../public/brand/v4/lattes_soulbound_badge_v4.jpg" alt="Medalhão 3D de Atestação Soulbound" width="240" />
+  <br />
+  <sub><em>Medalhão Criptográfico 3D de Credencial Imutável Auditada</em></sub>
+</p>

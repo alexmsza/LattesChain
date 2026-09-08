@@ -1,3 +1,12 @@
+<div align="center">
+  <img src="../public/brand/v4/logo_horizontal_light_v4.svg" alt="LattesChain Logo" width="380" />
+  <br /><br />
+  <img src="../public/brand/v4/lattes_linkedin_cover_v4.jpg" alt="LattesChain Pitch Deck Cover" width="100%" />
+  <br /><br />
+  <img src="../public/brand/v4/logo_icon_v4.svg" alt="LattesChain Icon" width="48" height="48" />
+  <br />
+</div>
+
 # LattesChain — Roteiro de Pitch (5 Minutos) 🎙️
 
 > **Desafio**: Hackathon Universitário Superteam Brasil (Superteam Earn)  
@@ -47,6 +56,10 @@
 ### [01:00 - 02:00] Bloco 2: A Solução em Linguagem Simples
 *(Slide 3 no app `/pitch`: Protocolo Unificado de Integridade Acadêmica)*
 
+<p align="center">
+  <img src="../public/brand/v4/lattes_hero_banner_v4.jpg" alt="Visão Geral da Plataforma LattesChain" width="100%" />
+</p>
+
 > **Narrador**:  
 > "O que o **LattesChain** propõe como solução definitiva? Nós criamos o **Protocolo Unificado de Integridade Acadêmica**: uma infraestrutura descentralizada que transforma documentos educacionais vulneráveis — como diplomas, históricos, certificados de extensão e ementas — em credenciais digitais soberanas e matematicamente invioláveis.  
 > 
@@ -67,6 +80,10 @@
 
 ### [02:00 - 03:00] Bloco 3: Por que Solana? O que só ela resolve
 *(Slide 4 no app `/pitch`: Primitivas Nativas da Solana)*
+
+<p align="center">
+  <img src="../public/brand/v4/lattes_soulbound_badge_v4.jpg" alt="Selo Soulbound Token-2022" width="240" />
+</p>
 
 > **Narrador**:  
 > "Por que a Solana é indispensável nessa solução e o que a blockchain resolve aqui que outra tecnologia não resolveria?
@@ -105,6 +122,10 @@
 
 ### [04:00 - 05:00] Bloco 5: Time, Stack MVP & Próximos Passos
 *(Slide 6 no app `/pitch`: Execução Focada & Escalabilidade Global)*
+
+<p align="center">
+  <img src="../public/brand/v4/lattes_logo_3d_v4.jpg" alt="LattesChain 3D Emblem" width="220" />
+</p>
 
 > **Narrador**:  
 > "Por trás do LattesChain está a **JOVIAN TECH**, formada por **Alex Miqueias** na liderança de arquitetura Web3 e contratos Solana, **Rogério Alencar Filho** em engenharia de dados, backend e DevSecOps, e **Caio Vila Nova** em suporte e operações de sistemas.

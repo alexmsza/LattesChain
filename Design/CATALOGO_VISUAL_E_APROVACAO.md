@@ -50,15 +50,51 @@ C:\Users\alexk\Desktop\LattesChain\Design\
 
 ---
 
-## 🗺️ Matriz de Deploy Final (Quando Aprovado)
+## 🗺️ Matriz de Deploy Final
 
 | Asset Padrão (v4) | Formato | Aplicação no Sistema | Destino em Produção |
 | :--- | :--- | :--- | :--- |
 | `logo_horizontal_dark_v4.svg` | SVG | Header principal (Navbar) | `src/components/Navbar.tsx` |
-| `logo_horizontal_light_v4.svg`| SVG | Certidões e RVDD em PDF (MEC) | `src/lib/pdf/reportTemplate.ts` |
+| `logo_horizontal_light_v4.svg`| SVG | Certidões, RVDD em PDF (MEC) e Documentos | `src/lib/pdf/reportTemplate.ts` |
 | `logo_icon_v4.svg` | SVG | Ícone mobile e selos públicos | `public/logo_icon.svg` |
+| `logo_badge_soulbound_v4.svg`| SVG | Selo circular oficial Token-2022 | `public/brand/v4/logo_badge_soulbound_v4.svg` |
 | `favicon_v4.svg` | SVG | Favicon da aplicação web | `src/app/icon.svg` |
-| `lattes_hero_banner_v4.jpg` | JPG 8k (16:9) | Hero banner da Landing Page | `public/images/hero_banner.jpg` |
-| `lattes_linkedin_cover_v4.jpg`| JPG 8k (16:9) | Divulgação corporativa LinkedIn | Redes Sociais / Mídia Externa |
-| `lattes_logo_3d_v4.jpg` | JPG 8k (1:1) | Pitch Deck e Avatares | `public/images/brand_3d.jpg` |
-| `lattes_soulbound_badge_v4.jpg`| JPG 8k (1:1) | Selo comemorativo no Passaporte | `src/app/student/page.tsx` |
+| `lattes_hero_banner_v4.jpg` | JPG 8k (16:9) | Hero banner da Landing Page e Docs | `public/images/hero_banner.jpg` |
+| `lattes_linkedin_cover_v4.jpg`| JPG 8k (16:9) | Divulgação corporativa e Capa README | Redes Sociais / README.md / Pitch |
+| `lattes_logo_3d_v4.jpg` | JPG 8k (1:1) | Pitch Deck, Docs e Avatares | `public/images/brand_3d.jpg` |
+| `lattes_soulbound_badge_v4.jpg`| JPG 8k (1:1) | Selo comemorativo no Passaporte e Docs | `src/app/student/page.tsx` |
+
+---
+
+## 🖼️ Galeria Visual de Homologação (v4)
+
+### 1. Banner Oficial LinkedIn & Pitch Cover (`lattes_linkedin_cover_v4.jpg`)
+<p align="center">
+  <img src="images/v4/lattes_linkedin_cover_v4.jpg" alt="LattesChain LinkedIn Cover v4" width="100%" />
+</p>
+
+### 2. Logotipos Horizontais (Light & Dark)
+<p align="center">
+  <img src="vectors/v4/logo_horizontal_light_v4.svg" alt="Logo Horizontal Light v4" width="48%" />
+  &nbsp;&nbsp;
+  <img src="vectors/v4/logo_horizontal_dark_v4.svg" alt="Logo Horizontal Dark v4" width="48%" />
+</p>
+
+### 3. Ícone Mestre & Selo Soulbound Circular
+<p align="center">
+  <img src="vectors/v4/logo_icon_v4.svg" alt="Logo Icon v4" width="160" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="vectors/v4/logo_badge_soulbound_v4.svg" alt="Logo Badge Soulbound v4" width="160" />
+</p>
+
+### 4. Hero Banner de Alta Resolução (`lattes_hero_banner_v4.jpg`)
+<p align="center">
+  <img src="images/v4/lattes_hero_banner_v4.jpg" alt="Hero Banner v4" width="100%" />
+</p>
+
+### 5. Render 3D do Logotipo & Medalhão Soulbound 3D
+<p align="center">
+  <img src="images/v4/lattes_logo_3d_v4.jpg" alt="LattesChain Logo 3D v4" width="45%" />
+  &nbsp;&nbsp;
+  <img src="images/v4/lattes_soulbound_badge_v4.jpg" alt="Soulbound Badge 3D v4" width="45%" />
+</p>

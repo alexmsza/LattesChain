@@ -47,22 +47,52 @@ Nossa identidade visual traduz três pilares:
 
 ## 4. Família de Logotipos & Símbolos (`/Design/vectors/` e `/public/brand/`)
 
-1. **Ícone Mestre (`logo_icon.svg`):**
+1. **Ícone Mestre (`logo_icon_v4.svg` / `logo_icon.svg`):**
    - Composição: Fusão geométrica do capelo acadêmico tradicional, as camadas de velocidade e consenso da Solana, com um nó criptográfico em forma de chave e selo central de verificação.
    - Aplicação: Favicon, avatares de rede social, ícone de aplicativo e selos de atestação.
-2. **Logotipo Horizontal Dark (`logo_horizontal_dark.svg`):**
-   - Composição: Ícone à esquerda + tipografia `LattesChain` com gradiente Solana + subtítulo `EDUCORE PROTOCOL` + tag `SOLANA SAS`.
+   <br />
+   <img src="vectors/v4/logo_icon_v4.svg" alt="Ícone Mestre v4" width="120" />
+
+2. **Logotipo Horizontal Dark (`logo_horizontal_dark_v4.svg` / `logo_horizontal_dark.svg`):**
+   - Composição: Ícone à esquerda + tipografia `LattesChain` com gradiente Solana + subtítulo `EDUCORE PROTOCOL` + cordão branco (`#FFFFFF`).
    - Aplicação: Barra de navegação principal (Navbar), rodapés escuros e apresentações (Pitch Deck).
-3. **Logotipo Horizontal Light (`logo_horizontal_light.svg`):**
-   - Composição: Versão de alto contraste sobre fundo branco para documentos impressos, diplomas em PDF (RVDD) e certidões acadêmicas.
-4. **Selo Soulbound Token-2022 (`logo_badge_soulbound.svg`):**
+   <br />
+   <img src="vectors/v4/logo_horizontal_dark_v4.svg" alt="Logo Horizontal Dark v4" width="380" />
+
+3. **Logotipo Horizontal Light (`logo_horizontal_light_v4.svg` / `logo_horizontal_light.svg`):**
+   - Composição: Versão de alto contraste sobre fundo branco para documentos impressos, diplomas em PDF (RVDD), certidões acadêmicas e documentação geral com cordão ardósia (`#0F172A`).
+   - Aplicação: Certidões, README.md, relatórios oficiais e impressões.
+   <br />
+   <img src="vectors/v4/logo_horizontal_light_v4.svg" alt="Logo Horizontal Light v4" width="380" />
+
+4. **Selo Soulbound Token-2022 (`logo_badge_soulbound_v4.svg` / `logo_badge_soulbound.svg`):**
    - Composição: Badge heráldico circular com gravação periférica (`★ LATTESCHAIN SOULBOUND CREDENTIAL ★`), indicativo `VERIFIED <400MS` e conformidade MEC/LGPD.
+   - Aplicação: Passaporte do aluno, relatórios de auditoria e validação de diplomas.
+   <br />
+   <img src="vectors/v4/logo_badge_soulbound_v4.svg" alt="Selo Soulbound v4" width="160" />
 
 ---
 
 ## 5. Diretrizes de Imagem e Síntese Visual (IA)
 - **Atmosfera:** Futurismo sóbrio, estética DataSecAIOps, iluminação de contorno (*rim light*) ciano e esmeralda.
 - **Proporções Padronizadas:**
-  - `16:9`: Banners de postagens no LinkedIn, cabeçalhos de artigos, capas de pitch deck e headers web.
+  - `16:9`: Banners corporativos do LinkedIn, cabeçalhos de artigos, capas de pitch deck e headers web.
   - `1:1`: Emblemas 3D, selos de validação de diploma e posts de feed.
 - **Disponibilidade em Produção:** Os assets oficiais estão homologados no diretório `/Design/` e publicados estaticamente em `/public/brand/` para carregamento de alta performance no site.
+
+### 5.1 Banner Corporativo LinkedIn (`lattes_linkedin_cover_v4.jpg`)
+<p align="center">
+  <img src="images/v4/lattes_linkedin_cover_v4.jpg" alt="LinkedIn Cover v4" width="100%" />
+</p>
+
+### 5.2 Hero Banner Monolítico (`lattes_hero_banner_v4.jpg`)
+<p align="center">
+  <img src="images/v4/lattes_hero_banner_v4.jpg" alt="Hero Banner v4" width="100%" />
+</p>
+
+### 5.3 Render 3D do Logotipo (`lattes_logo_3d_v4.jpg`) & Selo Soulbound 3D (`lattes_soulbound_badge_v4.jpg`)
+<p align="center">
+  <img src="images/v4/lattes_logo_3d_v4.jpg" alt="Logo 3D v4" width="45%" />
+  &nbsp;&nbsp;
+  <img src="images/v4/lattes_soulbound_badge_v4.jpg" alt="Soulbound Badge 3D v4" width="45%" />
+</p>

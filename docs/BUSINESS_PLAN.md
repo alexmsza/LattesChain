@@ -1,3 +1,9 @@
+<div align="center">
+  <img src="../public/brand/v4/logo_horizontal_light_v4.svg" alt="LattesChain Logo" width="360" />
+  <br /><br />
+  <img src="../public/brand/v4/lattes_linkedin_cover_v4.jpg" alt="LattesChain Business Plan Banner" width="100%" />
+</div>
+
 # LattesChain — Plano de Negócios & Go-to-Market 📊
 
 > **Visão**: Tornar-se o protocolo padrão global de atestações e passaporte acadêmico soberano sobre a Solana.
